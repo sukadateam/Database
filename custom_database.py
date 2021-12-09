@@ -1,12 +1,26 @@
+#data_base.edit.remove_row() has been finished
+#data_base.edit.remove_column() has been finished.
+#created and finished class clear, with empty def normal
+#created class check_type with empty def data_format and data_base_exists
 import sys
 required_version='3.10.0'
 if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:',sys.version[0:len(required_version)])
 if sys.version[0:len(required_version)] == required_version:
-    print('Program Version: 0.0.1')
+    print('Program Version: 0.0.2')
     from data import *
     from cache import *
+    class clear:
+        def normal():
+            for i in range(100):
+                print('')
+    class check_type:
+        def data_format(data_base=None):
+            #Call to return data_base type.
+            pass
+        def data_base_exists():
+            pass
     class users:
         def create():
             pass
@@ -42,18 +56,45 @@ if sys.version[0:len(required_version)] == required_version:
                 if data_base != None:
                     global row
                     rows=[]
+                    rows_count=0
+                    a=0
+                    #Gather sets that correspond with called data_base
                     try:
                         for i in range(len(row)):
-                            print(row[i])
-                            if (row[i])[0]==data_base:
-                                rows.append(row[i])
-                                row.pop(i)
+                            if (row[i-a])[0]==data_base:
+                                rows.append(row[i-a])
+                                row.pop(i-a)
+                                a+=1
+                                rows_count+=1
                     except:
                         pass
-                    #for i in range(len(rows)):
-                        #print('#'+str(i)+' : '+str(rows[i]))
-                    print(row)
-
+                    #Print known sets on screen.
+                    for i in range(len(rows)):
+                        print('#'+str(i)+' : '+str(rows[i]))
+                    try:
+                        a=input('Choose a set to delete: ')
+                        try:
+                            a=a.replace('#','')
+                        except:
+                            pass
+                        a=int(a)
+                    except ValueError:
+                        print('Please enter the corresponding number #?')
+                    #If input is correct then ask user if they wish to remove it.
+                    if isinstance(a, int) == True:
+                        if rows_count-1 >= a:
+                            print('Remove:',rows[a])
+                            choice = input('Are you sure(y/n): ').lower()
+                            if choice == "yes" or "y":
+                                rows.pop(a)
+                            elif choice == "no" or "n":
+                                print('No changes have occured.')
+                            else:
+                                print('Invalid response.')
+                        if rows_count <= a:
+                            print('That item does not exist.')
+                    for i in range(len(rows)):
+                        row.append(rows[i])
                 if data_base == None:
                     print(errors.cannot_call_func('data_base.edit.remove_row()'))
                 #Must be column_row
@@ -68,8 +109,47 @@ if sys.version[0:len(required_version)] == required_version:
                                 (data_bases[i])[4].append(column_name.lower())
                 if data_base == None or column_name == None:
                     print(errors.cannot_call_func('data_base.edit.add_column()'))
-            def remove_column():
-                pass
+            def remove_column(data_base=None, column=None, remove_row=False):
+                if data_base != None and column != None or '':
+                    global data_bases, debug, row
+                    for i in range(len(data_bases)):
+                        if (data_bases[i])[0]==data_base:
+                            if debug==True:
+                                print('Database Found!')
+                            if (data_bases[i])[3] == "column_row":
+                                if debug==True:
+                                    print("Correct data_base type!")
+                                if column in (data_bases[i])[4]:
+                                    print("Removed: "+str(column))
+                                    a=len((data_bases[i])[4])
+                                    for e in range(a):
+                                        if ((data_bases[i])[4])[e] == column:
+                                            print(e)
+                                            break
+                                    (data_bases[i])[4].remove(column)
+                                    print(data_bases[i])
+                                    rows=[]
+                                    rows_count=0
+                                    a=0
+                                    #Gather sets that correspond with called data_base
+                                    try:
+                                        for i in range(len(row)):
+                                            if (row[i-a])[0]==data_base:
+                                                rows.append(row[i-a])
+                                                row.pop(i-a)
+                                                a+=1
+                                                rows_count+=1
+                                    except:
+                                        pass
+                                    if remove_row==False:
+                                        for i in range(rows_count):
+                                            ((rows[i])[1])[e]=None
+                                    if remove_row==True:
+                                        for i in range(rows_count):
+                                            ((rows[i])[1]).pop(e)
+                                    print(rows)
+                if data_base == None or column == None or '':
+                    errors.cannot_call_func('data_base.edit.remove_column()')
                 #Goes through all lists for the column and changes it to equal None.
                 #Must be column_row
         class empty:
@@ -227,4 +307,4 @@ if sys.version[0:len(required_version)] == required_version:
             return '(Error) The function '+var+' that was called is missing 1 or more required variables.'
         def not_list():
             return '(Error) A list was expected, but was not given.'
-    data_base.edit.remove_row(data_base='basic')
+    #Test bench
