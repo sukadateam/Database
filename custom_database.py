@@ -1,16 +1,49 @@
-#data_base.edit.remove_row() has been finished
-#data_base.edit.remove_column() has been finished.
-#created and finished class clear, with empty def normal
-#created class check_type with empty def data_format and data_base_exists
-import sys
+#data_base.edit.add_item() has been finished.
+#data_base.edit.remove_item() has been finished.
+#data_base.empty.one() has been finished.
+#data_base.empty.all() has been finished.
+#users.create() has been finished.
+#save.all() has been finished.
+import sys, os
 required_version='3.10.0'
+program_version='0.1.0'
 if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:',sys.version[0:len(required_version)])
 if sys.version[0:len(required_version)] == required_version:
-    print('Program Version: 0.0.2')
-    from data import *
+    from directory import path
+    os.chdir(path)
+    print('Set path:', path)
+    from reset import *
+    try:
+        from data_save import *
+    except:
+        print('Could not find save file. Loading default file.')
+        from data import *
     from cache import *
+    import pyAesCrypt
+    class encrypt:
+        def custom_database():
+            pass
+        def data():
+            pass
+        def cache():
+            pass
+        def opt():
+            pass
+        def all():
+            encrypt.custom_database()
+            encrypt.data()
+            encrypt.cache()
+            encrypt.opt()
+    class save:
+        def all():
+            from vars_to_save import list
+            file=open('data_save.py','w')
+            for i in range(len(list)):
+                file.write(list[i]+'='+str(globals()[list[i]])+'\n')
+            file.write('\n')
+            file.close()
     class clear:
         def normal():
             for i in range(100):
@@ -22,8 +55,22 @@ if sys.version[0:len(required_version)] == required_version:
         def data_base_exists():
             pass
     class users:
-        def create():
-            pass
+        def create(new_user=None, new_password=None, new_permission=None):
+            if new_user != None and new_password != None:
+                if isinstance(new_user, str) == True:
+                    if isinstance(new_password, str) == True:
+                        if isinstance(new_permission, str) == True or new_permission==None:
+                            known_users.append(new_user)
+                            passwords.append(new_password)
+                            permissions.append(new_password)
+                if isinstance(new_user, str) == False:
+                    print('new_user must be str')
+                if isinstance(new_permission, str) == False:
+                    print('new_permission must be str')
+                if isinstance(new_permission, str) == False and new_permission != None:
+                    print('new_password must be str or None')
+            if new_user == None or new_password == None:
+                print(errors.cannot_call_func('users.create()'))
         def remove():
             pass
         def show_all():
@@ -34,15 +81,45 @@ if sys.version[0:len(required_version)] == required_version:
             pass
         def change_password():
             pass
+        def login_request():
+            pass
+        def logout():
+            pass
+        def return_login_cred():
+            pass
     class data_base:
         class edit:
-            def add_item(column=None,data_base=None, item_to_add=None):
-                if column != None and data_base != None and item_to_add != None:
-                    pass
-                if column == None or data_base == None or item_to_add == None:
+            def add_item(data_base=None, item_to_add=None):
+                #Used for the list types.
+                global data_bases, lists
+                if data_base != None and item_to_add != None:
+                    for i in range(len(data_bases)):
+                        if (data_bases[i])[0] == data_base:
+                            if (data_bases[i])[3]=="list":
+                                for x in range(len(lists)):
+                                    if (lists[x])[0]==data_base:
+                                        (lists[x])[1].append(item_to_add)
+                                        print(lists)
+                                        break
+                if data_base == None or item_to_add == None:
                     print(errors.cannot_call_func('data_base.edit.add_item()'))
-            def remove_item():
-                pass
+            def remove_item(data_base=None, item_to_remove=None):
+                #Used for the list types.
+                global data_bases, lists
+                if data_base != None and item_to_remove != None:
+                    for i in range(len(data_bases)):
+                        if (data_bases[i])[0]==data_base:
+                            if (data_bases[i])[3]=="list":
+                                for x in range(len(lists)):
+                                    if (lists[x])[0]==data_base:
+                                        try:
+                                            (lists[x])[1].remove(item_to_remove)
+                                            print(lists)
+                                        except:
+                                           pass
+                                        break
+                if data_base == None or item_to_remove == None:
+                    print(errors.cannot_call_func('data_base.edit.remove_item()'))
             def add_row(data_base=None, new_row=None):
                 #You can add as many objects to a row as you please, but it may not fit in your assinged constraints. No problems will occur though.
                 if data_base != None and new_row != None:
@@ -141,6 +218,7 @@ if sys.version[0:len(required_version)] == required_version:
                                                 rows_count+=1
                                     except:
                                         pass
+                                    #Remove or Empty column(s) in row(s)
                                     if remove_row==False:
                                         for i in range(rows_count):
                                             ((rows[i])[1])[e]=None
@@ -149,15 +227,30 @@ if sys.version[0:len(required_version)] == required_version:
                                             ((rows[i])[1]).pop(e)
                                     print(rows)
                 if data_base == None or column == None or '':
-                    errors.cannot_call_func('data_base.edit.remove_column()')
+                    print(errors.cannot_call_func('data_base.edit.remove_column()'))
                 #Goes through all lists for the column and changes it to equal None.
                 #Must be column_row
         class empty:
             #Clear all info in 1 or more databases.
             def all():
-                pass
-            def one():
-                pass
+                global lists, row
+                lists=[]
+                row=[]
+            def one(data_base=None):
+                if data_base != None:
+                    a=0
+                    global row, lists
+                    for i in range(len(row)):
+                        if (row[i-a])[0]==data_base:
+                            row.pop(i-a)
+                            a+=1
+                    a=0
+                    for i in range(len(lists)):
+                        if (lists[i-a])[0]==data_base:
+                            lists.pop(i-a)
+                            a+=1
+                if data_base == None:
+                    print(errors.cannot_call_func('data_base.empty.one()'))
         class reset:
             #Redirects to data_base.empty.
             def all():
@@ -256,6 +349,7 @@ if sys.version[0:len(required_version)] == required_version:
                 global data_bases, row, lists
                 data_bases=[]
                 lists=[]
+                row=[]
             def one_set(data_base=None):
                 global data_bases, row, lists
                 if data_base != None:
@@ -295,8 +389,17 @@ if sys.version[0:len(required_version)] == required_version:
                 data_base.create.database(data_base=None)
                 #Redirects to correct def
     class password_restrictions:
-        def set_min_length():
-            pass
+        def set_min_length(new_preset=None, new_value=None, value=None):
+            global min_length
+            if new_preset != None:
+                min_length=new_preset
+            if new_value != None:
+                min_length=new_value
+            if value != None:
+                min_length=value
+            if new_preset==None and new_value == None and value == None:
+                print(errors.cannot_call_func('password_restrictions.set_min_length()'))
+
         def set_max_length():
             pass
         def cannot_contian():
