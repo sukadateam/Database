@@ -1,0 +1,9 @@
+This whole repo was created by Brandon Robinson.
+
+This is an alternative to mysql. 
+
+I(Brandon Robinson) give full consent for use on others behalf.
+
+This is a database manager. Fully python!
+
+Python version 3.10.0 is required for this build.
