@@ -8,10 +8,14 @@ lists=[['chance', ['money','today']]]
 #Data_base, items in list
 
 #Authentication
-known_users=['Admin']
-passwords=[None]
+known_users=['Admin','Mr.Plummer','Gertie']
+passwords=[None,None,None]
 #Passwords can be none. Restrictions can also be set.
-permissions=['admin']
+permissions=['admin','all','tacobell']
+
+#Current user logged in
+user_logged=None
+user_permission=None
 
 global_password=None #A password that can be used on anything. If none, then no global_password is allowed.
 allowed_types=['column_row', 'list', 'grid']
