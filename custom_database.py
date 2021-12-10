@@ -1,7 +1,15 @@
-#python version 3.10.1 is now required. 3.10.0 is no longer allowed. Though it is supported. Change required_version if you wish.
+#users.remove() has been finished.
+#Added errors.not_str()
+#Added errors.user_exists()
+#users.create() has been fixed.
+#users.login_request() has been finished.
+#users.logout() has been finished.
+#users.return_login_cred() has been finished.
 import sys, os
+from pyAesCrypt.crypto import decryptFile, encryptFile
+password='Jimmy'
 required_version='3.10.1'
-program_version='0.1.1'
+program_version='0.1.3'
 if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:',sys.version[0:len(required_version)])
@@ -13,15 +21,38 @@ if sys.version[0:len(required_version)] == required_version:
     try:
         from data_save import *
     except:
-        print('Could not find save file. Loading default file.')
-        from data import *
+        try:
+            print('Could not find save file. Loading default file.')
+            from data import *
+        except:
+            pass
     from cache import *
     import pyAesCrypt
+    class get:
+        def password():
+            pass
+        def new_password():
+            pass
+    class decrypt:
+        def custom_database():
+            pass
+        def data():
+            global password
+            pyAesCrypt.decryptFile('data.aes','data.py',password)
+            os.remove('data.aes')
+        def cache():
+            pass
+        def opt():
+            pass
+        def all():
+            pass
     class encrypt:
         def custom_database():
             pass
         def data():
-            pass
+            global password
+            pyAesCrypt.encryptFile('data.py','data.aes',password)
+            os.remove('data.py')
         def cache():
             pass
         def opt():
@@ -50,24 +81,49 @@ if sys.version[0:len(required_version)] == required_version:
         def data_base_exists():
             pass
     class users:
+        def disable():
+            #Disables a user
+            pass
+        def enable():
+            #Enables a user
+            pass
         def create(new_user=None, new_password=None, new_permission=None):
+            global known_users, passwords, permissions
             if new_user != None and new_password != None:
-                if isinstance(new_user, str) == True:
-                    if isinstance(new_password, str) == True:
-                        if isinstance(new_permission, str) == True or new_permission==None:
-                            known_users.append(new_user)
-                            passwords.append(new_password)
-                            permissions.append(new_password)
-                if isinstance(new_user, str) == False:
-                    print('new_user must be str')
-                if isinstance(new_permission, str) == False:
-                    print('new_permission must be str')
-                if isinstance(new_permission, str) == False and new_permission != None:
-                    print('new_password must be str or None')
+                skip=False
+                for i in range(len(known_users)):
+                    if known_users[i]==new_user:
+                        skip=True
+                        print(errors.user_exists())
+                if skip == False:
+                    if isinstance(new_user, str) == True:
+                        if isinstance(new_password, str) == True:
+                            if isinstance(new_permission, str) == True or new_permission==None:
+                                known_users.append(new_user)
+                                passwords.append(new_password)
+                                permissions.append(new_password)
+                    if isinstance(new_user, str) == False:
+                        print('new_user must be str')
+                    if isinstance(new_permission, str) == False:
+                        print('new_permission must be str')
+                    if isinstance(new_permission, str) == False and new_permission != None:
+                        print('new_password must be str or None') 
             if new_user == None or new_password == None:
                 print(errors.cannot_call_func('users.create()'))
-        def remove():
-            pass
+        def remove(user=None):
+            if user != None:
+                found=False
+                global known_users, passwords, permissions
+                for i in range(len(known_users)):
+                    if known_users[i]==user:
+                        known_users.pop(i)
+                        passwords.pop(i)
+                        permissions.pop(i)
+                        found=True
+                if found==False:
+                    print(errors.user_not_found())
+            if user == None:
+                print(errors.cannot_call_func('users.remove()'))
         def show_all():
             pass
         def change_permissions():
@@ -76,12 +132,35 @@ if sys.version[0:len(required_version)] == required_version:
             pass
         def change_password():
             pass
-        def login_request():
-            pass
+        def login_request(user=None, password=None):
+            #Will return True if credentials are correct, if not will return False
+            if user != None and password != None or password==None:
+                global known_users, passwords, user_logged, user_permission
+                if isinstance(user, str)==True and isinstance(password, str)==True or password == None:
+                    if user in known_users:
+                        for i in range(len(known_users)):
+                            if known_users[i]==user:
+                                if passwords[i]==password:
+                                    user_logged=known_users[i]
+                                    user_permission=permissions[i]
+                                    return True
+                if isinstance(user, str) == False:
+                    print(errors.not_str())
+                if isinstance(password, str) == False and password != None:
+                    print(errors.not_str())
+                if user not in known_users:
+                    print(errors.user_not_found())
+                if user_logged==False:
+                    return False
+            if user == None:
+                print(errors.cannot_call_func('users.login_request()'))
         def logout():
-            pass
+            global user_logged, user_permission
+            user_permission=None
+            user_logged=None
         def return_login_cred():
-            pass
+            global user_logged, user_permission
+            return user_logged, user_permission
     class data_base:
         class edit:
             def add_item(data_base=None, item_to_add=None):
@@ -405,4 +484,10 @@ if sys.version[0:len(required_version)] == required_version:
             return '(Error) The function '+var+' that was called is missing 1 or more required variables.'
         def not_list():
             return '(Error) A list was expected, but was not given.'
+        def user_not_found():
+            return '(Error) The user specified was not found.'
+        def not_str():
+            return '(Error) A string was expected, but was not given.'
+        def user_exists():
+            return('(Error) This user already exists.')
     #Test bench
