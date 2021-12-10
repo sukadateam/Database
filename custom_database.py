@@ -1,7 +1,7 @@
 #python version 3.10.1 is now required. 3.10.0 is no longer allowed. Though it is supported. Change required_version if you wish.
 import sys, os
 required_version='3.10.1'
-program_version='0.1.0'
+program_version='0.1.1'
 if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:',sys.version[0:len(required_version)])
