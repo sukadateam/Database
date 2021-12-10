@@ -1,11 +1,6 @@
-#data_base.edit.add_item() has been finished.
-#data_base.edit.remove_item() has been finished.
-#data_base.empty.one() has been finished.
-#data_base.empty.all() has been finished.
-#users.create() has been finished.
-#save.all() has been finished.
+#python version 3.10.1 is now required. 3.10.0 is no longer allowed. Though it is supported. Change required_version if you wish.
 import sys, os
-required_version='3.10.0'
+required_version='3.10.1'
 program_version='0.1.0'
 if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
