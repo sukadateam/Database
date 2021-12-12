@@ -16,9 +16,8 @@
 #errors.not_int() has been created and finished.
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
-password='Jimmy'
-required_version='3.10.1'
-program_version='0.1.6'
+password=None
+from settings import *
 if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:',sys.version[0:len(required_version)])
@@ -38,11 +37,31 @@ if sys.version[0:len(required_version)] == required_version:
             from data import *
         except:
             pass
-    from cache import *
     import pyAesCrypt
     def exit():
         exit
     class get:
+        def change_hash_dir(new_dir=None):
+            if new_dir != None:
+                pass
+            if new_dir == None:
+                pass
+        def get_hash():
+            try:
+                password = get.password()
+                decrypt.hash(password)
+                file=open('E:/hash.txt','r').read()
+                return file
+            except ValueError:
+                print('Incorrect password!')
+        def new_hash():
+            get.random_hash()
+            get.encrypt_hash()
+            password=None
+        def encrypt_hash():
+            password=get.password()
+            pyAesCrypt.encryptFile('E:/hash.txt', 'E:/hash.aes', password)
+            os.remove('E:/hash.txt')
         def password():
             return input('Password: ')
         def new_password(new_password=None):
@@ -55,59 +74,70 @@ if sys.version[0:len(required_version)] == required_version:
                 #Tell user process completed.
             if new_password == None:
                 print(errors.cannot_call_func())
-        def remove_hash():
-            pass
-        def new_hash(length=1500):
+        def random_hash(length=100):
             ah=''
             for i in range(length): 
                 ah+=random.choice('ajfygweuoichwgbuieucr73rwecb638781417983b 623v9923 r t72344y 23uc3u2b4n9832 4b2c794y 237bc2423nc482b3c427 rfgshdfuw38263872guihfef86w4t878whryfeg48tg34hf7w')
-            file=open('F:/hash.txt','w')
+            file=open('E:/hash.txt','w')
             file.write(ah)
             file.close()
     class decrypt:
-        def custom_database():
-            global password
-            pyAesCrypt.decryptFile('custom_database.aes','custom_database.py',password)
-            os.remove('custom_database.aes')
-        def data():
-            global password
-            pyAesCrypt.decryptFile('data.aes','data.py',password)
-            os.remove('data.aes')
-        def cache():
-            global password
+        def hash(password):
+            pyAesCrypt.decryptFile('E:/hash.aes','E:/hash.txt',password)
+            return open('E:/hash.txt','r').read()
+        def data(password):
+            try:
+                pyAesCrypt.decryptFile('data.aes','data.py',password)
+                os.remove('data.aes')
+            except:
+                pass
+        def cache(password):
             pyAesCrypt.decryptFile('cache.aes','cache.py',password)
             os.remove('cache.aes')
-        def opt():
-            global password
+        def opt(password):
             pyAesCrypt.decryptFile('opt.aes','opt.py',password)
             os.remove('opt.aes')
-        def all():
-            decrypt.custom_database()
-            decrypt.data()
-            decrypt.cache()
-            decrypt.opt()
+        def all(password):
+            #decrypt.custom_database(password, True) Do not encrypt main file. This file is needed to decrypt!
+            try:
+                d_password=decrypt.hash(password)
+                decrypt.data(d_password)
+            except ValueError:
+                print('Wrong password.')
+            #decrypt.cache(d_password)
+            #decrypt.opt(d_password)
     class encrypt:
-        def custom_database():
-            global password
-            pyAesCrypt.encryptFile('custom_database.py','custom_database.aes',password)
-            os.remove('custom_data.py')
-        def data():
-            global password
-            pyAesCrypt.encryptFile('data.py','data.aes',password)
-            os.remove('data.py')
-        def cache():
-            global password
+        def data(password):
+            global fail_safe
+            failed=False
+            if fail_safe==True:
+                try:
+                    open('data.aes','r')
+                    print('Existing file found. Cannot encrypt.')
+                    failed=True
+                except:
+                    pass
+            if failed == False:
+                global do_not_remove
+                pyAesCrypt.encryptFile('data.py','data.aes',password)
+                if do_not_remove==False:
+                    os.remove('data.py')
+        def cache(password):
+            global do_not_remove
             pyAesCrypt.encryptFile('cache.py','cache.aes',password)
-            os.remove('cache.py')
-        def opt():
-            global password
+            if do_not_remove==True:
+                os.remove('cache.py')
+        def opt(password):
+            global do_not_remove
             pyAesCrypt.encryptFile('opt.py','opt.aes',password)
-            os.remove('opt.py')
-        def all():
-            encrypt.custom_database()
-            encrypt.data()
-            encrypt.cache()
-            encrypt.opt()
+            if do_not_remove==True:
+                os.remove('opt.py')
+        def all(password):
+            d_password=decrypt.hash(password)
+            #encrypt.custom_database(password, True) Do not encrypt main file. This file is needed to decrypt!
+            encrypt.data(d_password)
+            #encrypt.cache(d_password)
+            #encrypt.opt(d_password)
     class save:
         def all():
             from vars_to_save import list
@@ -465,10 +495,8 @@ if sys.version[0:len(required_version)] == required_version:
                         print(rows[i])
                 if data_base == None:
                     print(errors.cannot_call_func('data_base.show.all()'))
-            def all_data_bases(help=False):
+            def all_data_bases():
                 global data_bases
-                if help==True:
-                    print('Shows all databases that are known.\n')
                 print('Known databases:')
                 for i in range(len(data_bases)):
                     print('  ',(data_bases[i])[0])
@@ -610,4 +638,13 @@ if sys.version[0:len(required_version)] == required_version:
             if item != None:
                 return '(Error) A int was expected, but was not given. Item: '+str(item)
     #Test bench
-    
+    #<--Indent to here
+
+
+
+
+
+aaaa=False
+#Getting the files encrypted/decrypted.
+if aaaa==True:
+    pass
