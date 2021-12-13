@@ -1,0 +1,9 @@
+1. Encryption method will now remove visible hash after Decryption and Encryption.
+2. Removed start.py which is being replaced by shell.py for more functionality.
+3. Settings.py has new setting(s).
+4. Fixed AttributeError with chdir on startup.
+5. Created a info class about the system and application(s).
+6. Created a backup class. Currently Works.
+7. Created a restore class. Currently Works.
+8. Added file "files_to_backup.py".
+9. Removed file.exit.py.
