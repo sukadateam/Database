@@ -250,13 +250,18 @@ if sys.version[0:len(required_version)] == required_version:
             if user == None:
                 print(errors.cannot_call_func('users.remove()'))
         def show_all():
-            pass
+            global known_users
+            for i in range(len(known_users)):
+                print('User: '+known_users[i])
+                print('Permission: '+permissions[i])
         def change_permissions():
             pass
         def change_name():
             pass
         def change_password():
             pass
+        def return_users():
+            return known_users
         def login_request(user=None, password=None):
             #Will return True if credentials are correct, if not will return False
             if user != None and password != None or password==None:
