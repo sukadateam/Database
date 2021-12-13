@@ -6,4 +6,5 @@
 6. Created a backup class. Currently Works.
 7. Created a restore class. Currently Works.
 8. Added file "files_to_backup.py".
-9. Removed file.exit.py.
+9. Removed file exit.py.
+10. In users class. New features have been added. show_users() and return_users()
