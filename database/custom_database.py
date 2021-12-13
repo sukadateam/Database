@@ -1,19 +1,5 @@
-#users.remove() has been finished.
-#Added errors.not_str()
-#Added errors.user_exists()
-#users.create() has been fixed and has been added with new features.
-#users.login_request() has been finished.
-#users.logout() has been finished.
-#users.return_login_cred() has been finished.
-#all of encrypt has been finished.
-#all of decrypt has been finished.
-#check_type.data_format() has been finished.
-#check_type.data_base_exists() has been finished.
-#users.disable() has been finished.
-#users.enable() has been finished.
-#create.database() has been finished.
-#errors.not_bool() has been created and finished.
-#errors.not_int() has been created and finished.
+#Things to do next:
+#Check to make sure save class works as intended.
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
 password=None
@@ -50,7 +36,8 @@ if sys.version[0:len(required_version)] == required_version:
             try:
                 password = get.password()
                 decrypt.hash(password)
-                file=open('E:/hash.txt','r').read()
+                global drive_letter
+                file=open(drive_letter+':/hash.txt','r').read()
                 return file
             except ValueError:
                 print('Incorrect password!')
@@ -60,8 +47,9 @@ if sys.version[0:len(required_version)] == required_version:
             password=None
         def encrypt_hash():
             password=get.password()
-            pyAesCrypt.encryptFile('E:/hash.txt', 'E:/hash.aes', password)
-            os.remove('E:/hash.txt')
+            global drive_letter
+            pyAesCrypt.encryptFile(drive_letter+':/hash.txt', drive_letter+':/hash.aes', password)
+            os.remove(drive_letter+':/hash.txt')
         def password():
             return input('Password: ')
         def new_password(new_password=None):
@@ -78,13 +66,15 @@ if sys.version[0:len(required_version)] == required_version:
             ah=''
             for i in range(length): 
                 ah+=random.choice('ajfygweuoichwgbuieucr73rwecb638781417983b 623v9923 r t72344y 23uc3u2b4n9832 4b2c794y 237bc2423nc482b3c427 rfgshdfuw38263872guihfef86w4t878whryfeg48tg34hf7w')
-            file=open('E:/hash.txt','w')
+            global drive_letter
+            file=open(drive_letter+':/hash.txt','w')
             file.write(ah)
             file.close()
     class decrypt:
         def hash(password):
             pyAesCrypt.decryptFile('E:/hash.aes','E:/hash.txt',password)
-            return open('E:/hash.txt','r').read()
+            global drive_letter
+            return open(drive_letter+':/hash.txt','r').read()
         def data(password):
             try:
                 pyAesCrypt.decryptFile('data.aes','data.py',password)
@@ -104,6 +94,11 @@ if sys.version[0:len(required_version)] == required_version:
                 decrypt.data(d_password)
             except ValueError:
                 print('Wrong password.')
+            try:
+                global drive_letter
+                os.remove(drive_letter+':/hash.txt')
+            except:
+                pass
             #decrypt.cache(d_password)
             #decrypt.opt(d_password)
     class encrypt:
@@ -138,6 +133,11 @@ if sys.version[0:len(required_version)] == required_version:
             encrypt.data(d_password)
             #encrypt.cache(d_password)
             #encrypt.opt(d_password)
+            try:
+                global drive_letter
+                os.remove(drive_letter+':/hash.txt')
+            except:
+                pass
     class save:
         def all():
             from vars_to_save import list
@@ -639,12 +639,3 @@ if sys.version[0:len(required_version)] == required_version:
                 return '(Error) A int was expected, but was not given. Item: '+str(item)
     #Test bench
     #<--Indent to here
-
-
-
-
-
-aaaa=False
-#Getting the files encrypted/decrypted.
-if aaaa==True:
-    pass
