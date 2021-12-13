@@ -10,4 +10,4 @@ drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only.
 drive_name='Computer'
 #Operating System or OS. Can be windows or linux. Must be lowercase.
-os='windows'
+system='windows'
