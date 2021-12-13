@@ -13,8 +13,8 @@ if sys.version[0:len(required_version)] == required_version:
         from directory import path
     except ModuleNotFoundError:
         print('Please setup application.')
-    os.chdir(path)
     print('Set path:', path)
+    os.chdir(path)
     from reset import *
     try:
         from data_save import *
@@ -26,12 +26,19 @@ if sys.version[0:len(required_version)] == required_version:
     import pyAesCrypt
     def exit():
         exit
+    class backup():
+        def all():
+            pass
+    class info:
+        def operating_system():
+            global system
+            return system
+        def python_version():
+            return sys.version[0:len(required_version)]
+        def app_version():
+            global program_version
+            return program_version
     class get:
-        def change_hash_dir(new_dir=None):
-            if new_dir != None:
-                pass
-            if new_dir == None:
-                pass
         def get_hash():
             try:
                 password = get.password()
