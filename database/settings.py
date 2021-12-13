@@ -7,5 +7,7 @@ required_version='3.10.1'
 program_version='0.1.7'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
+#Drive name to store hash.aes file on root directory. Linux only.
+drive_name='Computer'
 #Operating System or OS. Can be windows or linux. Must be lowercase.
 os='windows'
