@@ -8,7 +8,7 @@ if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:',sys.version[0:len(required_version)])
 if sys.version[0:len(required_version)] == required_version:
-    import random
+    import random, shutil
     try:
         from directory import path
     except ModuleNotFoundError:
@@ -26,9 +26,20 @@ if sys.version[0:len(required_version)] == required_version:
     import pyAesCrypt
     def exit():
         exit
-    class backup():
+    class restore:
         def all():
-            pass
+            from files_to_backup import backup_files
+            global path
+            mod_path=path.replace('database','Backups')
+            for i in range(len(backup_files)):
+                shutil.copy(mod_path+'\\'+backup_files[i], path+'\\'+backup_files[i])
+    class backup:
+        def all():
+            from files_to_backup import backup_files
+            global path
+            mod_path=path.replace('database','Backups')
+            for i in range(len(backup_files)):
+                shutil.copy(path+'\\'+backup_files[i],mod_path)
     class info:
         def operating_system():
             global system
