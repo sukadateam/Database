@@ -1,5 +1,9 @@
 #Things to do next:
 #Check to make sure save class works as intended.
+#Create user needs to only allow permissions that are in allowed_users
+#Create system_check class to check data.py for any errors.
+#Inputs should also not be ''. System already checks for None, but not for ''.
+#implement denied_inputs.
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
 password=None
@@ -11,10 +15,11 @@ if sys.version[0:len(required_version)] == required_version:
     import random, shutil
     try:
         from directory import path
+        print('Set path:', path)
+        os.chdir(path)
     except ModuleNotFoundError:
-        print('Please setup application.')
-    print('Set path:', path)
-    os.chdir(path)
+        print('custom_database is not setup. Please setup with .bat or .sh file to enable this program.')
+        exit()
     from reset import *
     try:
         from data_save import *
@@ -24,6 +29,13 @@ if sys.version[0:len(required_version)] == required_version:
         except:
             pass
     import pyAesCrypt
+    def check(var):
+        global denied_inputs
+        for i in range(len(denied_inputs)):
+            if var==denied_inputs[i]:
+                return True
+        if var not in denied_inputs:
+            return False
     def exit():
         exit
     class restore:
@@ -170,13 +182,14 @@ if sys.version[0:len(required_version)] == required_version:
                 print('')
     class check_type:
         def data_format(data_base=None):
+            num=check(data_base)
             #Call to return data_base type.
-            if data_base != None:
+            if num == False:
                 global data_bases
                 for i in range(len(data_bases)):
                     if (data_bases[i])[0]==data_base:
                         return (data_bases[i])[3]
-            if data_base == None:
+            if num == True:
                 print(errors.cannot_call_func('check_type.data_format()'))
         def data_base_exists(data_base=None):
             if isinstance(data_base, str) == False and data_base != None:
@@ -193,26 +206,30 @@ if sys.version[0:len(required_version)] == required_version:
                     print(errors.cannot_call_func('check_type.data_base_exists()'))
     class users:
         def disable(user=None):
+            num=check(user)
             #Disables a user
-            if user != None:
+            if num == False:
                 global known_users, active_users
                 for i in range(len(known_users)):
                     if known_users[i]==user:
                         active_users[i]=False
-            if user == None:
+            if num == True:
                 print(errors.cannot_call_func('users.disable()'))
         def enable(user=None):
+            num=check(user)
             #Enables a user
-            if user != None:
+            if num == False:
                 global known_users, active_users
                 for i in range(len(known_users)):
                     if known_users[i]==user:
                         active_users[i]=True
-            if user == None:
+            if num == True:
                 print(errors.cannot_call_func('users.disable()'))
         def create(new_user=None, new_password=None, new_permission=None):
             global known_users, passwords, permissions
-            if new_user != None and new_password != None:
+            num1=check(new_user)
+            num2=check(new_password)
+            if num1 == False and num2 == False:
                 skip=False
                 for i in range(len(known_users)):
                     if known_users[i]==new_user:
@@ -232,10 +249,11 @@ if sys.version[0:len(required_version)] == required_version:
                         print('new_permission must be str')
                     if isinstance(new_permission, str) == False and new_permission != None:
                         print('new_password must be str or None') 
-            if new_user == None or new_password == None:
+            if num1 == True or num2 == True:
                 print(errors.cannot_call_func('users.create()'))
         def remove(user=None):
-            if user != None:
+            num=check(user)
+            if num == False:
                 found=False
                 global known_users, passwords, permissions
                 for i in range(len(known_users)):
@@ -247,19 +265,40 @@ if sys.version[0:len(required_version)] == required_version:
                         found=True
                 if found==False:
                     print(errors.user_not_found())
-            if user == None:
+            if num == True:
                 print(errors.cannot_call_func('users.remove()'))
         def show_all():
             global known_users
             for i in range(len(known_users)):
                 print('User: '+known_users[i])
                 print('Permission: '+permissions[i])
-        def change_permissions():
-            pass
-        def change_name():
-            pass
-        def change_password():
-            pass
+        def change_permissions(user=None, new_permission=None):
+            num1=check(user)
+            num2=check(new_permission)
+            if num1 == False and num2 == False:
+                for i in range(len(known_users)):
+                    if known_users[i]==user:
+                        permissions[i]=new_permission
+            if num1 == True or num2 == True:
+                print(errors.cannot_call_func('users.change_permissions()'))
+        def change_name(user=None, new_name=None):
+            num1=check(user)
+            num2=check(new_name)
+            if num1 == False and num2 == False:
+                for i in range(len(known_users)):
+                    if known_users[i]==user:
+                        known_users[i]=new_name
+            if num1 == True or num2 == True:
+                print(errors.cannot_call_func('users.change_name()'))
+        def change_password(user=None, new_password=None):
+            global passwords
+            num=check(user)
+            if num == False:
+                for i in range(len(known_users)):
+                    if known_users[i]==user:
+                        passwords[i]=new_password
+            if num == True:
+                print(errors.cannot_call_func('users.change_password()'))
         def return_users():
             return known_users
         def login_request(user=None, password=None):
@@ -299,7 +338,9 @@ if sys.version[0:len(required_version)] == required_version:
             def add_item(data_base=None, item_to_add=None):
                 #Used for the list types.
                 global data_bases, lists
-                if data_base != None and item_to_add != None:
+                num1=check(data_base)
+                num2=check(item_to_add)
+                if num1 == False and num2 == False:
                     for i in range(len(data_bases)):
                         if (data_bases[i])[0] == data_base:
                             if (data_bases[i])[3]=="list":
@@ -308,12 +349,14 @@ if sys.version[0:len(required_version)] == required_version:
                                         (lists[x])[1].append(item_to_add)
                                         print(lists)
                                         break
-                if data_base == None or item_to_add == None:
+                if num1==True or num2==True:
                     print(errors.cannot_call_func('data_base.edit.add_item()'))
             def remove_item(data_base=None, item_to_remove=None):
                 #Used for the list types.
+                num1=check(data_base)
+                num2=check(item_to_remove)
                 global data_bases, lists
-                if data_base != None and item_to_remove != None:
+                if num1 == False and num2 == False:
                     for i in range(len(data_bases)):
                         if (data_bases[i])[0]==data_base:
                             if (data_bases[i])[3]=="list":
@@ -325,19 +368,22 @@ if sys.version[0:len(required_version)] == required_version:
                                         except:
                                            pass
                                         break
-                if data_base == None or item_to_remove == None:
+                if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.remove_item()'))
             def add_row(data_base=None, new_row=None):
                 #You can add as many objects to a row as you please, but it may not fit in your assinged constraints. No problems will occur though.
-                if data_base != None and new_row != None:
+                num1=check(data_base)
+                num2=check(new_row)
+                if num1 == False and num2 == False:
                     if isinstance(new_row, list) == True:
                         row.append([data_base,new_row])
                     if isinstance(new_row, list) == False:
                         print(errors.not_list())
-                if data_base == None or new_row == None:
+                if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.add_row()'))
             def remove_row(data_base=None):
-                if data_base != None:
+                num1=check(data_base)
+                if num1 == False:
                     global row
                     rows=[]
                     rows_count=0
@@ -379,22 +425,26 @@ if sys.version[0:len(required_version)] == required_version:
                             print('That item does not exist.')
                     for i in range(len(rows)):
                         row.append(rows[i])
-                if data_base == None:
+                if num1 == True:
                     print(errors.cannot_call_func('data_base.edit.remove_row()'))
                 #Must be column_row
             def add_column(data_base=None, column_name=None):
+                num1=check(data_base)
+                num2=check(column_name)
                 global debug, data_bases
-                if data_base != None and column_name != None:
+                if num1 == False and num2 == False:
                     if debug==True:
                         print("Adding column at",data_base,"with name",column_name.lower())
                     for i in range(len(data_bases)):
                         if (data_bases[i])[0] == data_base:
                             if (data_bases[i])[3]=="column_row":
                                 (data_bases[i])[4].append(column_name.lower())
-                if data_base == None or column_name == None:
+                if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.add_column()'))
             def remove_column(data_base=None, column=None, remove_row=False):
-                if data_base != None and column != None or '':
+                num1=check(data_base)
+                num2=check(column)
+                if num1 == False and num2 == False:
                     global data_bases, debug, row
                     for i in range(len(data_bases)):
                         if (data_bases[i])[0]==data_base:
@@ -433,7 +483,7 @@ if sys.version[0:len(required_version)] == required_version:
                                         for i in range(rows_count):
                                             ((rows[i])[1]).pop(e)
                                     print(rows)
-                if data_base == None or column == None or '':
+                if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.remove_column()'))
                 #Goes through all lists for the column and changes it to equal None.
                 #Must be column_row
@@ -444,7 +494,8 @@ if sys.version[0:len(required_version)] == required_version:
                 lists=[]
                 row=[]
             def one(data_base=None):
-                if data_base != None:
+                num1=check(data_base)
+                if num1 == False:
                     a=0
                     global row, lists
                     for i in range(len(row)):
@@ -456,46 +507,44 @@ if sys.version[0:len(required_version)] == required_version:
                         if (lists[i-a])[0]==data_base:
                             lists.pop(i-a)
                             a+=1
-                if data_base == None:
+                if num1 == True:
                     print(errors.cannot_call_func('data_base.empty.one()'))
-        class reset:
-            #Redirects to data_base.empty.
-            def all():
-                data_base.empty.all()
-            def one():
-                data_base.empty.one()
         class show:
             def show_column(data_base=None):
-                if data_base != None:
+                num=check(data_base)
+                if num == False:
                     for i in range(len(data_bases)):
                         if (data_bases[i])[0]==data_base:
                             if (data_bases[i])[3]=="column_row":
                                 print((data_bases[i])[4])
-                if data_base == None:
+                if num == True:
                     print(errors.cannot_call_func('data_base.show.show_column()'))
             def show_row(data_base=None):
+                num=check(data_base)
                 #Must be column_row type
                 global row
-                if data_base != None:
+                if num == False:
                     for x in range(len(row)):
                         if (row[x])[0]==data_base:
                             print(row[x])
-                if data_base == None:
+                if num == True:
                     print(errors.cannot_call_func('data_base.show.show_row()'))
             def show_lists(data_base=None):
+                num=check(data_base)
                 global lists
-                if data_base != None:
+                if num == False:
                     for x in range(len(lists)):
                         if (lists[x])[0]==data_base:
                             print(lists[x])
-                if data_base == None:
+                if num == True:
                     print(errors.cannot_call_func('data_base.show.show_lists'))
             def all_in_database(data_base=None):
+                num=check(data_base)
                 global data_bases, row, debug, sets, rows, type
                 sets=[]
                 rows=[]
                 type=None
-                if data_base != None:
+                if num == False:
                     for i in range(len(data_bases)):
                         if (data_bases[i])[0] == data_base:
                             if (data_bases[i])[3] == 'list':
@@ -516,7 +565,7 @@ if sys.version[0:len(required_version)] == required_version:
                     print(sets)
                     for i in range(len(rows)):
                         print(rows[i])
-                if data_base == None:
+                if num == True:
                     print(errors.cannot_call_func('data_base.show.all()'))
             def all_data_bases():
                 global data_bases
@@ -524,8 +573,9 @@ if sys.version[0:len(required_version)] == required_version:
                 for i in range(len(data_bases)):
                     print('  ',(data_bases[i])[0])
             def info(data_base=None):
+                num=check(data_base)
                 global data_bases, type
-                if data_base != None:
+                if num == False:
                     type=None
                     for i in range(len(data_bases)):
                         if (data_bases[i])[0] == data_base:
@@ -549,6 +599,8 @@ if sys.version[0:len(required_version)] == required_version:
                         print('Database status:',(data_bases[i])[1])
                         print('Database access:',(data_bases[i])[2])
                         print('Database type:',(data_bases[i])[3])
+                if num == True:
+                    print(errors.cannot_call_func('data_base.show.info()'))
         class remove:
             def all():
                 global data_bases, row, lists
@@ -556,8 +608,9 @@ if sys.version[0:len(required_version)] == required_version:
                 lists=[]
                 row=[]
             def one_set(data_base=None):
+                num=check(data_base)
                 global data_bases, row, lists
-                if data_base != None:
+                if num == False:
                     for i in range(len(data_bases)):
                         if (data_bases[i])[0] == data_base:
                             data_bases.pop(i)
@@ -574,7 +627,7 @@ if sys.version[0:len(required_version)] == required_version:
                                 lists.pop(x-1)
                         except:
                             pass
-                if data_base == None:
+                if num == True:
                     print(errors.cannot_call_func('data_base.remove.one()'))
             def reset_to_standard(reset_users=False):
                 global data_bases, row, lists, allowed_types, allowed_users, data_bases_reset, row_reset, lists_reset, allowed_types_reset, allowed_users_reset, known_users, passwords, known_users_reset, passwords_reset, permissions, permissions_reset
@@ -589,7 +642,9 @@ if sys.version[0:len(required_version)] == required_version:
                     permissions=permissions_reset
         class create:
             def database(data_base=None, status=True, type=None, owner='all', columns=None):
-                if data_base != None and type != None:
+                num1=check(data_base)
+                num2=check(type)
+                if num1 == False and num2 == False:
                     if isinstance(owner, str) == True and isinstance(type, str) == True and isinstance(owner, str) == True and isinstance(status, bool) :
                         if columns==None or isinstance(columns, list) == True:
                             global data_bases
@@ -610,7 +665,7 @@ if sys.version[0:len(required_version)] == required_version:
                         print(errors.not_str(item='type'))
                     if isinstance(type, str) == False:
                         print(errors.not_str(item='data_base'))
-                if data_base == None and type == None:
+                if num1 == True and num2 == True:
                     print(errors.cannot_call_func('data_base.create.datebase()'))
             def data_base(data_base=None, type=None):
                 data_base.create.database(data_base=data_base, type=type)
@@ -618,21 +673,20 @@ if sys.version[0:len(required_version)] == required_version:
     class password_restrictions:
         def set_min_length(value=None):
             global min_length
-            if value != None and isinstance(value, int) == True:
+            num=check(value)
+            if num==False and isinstance(value, int) == True:
                 min_length=value
             if isinstance(value, int) == False:
                 print(errors.not_int(item='value'))
-            if value == None:
+            if num == True:
                 print(errors.cannot_call_func('password_restrictions.set_min_length()'))
         def set_max_length(value=None):
             global max_length
-            if value != None and isinstance(value, int) == True:
+            num=check(value)
+            if num == False and isinstance(value, int) == True:
                 max_length=value
-            if value == None:
+            if num == True:
                 print(errors.cannot_call_func('password_restrictions.set_max_length()'))
-        def cannot_contian():
-            #Password cannot contain these
-            pass
     class errors:
         def cannot_call_func(var):
             return '(Error) The function '+var+' that was called is missing 1 or more required variables.'
@@ -662,3 +716,4 @@ if sys.version[0:len(required_version)] == required_version:
                 return '(Error) A int was expected, but was not given. Item: '+str(item)
     #Test bench
     #<--Indent to here
+    password_restrictions.set_max_length(value=None)
