@@ -29,6 +29,10 @@ if sys.version[0:len(required_version)] == required_version:
         except:
             pass
     import pyAesCrypt
+    def list_count(data_base):
+        for i in range(len(data_bases)):
+            if (data_bases[i])[0]==data_base:
+                return len((data_bases[i])[4])
     def check(var):
         global denied_inputs
         for i in range(len(denied_inputs)):
@@ -158,16 +162,19 @@ if sys.version[0:len(required_version)] == required_version:
             if do_not_remove==True:
                 os.remove('opt.py')
         def all(password):
-            d_password=decrypt.hash(password)
-            #encrypt.custom_database(password, True) Do not encrypt main file. This file is needed to decrypt!
-            encrypt.data(d_password)
-            #encrypt.cache(d_password)
-            #encrypt.opt(d_password)
             try:
-                global drive_letter
-                os.remove(drive_letter+':/hash.txt')
-            except:
-                pass
+                d_password=decrypt.hash(password)
+                #encrypt.custom_database(password, True) Do not encrypt main file. This file is needed to decrypt!
+                encrypt.data(d_password)
+                #encrypt.cache(d_password)
+                #encrypt.opt(d_password)
+                try:
+                    global drive_letter
+                    os.remove(drive_letter+':/hash.txt')
+                except:
+                    pass
+            except ValueError:
+                print('Wrong password.')
     class save:
         def all():
             from vars_to_save import list
@@ -335,6 +342,17 @@ if sys.version[0:len(required_version)] == required_version:
             return user_logged, user_permission
     class data_base:
         class edit:
+            def add_row_term():
+                data=str(input('Database: '))
+                ah=list_count(data_base=data)
+                aa=[]
+                bra=False
+                for i in range(len(data_bases)):
+                    if bra == True:
+                        break
+                    if (data_bases[i])[0]==data:
+                        aa=input('Enter row/list with spaces between each: ')
+                data_base.edit.add_row(data_base=data, new_row=aa)
             def add_item(data_base=None, item_to_add=None):
                 #Used for the list types.
                 global data_bases, lists
@@ -372,6 +390,8 @@ if sys.version[0:len(required_version)] == required_version:
                     print(errors.cannot_call_func('data_base.edit.remove_item()'))
             def add_row(data_base=None, new_row=None):
                 #You can add as many objects to a row as you please, but it may not fit in your assinged constraints. No problems will occur though.
+                new_row=new_row.split() 
+                print(new_row)
                 num1=check(data_base)
                 num2=check(new_row)
                 if num1 == False and num2 == False:
@@ -381,6 +401,7 @@ if sys.version[0:len(required_version)] == required_version:
                         print(errors.not_list())
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.add_row()'))
+                print("Added new row!")
             def remove_row(data_base=None):
                 num1=check(data_base)
                 if num1 == False:
@@ -611,9 +632,11 @@ if sys.version[0:len(required_version)] == required_version:
                 num=check(data_base)
                 global data_bases, row, lists
                 if num == False:
+                    found=False
                     for i in range(len(data_bases)):
                         if (data_bases[i])[0] == data_base:
                             data_bases.pop(i)
+                            found=True
                             break
                     for x in range(len(row)):
                         try:
@@ -627,6 +650,8 @@ if sys.version[0:len(required_version)] == required_version:
                                 lists.pop(x-1)
                         except:
                             pass
+                if found == False and num == False:
+                    print(errors.database_does_not_exist())
                 if num == True:
                     print(errors.cannot_call_func('data_base.remove.one()'))
             def reset_to_standard(reset_users=False):
@@ -642,34 +667,39 @@ if sys.version[0:len(required_version)] == required_version:
                     permissions=permissions_reset
         class create:
             def database(data_base=None, status=True, type=None, owner='all', columns=None):
-                num1=check(data_base)
-                num2=check(type)
-                if num1 == False and num2 == False:
-                    if isinstance(owner, str) == True and isinstance(type, str) == True and isinstance(owner, str) == True and isinstance(status, bool) :
-                        if columns==None or isinstance(columns, list) == True:
-                            global data_bases
-                            if type == "list":
-                                data_bases.append([data_base, status, owner, 'list'])
-                            if type == "column_row":
-                                if columns==None:
-                                    data_bases.append([data_base, status, owner, 'column_row', []])
-                                if columns != None:
-                                    data_bases.append([data_base, status, owner, 'column_row', columns])
-                    if isinstance(status, bool) == False:
-                        print(errors.not_bool(item='status'))
-                    if columns != None and isinstance(columns, list) == False:
-                        print(errors.not_list(item='columns'))
-                    if isinstance(owner, str) == False:
-                        print(errors.not_str(item='owner'))
-                    if isinstance(data_base, str) == False:
-                        print(errors.not_str(item='type'))
-                    if isinstance(type, str) == False:
-                        print(errors.not_str(item='data_base'))
-                if num1 == True and num2 == True:
-                    print(errors.cannot_call_func('data_base.create.datebase()'))
-            def data_base(data_base=None, type=None):
-                data_base.create.database(data_base=data_base, type=type)
-                #Redirects to correct def
+                found=False
+                for i in range(len(data_bases)):
+                    if (data_bases[i])[0]==data_base:
+                        print('That database already exists.')
+                        found=True
+                if type not in allowed_types:
+                    print('An incorrect data type has been entered.')
+                    found=False
+                if found == False:
+                    num1=check(data_base)
+                    num2=check(type)
+                    if num1 == False and num2 == False:
+                        if isinstance(owner, str) == True and isinstance(type, str) == True and isinstance(owner, str) == True and isinstance(status, bool) :
+                            if columns==None or isinstance(columns, list) == True:
+                                if type == "list":
+                                    data_bases.append([data_base, status, owner, 'list'])
+                                if type == "column_row":
+                                    if columns==None:
+                                        data_bases.append([data_base, status, owner, 'column_row', []])
+                                    if columns != None:
+                                        data_bases.append([data_base, status, owner, 'column_row', columns])
+                        if isinstance(status, bool) == False:
+                            print(errors.not_bool(item='status'))
+                        if columns != None and isinstance(columns, list) == False:
+                            print(errors.not_list(item='columns'))
+                        if isinstance(owner, str) == False:
+                            print(errors.not_str(item='owner'))
+                        if isinstance(data_base, str) == False:
+                            print(errors.not_str(item='type'))
+                        if isinstance(type, str) == False:
+                            print(errors.not_str(item='data_base'))
+                    if num1 == True and num2 == True:
+                        print(errors.cannot_call_func('data_base.create.datebase()'))
     class password_restrictions:
         def set_min_length(value=None):
             global min_length
@@ -688,6 +718,8 @@ if sys.version[0:len(required_version)] == required_version:
             if num == True:
                 print(errors.cannot_call_func('password_restrictions.set_max_length()'))
     class errors:
+        def database_does_not_exist():
+            return '(Error) Database requested could not be found.'
         def cannot_call_func(var):
             return '(Error) The function '+var+' that was called is missing 1 or more required variables.'
         def not_list(item=None):
@@ -716,4 +748,4 @@ if sys.version[0:len(required_version)] == required_version:
                 return '(Error) A int was expected, but was not given. Item: '+str(item)
     #Test bench
     #<--Indent to here
-    password_restrictions.set_max_length(value=None)
+    
