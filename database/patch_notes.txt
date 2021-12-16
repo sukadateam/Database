@@ -11,3 +11,6 @@
 11. Encrypt now execpts wrong password.
 12. You can not create a database if one with the same name exists already.
 13. You can only create a database with allowed data types.
+14. Added a new error function for creating a database.
+15. get.random_hash() Var: length now must be int or message is displayed.
+16. data_base.show.all_in_database() has been rebuilt.
