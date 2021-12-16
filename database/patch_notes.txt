@@ -8,3 +8,6 @@
 8. data_base.remove() now uses denied_inputs.
 9. data_base.create() now uses denied_inputs.
 10. users() now uses denied_inputs.
+11. Encrypt now execpts wrong password.
+12. You can not create a database if one with the same name exists already.
+13. You can only create a database with allowed data types.
