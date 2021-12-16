@@ -16,7 +16,7 @@ while True:
     if choice == "6":
         save.all()
     if choice == "7":
-        choice=input('\n\n\n(1)Users\n(2)Add to row/list\n(3)Show databases\n(4)Delete database\nYour choice: ')
+        choice=input('\n\n\n(1)Users\n(2)Add to row\n(3)Show databases\n(4)Delete database\n(5)Remove row\n(6)Show items in database\nYour choice: ')
         if choice == "1":
             other=input('\n\n\n(1)Create user\n(2)Remove user\nYour choice: ')
             if other == "1":
@@ -29,4 +29,8 @@ while True:
             data_base.show.all_data_bases()
         if choice == "4":
             data_base.remove.one_set(data_base=str(input('Database: ')))
+        if choice == "5":
+            data_base.edit.remove_row(data_base=input('Database: '))
+        if choice == "6":
+            data_base.show.all_in_database(data_base=input('Database: '))
         choice=''
