@@ -2,8 +2,6 @@
 #Check to make sure save class works as intended.
 #Create user needs to only allow permissions that are in allowed_users
 #Create system_check class to check data.py for any errors.
-#Inputs should also not be ''. System already checks for None, but not for ''.
-#implement denied_inputs.
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
 password=None
@@ -86,24 +84,17 @@ if sys.version[0:len(required_version)] == required_version:
             os.remove(drive_letter+':/hash.txt')
         def password():
             return input('Password: ')
-        def new_password(new_password=None):
-            if new_password != None:
-                pass
-                #Ask for current password to allow change.
-                #Change password.
-                #Delete current hash.
-                #Create new hash with new password.
-                #Tell user process completed.
-            if new_password == None:
-                print(errors.cannot_call_func())
         def random_hash(length=100):
-            ah=''
-            for i in range(length): 
-                ah+=random.choice('ajfygweuoichwgbuieucr73rwecb638781417983b 623v9923 r t72344y 23uc3u2b4n9832 4b2c794y 237bc2423nc482b3c427 rfgshdfuw38263872guihfef86w4t878whryfeg48tg34hf7w')
-            global drive_letter
-            file=open(drive_letter+':/hash.txt','w')
-            file.write(ah)
-            file.close()
+            if isinstance(length, int) == False:
+                print(errors.not_int())
+            if isinstance(length, int) == True:
+                ah=''
+                for i in range(length): 
+                    ah+=random.choice('ajfygweuoichwgbuieucr73rwecb638781417983b 623v9923 r t72344y 23uc3u2b4n9832 4b2c794y 237bc2423nc482b3c427 rfgshdfuw38263872guihfef86w4t878whryfeg48tg34hf7w')
+                global drive_letter
+                file=open(drive_letter+':/hash.txt','w')
+                file.write(ah)
+                file.close()
     class decrypt:
         def hash(password):
             pyAesCrypt.decryptFile('E:/hash.aes','E:/hash.txt',password)
@@ -578,14 +569,19 @@ if sys.version[0:len(required_version)] == required_version:
                                     print('Data base found!')
                                     type='column_row'
                                     break
-                    for x in range(len((data_bases[i])[4])):
-                        sets.append(((data_bases[i])[4])[x])
-                    for n in range(len(row)):
-                        if (row[n])[0] == data_base:
-                            rows.append((row[n])[1])
-                    print(sets)
-                    for i in range(len(rows)):
-                        print(rows[i])
+                    if type == "column_row":
+                        for x in range(len((data_bases[i])[4])):
+                            sets.append(((data_bases[i])[4])[x])
+                        for n in range(len(row)):
+                            if (row[n])[0] == data_base:
+                                rows.append((row[n])[1])
+                        print(sets)
+                        for i in range(len(rows)):
+                            print(rows[i])
+                    if type == "list":
+                        for i in range(len(lists)):
+                            if (lists[i])[0]==data_base:
+                                print((lists[i])[1])
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.all()'))
             def all_data_bases():
