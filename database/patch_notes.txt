@@ -1,16 +1,2 @@
-1. Added change_name() and change_password() in users class.
-2. Added new examples to shell.py.
-3. password_restrictions class now uses denied_inputs
-4. data_base.edit() now uses denied_inputs.
-5. data_base.empty() now uses denied_inputs.
-6. Removed reset class.
-7. data_base.show() now uses denied_inputs.
-8. data_base.remove() now uses denied_inputs.
-9. data_base.create() now uses denied_inputs.
-10. users() now uses denied_inputs.
-11. Encrypt now execpts wrong password.
-12. You can not create a database if one with the same name exists already.
-13. You can only create a database with allowed data types.
-14. Added a new error function for creating a database.
-15. get.random_hash() Var: length now must be int or message is displayed.
-16. data_base.show.all_in_database() has been rebuilt.
+1. New users can only be granted permissions that are allowed preset.
+2. Started working on a save file check, to look for any corruption.
