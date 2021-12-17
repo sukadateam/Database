@@ -8,6 +8,7 @@ if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:',sys.version[0:len(required_version)])
 if sys.version[0:len(required_version)] == required_version:
+    alphabet='abcdefghijklmnopqrstuvwxyz'
     from settings import *
     import random, shutil
     try:
@@ -29,13 +30,15 @@ if sys.version[0:len(required_version)] == required_version:
             pass
     import pyAesCrypt
     class optimize():
-        def checkpoint():
-            #Database class calls this to find the checkpoint to start at.
-            pass
-        def determ(letter=None):
+        def determ(letter=None, set=None, test=False):
             for i in range(26):
                 if letter == alphabet[i]:
-                    return i
+                    if test == False:
+                        return 0
+                    if test == True:
+                        a=globals()[set]
+                        a=a[i]
+                        return a
         def run(save_optimizations=True):
             global data_bases, opto_data, opto_row, row, opto_lists, lists, debug
             try:
@@ -51,6 +54,7 @@ if sys.version[0:len(required_version)] == required_version:
                 if debug == True:
                     print('An error occured.')
             if save_optimizations==True:
+                print('All data saved.')
                 save.all()
         def count(var):
             opto=[]
@@ -442,10 +446,11 @@ if sys.version[0:len(required_version)] == required_version:
                 global data_bases, lists
                 num1=check(data_base)
                 num2=check(item_to_add)
+                letter_spot=optimize.determ(letter=data_base[0])
                 if num1 == False and num2 == False:
                     for i in range(len(data_bases)):
-                        if (data_bases[i])[0] == data_base:
-                            if (data_bases[i])[3]=="list":
+                        if (data_bases[i+letter_spot])[0] == data_base:
+                            if (data_bases[i+letter_spot])[3]=="list":
                                 for x in range(len(lists)):
                                     if (lists[x])[0]==data_base:
                                         (lists[x])[1].append(item_to_add)
@@ -458,10 +463,11 @@ if sys.version[0:len(required_version)] == required_version:
                 num1=check(data_base)
                 num2=check(item_to_remove)
                 global data_bases, lists
+                letter_spot=optimize.determ(letter=data_base[0], set='opto_data')
                 if num1 == False and num2 == False:
                     for i in range(len(data_bases)):
-                        if (data_bases[i])[0]==data_base:
-                            if (data_bases[i])[3]=="list":
+                        if (data_bases[i+letter_spot])[0]==data_base:
+                            if (data_bases[i+letter_spot])[3]=="list":
                                 for x in range(len(lists)):
                                     if (lists[x])[0]==data_base:
                                         try:
@@ -534,6 +540,7 @@ if sys.version[0:len(required_version)] == required_version:
                     print(errors.cannot_call_func('data_base.edit.remove_row()'))
                 #Must be column_row
             def add_column(data_base=None, column_name=None):
+                letter_spot=optimize.determ(letter=data_base[0], set='opto_data')
                 num1=check(data_base)
                 num2=check(column_name)
                 global debug, data_bases
@@ -541,32 +548,33 @@ if sys.version[0:len(required_version)] == required_version:
                     if debug==True:
                         print("Adding column at",data_base,"with name",column_name.lower())
                     for i in range(len(data_bases)):
-                        if (data_bases[i])[0] == data_base:
-                            if (data_bases[i])[3]=="column_row":
-                                (data_bases[i])[4].append(column_name.lower())
+                        if (data_bases[i+letter_spot])[0] == data_base:
+                            if (data_bases[i+letter_spot])[3]=="column_row":
+                                (data_bases[i+letter_spot])[4].append(column_name.lower())
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.add_column()'))
             def remove_column(data_base=None, column=None, remove_row=False):
                 num1=check(data_base)
                 num2=check(column)
+                letter_spot=optimize.determ(letter=data_base[0])
                 if num1 == False and num2 == False:
                     global data_bases, debug, row
                     for i in range(len(data_bases)):
-                        if (data_bases[i])[0]==data_base:
+                        if (data_bases[i+letter_spot])[0]==data_base:
                             if debug==True:
                                 print('Database Found!')
-                            if (data_bases[i])[3] == "column_row":
+                            if (data_bases[i+letter_spot])[3] == "column_row":
                                 if debug==True:
                                     print("Correct data_base type!")
-                                if column in (data_bases[i])[4]:
+                                if column in (data_bases[i+letter_spot])[4]:
                                     print("Removed: "+str(column))
-                                    a=len((data_bases[i])[4])
+                                    a=len((data_bases[i+letter_spot])[4])
                                     for e in range(a):
-                                        if ((data_bases[i])[4])[e] == column:
+                                        if ((data_bases[i+letter_spot])[4])[e] == column:
                                             print(e)
                                             break
-                                    (data_bases[i])[4].remove(column)
-                                    print(data_bases[i])
+                                    (data_bases[i+letter_spot])[4].remove(column)
+                                    print(data_bases[i+letter_spot])
                                     rows=[]
                                     rows_count=0
                                     a=0
