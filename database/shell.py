@@ -2,7 +2,7 @@ from custom_database import *
 while True:
     for i in range(10):
         print('')
-    choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\nYour choice: ')
+    choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\n(8)Optimize save file\nYour choice: ')
     if choice == "1":
         get.new_hash() #Makes a new hash
     if choice == "2":
@@ -15,6 +15,8 @@ while True:
         data_base.create.database(data_base=input('Enter the new databases name: ').lower(), type=input('column_row or list: '))
     if choice == "6":
         save.all()
+    if choice == "8":
+        optimize.run()
     if choice == "7":
         choice=input('\n\n\n(1)Users\n(2)Add to row\n(3)Show databases\n(4)Delete database\n(5)Remove row\n(6)Show items in database\nYour choice: ')
         if choice == "1":
