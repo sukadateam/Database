@@ -1,5 +1,6 @@
 # Database
-A custom database handler. Still in development.
+Discord Server: https://discord.gg/RadNcnwSZr
+<br>A custom database handler. Still in development.
 
 To setup application in windows: Manage application/Windows/setup.bat
 <br>To setup application in linux: Manage application/Linux/setup.sh
