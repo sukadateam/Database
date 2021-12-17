@@ -1,5 +1,4 @@
 #Things to do next:
-#Database names can only be letters, no symbols or numbers.
 #Allow save file name to be changed.
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
@@ -9,6 +8,7 @@ if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:',sys.version[0:len(required_version)])
 if sys.version[0:len(required_version)] == required_version:
+    from settings import *
     import random, shutil
     try:
         from directory import path
@@ -29,6 +29,9 @@ if sys.version[0:len(required_version)] == required_version:
             pass
     import pyAesCrypt
     class optimize():
+        def checkpoint():
+            #Database class calls this to find the checkpoint to start at.
+            pass
         def determ(letter=None):
             for i in range(26):
                 if letter == alphabet[i]:
@@ -754,6 +757,7 @@ if sys.version[0:len(required_version)] == required_version:
         class create:
             def database(data_base=None, status=True, type=None, owner='all', columns=None):
                 found=False
+                #Check to see if database already exists.
                 for i in range(len(data_bases)):
                     if (data_bases[i])[0]==data_base:
                         print('That database already exists.')
@@ -761,6 +765,14 @@ if sys.version[0:len(required_version)] == required_version:
                 if type not in allowed_types:
                     print('An incorrect data type has been entered.')
                     found=False
+                for i in range(len(data_base)):
+                    if data_base[i] in alphabet:
+                        found=True
+                    if data_base[i] not in alphabet:
+                        found=False
+                        print('Database name can only consist of lowercase letters.')
+                        break
+                #If database doesn't exist continue on creating it.
                 if found == False:
                     num1=check(data_base)
                     num2=check(type)
@@ -836,5 +848,3 @@ if sys.version[0:len(required_version)] == required_version:
             return '(Error) The permission requested is not allowed.'
     #Test bench
     #<--Indent to here
-    optimize.run()
-    save.all()
