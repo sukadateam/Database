@@ -1,2 +1,4 @@
 1. New users can only be granted permissions that are allowed preset.
 2. Started working on a save file check, to look for any corruption.
+3. Started working on save file optimizations.
+4. Database names can only be letters, no symbols or numbers.
