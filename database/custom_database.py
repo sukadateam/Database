@@ -26,6 +26,43 @@ if sys.version[0:len(required_version)] == required_version:
         except:
             pass
     import pyAesCrypt
+    class optimize():
+        def determ(letter=None):
+            for i in range(26):
+                if letter == alphabet[i]:
+                    return i
+        def run():
+            global data_bases, opto
+            opto=optimize.count_org()
+            data_bases=optimize.list_org()
+            save.all()
+        def count_org():
+            opto=[]
+            alphabet='abcdefghijklmnopqrstuvwxyz '
+            for i in range(26):
+                opto.append(0)
+            count=0
+            letter=''
+            rcount=len(data_bases)
+            while letter != " ":
+                letter = alphabet[count]
+                for i in range(rcount):
+                    if ((data_bases[i])[0])[0] == letter:
+                        opto[count]+=1
+                count+=1
+            return opto
+        def list_org():
+            org=[]
+            max=len(data_bases)
+            current=0
+            alphabet='abcdefghijklmnopqrstuvwxyz '
+            count=0
+            while current < max:
+                for i in range(max):
+                    if ((data_bases[i])[0])[0] == alphabet[count]:
+                        org.append(data_bases[i])
+                        current+=1
+                count+=1
     def check_data():
         print('\n')
         global import_type
@@ -782,4 +819,4 @@ if sys.version[0:len(required_version)] == required_version:
             return '(Error) The permission requested is not allowed.'
     #Test bench
     #<--Indent to here
-    check_data()
+    optimize.run()
