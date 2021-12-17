@@ -1,4 +1,4 @@
-data_bases=[['basic', True, 'all', 'column_row', ['name','id','gender']],['chance', True, 'all', 'list']]
+data_bases=[['chance', True, 'all', 'list'], ['basic', True, 'all', 'column_row', ['name','id','gender']]]
 #Name, Active status, owner, type, columns
 row=[['basic',['Brandon','123456','Male']],['basic', ['Gertie','124551','Male']], ['basic', ['Fluffy','124411','Trans']]]
 #Side to side
@@ -26,5 +26,7 @@ denied_names=[]
 min_length=5 #Min password length
 max_length=8 #Max password length
 debug=True
-opto=[]
+opto_data=[]
+opto_row=[]
+opto_lists=[]
 alphabet='abcdefghijklmnopqrstuvwxyz'
