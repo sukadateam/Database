@@ -1,7 +1,4 @@
 #Things to do next:
-#Check to make sure save class works as intended.
-#Create user needs to only allow permissions that are in allowed_users
-#Create system_check class to check data.py for any errors.
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
 password=None
@@ -21,12 +18,49 @@ if sys.version[0:len(required_version)] == required_version:
     from reset import *
     try:
         from data_save import *
+        import_type='data_save'
     except:
         try:
             from data import *
+            import_type='data'
         except:
             pass
     import pyAesCrypt
+    def check_data():
+        print('\n')
+        global import_type
+        check=[False, False]
+        #Check data_bases var
+        for i in range(len(data_bases)):
+            try:
+                if (data_bases[i])[0] != None:
+                    if (data_bases[i])[1] != None:
+                        if (data_bases[i])[2] != None:
+                            if (data_bases[i])[3] == "column_row":
+                                if isinstance((data_bases[i])[4], list) == True:
+                                    check[0]=True
+                            if (data_bases[i])[3] == "list":
+                                check[0]=True
+            except:
+                check[0]=False
+                break
+        #Write down all current databases.
+        known_databases=[]
+        for i in range(len(data_bases)):
+            known_databases.append((data_bases[i])[0])
+        #Row check. Check to see if database and list are present for each, and if set databases doesn't exist.
+        for i in range(len(row)):
+            try:
+                if (row[i])[0] != None:
+                    if (row[i])[0] in known_databases:
+                        if isinstance((row[i])[1], list) == True:
+                            check[1]=True
+            except:
+                check[1]=False
+                break
+        print('True = Working | False = Broken')
+        print('Database Check:',check[0])
+        print('Rows Check:',check[1])
     def list_count(data_base):
         for i in range(len(data_bases)):
             if (data_bases[i])[0]==data_base:
@@ -227,7 +261,9 @@ if sys.version[0:len(required_version)] == required_version:
             global known_users, passwords, permissions
             num1=check(new_user)
             num2=check(new_password)
-            if num1 == False and num2 == False:
+            if new_permission not in allowed_users:
+                print(errors.incorrect_perm())
+            if num1 == False and num2 == False and new_permission in allowed_users:
                 skip=False
                 for i in range(len(known_users)):
                     if known_users[i]==new_user:
@@ -742,6 +778,8 @@ if sys.version[0:len(required_version)] == required_version:
                 return '(Error) A int was expected, but was not given.'
             if item != None:
                 return '(Error) A int was expected, but was not given. Item: '+str(item)
+        def incorrect_perm():
+            return '(Error) The permission requested is not allowed.'
     #Test bench
     #<--Indent to here
-    
+    check_data()
