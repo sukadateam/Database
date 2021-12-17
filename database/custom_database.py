@@ -1,4 +1,6 @@
 #Things to do next:
+#Database names can only be letters, no symbols or numbers.
+#Allow save file name to be changed.
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
 password=None
@@ -31,38 +33,50 @@ if sys.version[0:len(required_version)] == required_version:
             for i in range(26):
                 if letter == alphabet[i]:
                     return i
-        def run():
-            global data_bases, opto
-            opto=optimize.count_org()
-            data_bases=optimize.list_org()
-            save.all()
-        def count_org():
+        def run(save_optimizations=True):
+            global data_bases, opto_data, opto_row, row, opto_lists, lists, debug
+            try:
+                opto_data=optimize.count(var='data_bases')
+                data_bases=optimize.list_org(var='data_bases')
+                opto_row=optimize.count(var='row')
+                row=optimize.list_org(var='row')
+                opto_lists=optimize.count(var='lists')
+                lists=optimize.list_org(var='lists')
+                if debug == True:
+                    print('Save file optimized.')
+            except:
+                if debug == True:
+                    print('An error occured.')
+            if save_optimizations==True:
+                save.all()
+        def count(var):
             opto=[]
             alphabet='abcdefghijklmnopqrstuvwxyz '
             for i in range(26):
                 opto.append(0)
             count=0
             letter=''
-            rcount=len(data_bases)
+            rcount=len(globals()[var])
             while letter != " ":
                 letter = alphabet[count]
                 for i in range(rcount):
-                    if ((data_bases[i])[0])[0] == letter:
+                    if (((globals()[var])[i])[0])[0] == letter:
                         opto[count]+=1
                 count+=1
             return opto
-        def list_org():
+        def list_org(var):
             org=[]
-            max=len(data_bases)
+            max=len(globals()[var])
             current=0
             alphabet='abcdefghijklmnopqrstuvwxyz '
             count=0
             while current < max:
                 for i in range(max):
-                    if ((data_bases[i])[0])[0] == alphabet[count]:
-                        org.append(data_bases[i])
+                    if (((globals()[var])[i])[0])[0] == alphabet[count]:
+                        org.append((globals()[var])[i])
                         current+=1
                 count+=1
+            return org
     def check_data():
         print('\n')
         global import_type
@@ -411,12 +425,15 @@ if sys.version[0:len(required_version)] == required_version:
                 ah=list_count(data_base=data)
                 aa=[]
                 bra=False
-                for i in range(len(data_bases)):
-                    if bra == True:
-                        break
-                    if (data_bases[i])[0]==data:
-                        aa=input('Enter row/list with spaces between each: ')
-                data_base.edit.add_row(data_base=data, new_row=aa)
+                try:
+                    for i in range(len(data_bases)):
+                        if bra == True:
+                            break
+                        if (data_bases[i])[0]==data:
+                            aa=input('Enter row/list with spaces between each: ')
+                    data_base.edit.add_row(data_base=data, new_row=aa)
+                except:
+                    pass
             def add_item(data_base=None, item_to_add=None):
                 #Used for the list types.
                 global data_bases, lists
@@ -820,3 +837,4 @@ if sys.version[0:len(required_version)] == required_version:
     #Test bench
     #<--Indent to here
     optimize.run()
+    save.all()
