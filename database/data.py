@@ -20,9 +20,11 @@ user_permission=None
 
 global_password=None #A password that can be used on anything. If none, then no global_password is allowed.
 allowed_types=['column_row', 'list', 'grid']
-allowed_users=['all', 'admin', 'student', 'teacher']
+allowed_users=['all', 'admin', 'student', 'teacher', 'None']
 denied_inputs=['',' ',None]
 denied_names=[]
 min_length=5 #Min password length
 max_length=8 #Max password length
 debug=True
+opto=[]
+alphabet='abcdefghijklmnopqrstuvwxyz'
