@@ -1,4 +1,7 @@
-1. New users can only be granted permissions that are allowed preset.
-2. Started working on a save file check, to look for any corruption.
-3. Started working on save file optimizations.
-4. Database names can only be letters, no symbols or numbers.
+1. Fixed a problem where if system states that's a database cannot be made, it will still create it, later causing errors.
+2. Fixed a problem where remove_column would not give notice if database selected does not exist.
+3. Fixed a problem where add_column would add a column to a database that does not exist, later causing errors.
+4. Fixed a problem where create database would not create a database even though it meets requirements.
+5. Added a class called history to create a record of all that has been done. This will be automated soon.
+6. Encrypt and decrypt now encrypts and decrypts history.txt.
+7. Database functions now automatically sets database names to .lower()
