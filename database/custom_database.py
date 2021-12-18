@@ -1,10 +1,7 @@
 #Things to do next:
 #Allow save file name to be changed.
 #reset.py needs to be updated or removed.
-#database functions needs to automatically set database names to .lower()
-#create a file to store data. Ex: Logged items, created user, edited user, removed user, and anything else.
-#Encrypt and decrypt needs to encrypt and decrypt history.txt.
-#remove.reset_to_standard needs to be updated.
+#Fix compadability issues with linux.
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
 password=None
@@ -23,7 +20,6 @@ if sys.version[0:len(required_version)] == required_version:
     except ModuleNotFoundError:
         print('custom_database is not setup. Please setup with .bat or .sh file to enable this program.')
         exit()
-    from reset import *
     from datetime import date
     today=date.today()
     d1 = today.strftime("%m/%d/%Y")
@@ -218,6 +214,12 @@ if sys.version[0:len(required_version)] == required_version:
             pyAesCrypt.decryptFile('E:/hash.aes','E:/hash.txt',password)
             global drive_letter
             return open(drive_letter+':/hash.txt','r').read()
+        def history(password):
+            try:
+                pyAesCrypt.decryptFile('history.aes','history.txt',password)
+                os.remove('history.aes')
+            except:
+                pass
         def data(password):
             try:
                 pyAesCrypt.decryptFile('data.aes','data.py',password)
@@ -235,6 +237,7 @@ if sys.version[0:len(required_version)] == required_version:
             try:
                 d_password=decrypt.hash(password)
                 decrypt.data(d_password)
+                decrypt.history(d_password)
             except ValueError:
                 print('Wrong password.')
             try:
@@ -245,6 +248,21 @@ if sys.version[0:len(required_version)] == required_version:
             #decrypt.cache(d_password)
             #decrypt.opt(d_password)
     class encrypt:
+        def history(password):
+            global fail_safe
+            failed=False
+            if fail_safe==True:
+                try:
+                    open('history.aes','r')
+                    print('Existing file found. Cannot encrypt.')
+                    failed=True
+                except:
+                    pass
+            if failed == False:
+                global do_not_remove
+                pyAesCrypt.encryptFile('history.txt','history.aes',password)
+                if do_not_remove==False:
+                    os.remove('history.txt')
         def data(password):
             global fail_safe
             failed=False
@@ -275,6 +293,7 @@ if sys.version[0:len(required_version)] == required_version:
                 d_password=decrypt.hash(password)
                 #encrypt.custom_database(password, True) Do not encrypt main file. This file is needed to decrypt!
                 encrypt.data(d_password)
+                encrypt.history(d_password)
                 #encrypt.cache(d_password)
                 #encrypt.opt(d_password)
                 try:
@@ -463,7 +482,7 @@ if sys.version[0:len(required_version)] == required_version:
     class data_base:
         class edit:
             def add_row_term():
-                data=str(input('Database: '))
+                data=str(input('Database: ')).lower()
                 ah=list_count(data_base=data)
                 aa=[]
                 bra=False
@@ -484,6 +503,7 @@ if sys.version[0:len(required_version)] == required_version:
                 num2=check(item_to_add)
                 letter_spot=optimize.determ(letter=data_base[0])
                 if num1 == False and num2 == False:
+                    data_base=data_base.lower()
                     for i in range(len(data_bases)):
                         if (data_bases[i+letter_spot])[0] == data_base:
                             if (data_bases[i+letter_spot])[3]=="list":
@@ -502,6 +522,7 @@ if sys.version[0:len(required_version)] == required_version:
                 global data_bases, lists
                 letter_spot=optimize.determ(letter=data_base[0], set='opto_data')
                 if num1 == False and num2 == False:
+                    data_base=data_base.lower()
                     for i in range(len(data_bases)):
                         if (data_bases[i+letter_spot])[0]==data_base:
                             if (data_bases[i+letter_spot])[3]=="list":
@@ -523,6 +544,7 @@ if sys.version[0:len(required_version)] == required_version:
                 num1=check(data_base)
                 num2=check(new_row)
                 if num1 == False and num2 == False:
+                    data_base=data_base.lower()
                     if isinstance(new_row, list) == True:
                         row.append([data_base,new_row])
                     if isinstance(new_row, list) == False:
@@ -533,6 +555,7 @@ if sys.version[0:len(required_version)] == required_version:
             def remove_row(data_base=None):
                 num1=check(data_base)
                 if num1 == False:
+                    data_base=data_base.lower()
                     history.create_history(data_base, 'Remove row')
                     global row
                     rows=[]
@@ -592,6 +615,7 @@ if sys.version[0:len(required_version)] == required_version:
                 if found==False:
                     print(errors.database_does_not_exist())
                 if num1 == False and num2 == False and found==True:
+                    data_base=data_base.lower()
                     if debug==True:
                         print("Adding column at",data_base,"with name",column_name.lower())
                     for i in range(len(data_bases)):
@@ -608,6 +632,7 @@ if sys.version[0:len(required_version)] == required_version:
                     found=False
                     letter_spot=optimize.determ(letter=data_base[0])
                     if num1 == False and num2 == False:
+                        data_base=data_base.lower()
                         global data_bases, debug, row
                         for i in range(len(data_bases)):
                             if (data_bases[i+letter_spot])[0]==data_base:
@@ -928,4 +953,3 @@ if sys.version[0:len(required_version)] == required_version:
             return '(Error) The permission requested is not allowed.'
     #Test bench
     #<--Indent to here
-    
