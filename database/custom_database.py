@@ -1,5 +1,10 @@
 #Things to do next:
 #Allow save file name to be changed.
+#reset.py needs to be updated or removed.
+#database functions needs to automatically set database names to .lower()
+#create a file to store data. Ex: Logged items, created user, edited user, removed user, and anything else.
+#Encrypt and decrypt needs to encrypt and decrypt history.txt.
+#remove.reset_to_standard needs to be updated.
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
 password=None
@@ -19,6 +24,9 @@ if sys.version[0:len(required_version)] == required_version:
         print('custom_database is not setup. Please setup with .bat or .sh file to enable this program.')
         exit()
     from reset import *
+    from datetime import date
+    today=date.today()
+    d1 = today.strftime("%m/%d/%Y")
     try:
         from data_save import *
         import_type='data_save'
@@ -29,6 +37,22 @@ if sys.version[0:len(required_version)] == required_version:
         except:
             pass
     import pyAesCrypt
+    class history:
+        def delete():
+            os.remove('history.txt')
+        def create():
+            global d1
+            ah=open('history.txt','w')
+            ah.write('File created: '+d1)
+            ah.close()
+        def create_history(user, usage):
+            global d1
+            ah=open('history.txt','a')
+            ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user))
+            ah.close()
+            #Created user
+            #Removed user
+            #Edited user
     class optimize():
         def determ(letter=None, set=None, test=False):
             for i in range(26):
@@ -41,6 +65,7 @@ if sys.version[0:len(required_version)] == required_version:
                         return a
         def run(save_optimizations=True):
             global data_bases, opto_data, opto_row, row, opto_lists, lists, debug
+            history.create_history(None, 'Optimize')
             try:
                 opto_data=optimize.count(var='data_bases')
                 data_bases=optimize.list_org(var='data_bases')
@@ -85,6 +110,7 @@ if sys.version[0:len(required_version)] == required_version:
                 count+=1
             return org
     def check_data():
+        #Also remove data sets that are not apart of a database.
         print('\n')
         global import_type
         check=[False, False]
@@ -302,6 +328,7 @@ if sys.version[0:len(required_version)] == required_version:
                 global known_users, active_users
                 for i in range(len(known_users)):
                     if known_users[i]==user:
+                        history.create_history(user, 'Disable user')
                         active_users[i]=False
             if num == True:
                 print(errors.cannot_call_func('users.disable()'))
@@ -312,6 +339,7 @@ if sys.version[0:len(required_version)] == required_version:
                 global known_users, active_users
                 for i in range(len(known_users)):
                     if known_users[i]==user:
+                        history.create_history(user, 'Enable user')
                         active_users[i]=True
             if num == True:
                 print(errors.cannot_call_func('users.disable()'))
@@ -331,6 +359,7 @@ if sys.version[0:len(required_version)] == required_version:
                     if isinstance(new_user, str) == True:
                         if isinstance(new_password, str) == True:
                             if isinstance(new_permission, str) == True or new_permission==None:
+                                history.create_history(new_user, 'Created user')
                                 known_users.append(new_user)
                                 passwords.append(new_password)
                                 permissions.append(new_password)
@@ -350,6 +379,7 @@ if sys.version[0:len(required_version)] == required_version:
                 global known_users, passwords, permissions
                 for i in range(len(known_users)):
                     if known_users[i]==user:
+                        history.create_history(user, 'Removed user')
                         known_users.pop(i)
                         passwords.pop(i)
                         permissions.pop(i)
@@ -370,6 +400,7 @@ if sys.version[0:len(required_version)] == required_version:
             if num1 == False and num2 == False:
                 for i in range(len(known_users)):
                     if known_users[i]==user:
+                        history.create_history(user, 'Change permission')
                         permissions[i]=new_permission
             if num1 == True or num2 == True:
                 print(errors.cannot_call_func('users.change_permissions()'))
@@ -379,6 +410,7 @@ if sys.version[0:len(required_version)] == required_version:
             if num1 == False and num2 == False:
                 for i in range(len(known_users)):
                     if known_users[i]==user:
+                        history.create_history(user+' to '+new_name, 'Change name')
                         known_users[i]=new_name
             if num1 == True or num2 == True:
                 print(errors.cannot_call_func('users.change_name()'))
@@ -388,6 +420,7 @@ if sys.version[0:len(required_version)] == required_version:
             if num == False:
                 for i in range(len(known_users)):
                     if known_users[i]==user:
+                        history.create_history(user, 'Change password')
                         passwords[i]=new_password
             if num == True:
                 print(errors.cannot_call_func('users.change_password()'))
@@ -395,6 +428,8 @@ if sys.version[0:len(required_version)] == required_version:
             return known_users
         def login_request(user=None, password=None):
             #Will return True if credentials are correct, if not will return False
+            user=str(user)
+            password=str(password)
             if user != None and password != None or password==None:
                 global known_users, passwords, user_logged, user_permission
                 if isinstance(user, str)==True and isinstance(password, str)==True or password == None:
@@ -442,6 +477,7 @@ if sys.version[0:len(required_version)] == required_version:
                 except:
                     pass
             def add_item(data_base=None, item_to_add=None):
+                history.create_history(item_to_add, 'Add item')
                 #Used for the list types.
                 global data_bases, lists
                 num1=check(data_base)
@@ -459,6 +495,7 @@ if sys.version[0:len(required_version)] == required_version:
                 if num1==True or num2==True:
                     print(errors.cannot_call_func('data_base.edit.add_item()'))
             def remove_item(data_base=None, item_to_remove=None):
+                history.create_history(item_to_remove, 'Remove item')
                 #Used for the list types.
                 num1=check(data_base)
                 num2=check(item_to_remove)
@@ -479,6 +516,7 @@ if sys.version[0:len(required_version)] == required_version:
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.remove_item()'))
             def add_row(data_base=None, new_row=None):
+                history.create_history(new_row, 'Add row')
                 #You can add as many objects to a row as you please, but it may not fit in your assinged constraints. No problems will occur though.
                 new_row=new_row.split() 
                 print(new_row)
@@ -495,6 +533,7 @@ if sys.version[0:len(required_version)] == required_version:
             def remove_row(data_base=None):
                 num1=check(data_base)
                 if num1 == False:
+                    history.create_history(data_base, 'Remove row')
                     global row
                     rows=[]
                     rows_count=0
@@ -540,11 +579,19 @@ if sys.version[0:len(required_version)] == required_version:
                     print(errors.cannot_call_func('data_base.edit.remove_row()'))
                 #Must be column_row
             def add_column(data_base=None, column_name=None):
+                history.create_history(column_name, 'Add column')
                 letter_spot=optimize.determ(letter=data_base[0], set='opto_data')
                 num1=check(data_base)
                 num2=check(column_name)
                 global debug, data_bases
-                if num1 == False and num2 == False:
+                found=False
+                for i in range(len(data_bases)):
+                    if (data_bases[i])[0] == data_base:
+                        found=True
+                        break
+                if found==False:
+                    print(errors.database_does_not_exist())
+                if num1 == False and num2 == False and found==True:
                     if debug==True:
                         print("Adding column at",data_base,"with name",column_name.lower())
                     for i in range(len(data_bases)):
@@ -554,55 +601,64 @@ if sys.version[0:len(required_version)] == required_version:
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.add_column()'))
             def remove_column(data_base=None, column=None, remove_row=False):
-                num1=check(data_base)
-                num2=check(column)
-                letter_spot=optimize.determ(letter=data_base[0])
-                if num1 == False and num2 == False:
-                    global data_bases, debug, row
-                    for i in range(len(data_bases)):
-                        if (data_bases[i+letter_spot])[0]==data_base:
-                            if debug==True:
-                                print('Database Found!')
-                            if (data_bases[i+letter_spot])[3] == "column_row":
+                try:
+                    history.create_history(column, 'Remove Column')
+                    num1=check(data_base)
+                    num2=check(column)
+                    found=False
+                    letter_spot=optimize.determ(letter=data_base[0])
+                    if num1 == False and num2 == False:
+                        global data_bases, debug, row
+                        for i in range(len(data_bases)):
+                            if (data_bases[i+letter_spot])[0]==data_base:
                                 if debug==True:
-                                    print("Correct data_base type!")
-                                if column in (data_bases[i+letter_spot])[4]:
-                                    print("Removed: "+str(column))
-                                    a=len((data_bases[i+letter_spot])[4])
-                                    for e in range(a):
-                                        if ((data_bases[i+letter_spot])[4])[e] == column:
-                                            print(e)
-                                            break
-                                    (data_bases[i+letter_spot])[4].remove(column)
-                                    print(data_bases[i+letter_spot])
-                                    rows=[]
-                                    rows_count=0
-                                    a=0
-                                    #Gather sets that correspond with called data_base
-                                    try:
-                                        for i in range(len(row)):
-                                            if (row[i-a])[0]==data_base:
-                                                rows.append(row[i-a])
-                                                row.pop(i-a)
-                                                a+=1
-                                                rows_count+=1
-                                    except:
-                                        pass
-                                    #Remove or Empty column(s) in row(s)
-                                    if remove_row==False:
-                                        for i in range(rows_count):
-                                            ((rows[i])[1])[e]=None
-                                    if remove_row==True:
-                                        for i in range(rows_count):
-                                            ((rows[i])[1]).pop(e)
-                                    print(rows)
-                if num1 == True or num2 == True:
-                    print(errors.cannot_call_func('data_base.edit.remove_column()'))
+                                    print('Database Found!')
+                                found=True
+                                if (data_bases[i+letter_spot])[3] == "column_row":
+                                    if debug==True:
+                                        print("Correct data_base type!")
+                                    if column in (data_bases[i+letter_spot])[4]:
+                                        print("Removed: "+str(column))
+                                        a=len((data_bases[i+letter_spot])[4])
+                                        for e in range(a):
+                                            if ((data_bases[i+letter_spot])[4])[e] == column:
+                                                print(e)
+                                                break
+                                        (data_bases[i+letter_spot])[4].remove(column)
+                                        print(data_bases[i+letter_spot])
+                                        rows=[]
+                                        rows_count=0
+                                        a=0
+                                        #Gather sets that correspond with called data_base
+                                        try:
+                                            for i in range(len(row)):
+                                                if (row[i-a])[0]==data_base:
+                                                    rows.append(row[i-a])
+                                                    row.pop(i-a)
+                                                    a+=1
+                                                    rows_count+=1
+                                        except:
+                                            pass
+                                        #Remove or Empty column(s) in row(s)
+                                        if remove_row==False:
+                                            for i in range(rows_count):
+                                                ((rows[i])[1])[e]=None
+                                        if remove_row==True:
+                                            for i in range(rows_count):
+                                                ((rows[i])[1]).pop(e)
+                                        print(rows)
+                    if num1 == True or num2 == True:
+                        print(errors.cannot_call_func('data_base.edit.remove_column()'))
+                    if found==False and data_base != None:
+                        print(errors.database_does_not_exist())
+                except:
+                    pass
                 #Goes through all lists for the column and changes it to equal None.
                 #Must be column_row
         class empty:
             #Clear all info in 1 or more databases.
             def all():
+                history.create_history(None, 'Reset all databases')
                 global lists, row
                 lists=[]
                 row=[]
@@ -721,11 +777,13 @@ if sys.version[0:len(required_version)] == required_version:
                     print(errors.cannot_call_func('data_base.show.info()'))
         class remove:
             def all():
+                history.create_history(None, 'Remove All')
                 global data_bases, row, lists
                 data_bases=[]
                 lists=[]
                 row=[]
             def one_set(data_base=None):
+                history.create_history(None, 'Remove One Set')
                 num=check(data_base)
                 global data_bases, row, lists
                 if num == False:
@@ -751,37 +809,40 @@ if sys.version[0:len(required_version)] == required_version:
                     print(errors.database_does_not_exist())
                 if num == True:
                     print(errors.cannot_call_func('data_base.remove.one()'))
-            def reset_to_standard(reset_users=False):
-                global data_bases, row, lists, allowed_types, allowed_users, data_bases_reset, row_reset, lists_reset, allowed_types_reset, allowed_users_reset, known_users, passwords, known_users_reset, passwords_reset, permissions, permissions_reset
-                data_bases=data_bases_reset
-                row=row_reset
-                lists=lists_reset
-                if reset_users==True:
-                    allowed_types=allowed_types_reset
-                    allowed_users=allowed_users_reset
-                    known_users=known_users_reset
-                    passwords=passwords_reset
-                    permissions=permissions_reset
+            def reset_to_standard():
+                history.create_history(None, 'Reset to Standard')
+                try:
+                    os.remove('data_save.py')
+                except:
+                    pass
         class create:
             def database(data_base=None, status=True, type=None, owner='all', columns=None):
-                found=False
+                history.create_history(data_base, 'Create Database')
+                found1=False
+                found2=False
+                found3=False
+                print(data_base)
                 #Check to see if database already exists.
                 for i in range(len(data_bases)):
                     if (data_bases[i])[0]==data_base:
                         print('That database already exists.')
-                        found=True
+                        found1=True
+                        break
                 if type not in allowed_types:
                     print('An incorrect data type has been entered.')
-                    found=False
+                    found2=False
+                if type in allowed_types:
+                    found2=True
                 for i in range(len(data_base)):
                     if data_base[i] in alphabet:
-                        found=True
+                        found3=True
                     if data_base[i] not in alphabet:
-                        found=False
+                        found3=False
                         print('Database name can only consist of lowercase letters.')
                         break
                 #If database doesn't exist continue on creating it.
-                if found == False:
+                if found3 == True and found2 == True and found1 == False:
+                    print('Database created!')
                     num1=check(data_base)
                     num2=check(type)
                     if num1 == False and num2 == False:
@@ -808,6 +869,7 @@ if sys.version[0:len(required_version)] == required_version:
                         print(errors.cannot_call_func('data_base.create.datebase()'))
     class password_restrictions:
         def set_min_length(value=None):
+            history.create_history(str(value), 'Set min length')
             global min_length
             num=check(value)
             if num==False and isinstance(value, int) == True:
@@ -817,6 +879,7 @@ if sys.version[0:len(required_version)] == required_version:
             if num == True:
                 print(errors.cannot_call_func('password_restrictions.set_min_length()'))
         def set_max_length(value=None):
+            history.create_history(str(value), 'Set max length')
             global max_length
             num=check(value)
             if num == False and isinstance(value, int) == True:
@@ -825,34 +888,44 @@ if sys.version[0:len(required_version)] == required_version:
                 print(errors.cannot_call_func('password_restrictions.set_max_length()'))
     class errors:
         def database_does_not_exist():
+            history.create_history('database_does_not_exist', 'Error')
             return '(Error) Database requested could not be found.'
         def cannot_call_func(var):
+            history.create_history('cannot_call_func', 'Error')
             return '(Error) The function '+var+' that was called is missing 1 or more required variables.'
         def not_list(item=None):
+            history.create_history('not_list', 'Error')
             if item==None:
                 return '(Error) A list was expected, but was not given.'
             if item != None:
                 return '(Error) A list was expected, but was not given. Item: '+str(item)
         def user_not_found():
+            history.create_history('user_not_found', 'Error')
             return '(Error) The user specified was not found.'
         def not_str(item=None):
+            history.create_history('not_str', 'Error')
             if item==None:
                 return '(Error) A string was expected, but was not given.'
             if item != None:
                 return '(Error) A string was excepted, but was not given. Item: '+str(item)
         def user_exists():
+            history.create_history('user_exists', 'Error')
             return('(Error) This user already exists.')
         def not_bool(item=None):
+            history.create_history('not_bool', 'Error')
             if item==None:
                 return '(Error) A bool was expected, but was not given.'
             if item != None:
                 return '(Error) A bool was expected, but was not given. Item: '+str(item)
         def not_int(item=None):
+            history.create_history('not_int', 'Error')
             if item==None:
                 return '(Error) A int was expected, but was not given.'
             if item != None:
                 return '(Error) A int was expected, but was not given. Item: '+str(item)
         def incorrect_perm():
+            history.create_history('incorrect_perm','Error')
             return '(Error) The permission requested is not allowed.'
     #Test bench
     #<--Indent to here
+    
