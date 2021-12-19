@@ -1,7 +1,7 @@
 #Things to do next:
-#Allow save file name to be changed.
-#reset.py needs to be updated or removed.
 #Fix compadability issues with linux.
+#Find a fix for path variable. May cause issues on some devices.
+#Implement global_password variable
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
 password=None
@@ -187,12 +187,15 @@ if sys.version[0:len(required_version)] == required_version:
                 return file
             except ValueError:
                 print('Incorrect password!')
-        def new_hash():
+        def new_hash(passw=None):
             get.random_hash()
-            get.encrypt_hash()
+            get.encrypt_hash(passw)
             password=None
-        def encrypt_hash():
-            password=get.password()
+        def encrypt_hash(passw=None):
+            if passw != None:
+                password=passw
+            if passw == None:
+                password=get.password()
             global drive_letter
             pyAesCrypt.encryptFile(drive_letter+':/hash.txt', drive_letter+':/hash.aes', password)
             os.remove(drive_letter+':/hash.txt')
