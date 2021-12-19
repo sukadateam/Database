@@ -5,3 +5,5 @@
 5. Added a class called history to create a record of all that has been done. This will be automated soon.
 6. Encrypt and decrypt now encrypts and decrypts history.txt.
 7. Database functions now automatically sets database names to .lower()
+8. Temporary fix for linux has been implemented.
+9. Removed reset.py file. Another implementation of this have been added that replaced this.
