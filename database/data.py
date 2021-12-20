@@ -8,8 +8,8 @@ lists=[['chance', ['money','today']]]
 #Data_base, items in list
 
 #Authentication
-known_users=['Admin','Mr.Plummer','Gertie']
-passwords=[None,None,None]
+known_users=['admin','brandon','gertie']
+passwords=[None,'Hello','Hello']
 #Passwords can be none. Restrictions can also be set.
 permissions=['admin','all','student']
 active_users=[True, True, True]
