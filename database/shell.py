@@ -1,3 +1,6 @@
+#add_column has had no testing done at all.
+#remove_column has had no testing done at all.
+#Optimize save file has had no test done at all.
 from custom_database import *
 while True:
     for i in range(10):
@@ -12,17 +15,22 @@ while True:
     if choice == "4":
         backup.all()
     if choice == "5":
-        data_base.create.database(data_base=input('Enter the new databases name: ').lower(), type=input('column_row or list: '))
+        data_base.create.database(data_base=str(input('Enter the new databases name: ')).lower(), type=str(input('column_row or list: ')))
     if choice == "6":
         save.all()
     if choice == "8":
-        optimize.run()
+        choice=input('Would you like to save (y/n): ').lower()
+        if choice == "y":
+            optimize.run(save_optimizations=True)
+        if choice == "n":
+            optimize.run(save_optimizations=False)
+        choice = ''
     if choice == "7":
-        choice=input('\n\n\n(1)Users\n(2)Add to row\n(3)Show databases\n(4)Delete database\n(5)Remove row\n(6)Show items in database\nYour choice: ')
+        choice=input('\n\n\n(1)Users\n(2)Add to row\n(3)Show databases\n(4)Delete database\n(5)Remove row\n(6)Show items in database\n(7)Add Column\n(8)Remove Column\nYour choice: ')
         if choice == "1":
             other=input('\n\n\n(1)Create user\n(2)Remove user\nYour choice: ')
             if other == "1":
-                users.create(new_user=str(input('New username: ')), new_password=input('New password: '), new_permission=input('New permission: '))
+                users.create(new_user=str(input('New username: ')), new_password=str(input('New password: ')), new_permission=str(input('New permission: ')))
             if other == "2":
                 users.remove(user=str(input('User to remove: ')))
         if choice == "2":
@@ -32,7 +40,13 @@ while True:
         if choice == "4":
             data_base.remove.one_set(data_base=str(input('Database: ')))
         if choice == "5":
-            data_base.edit.remove_row(data_base=input('Database: '))
+            data_base.edit.remove_row(data_base=str(input('Database: ')))
         if choice == "6":
-            data_base.show.all_in_database(data_base=input('Database: '))
+            data_base.show.all_in_database(data_base=str(input('Database: ')))
+        if choice == "7":
+            data_base.edit.add_column(data_base=str(input('Database: ')), column_name=str(input('What is the new column: ')))
+        if choice == "8":
+            data_bas=str(input('Database: '))
+            data_base.show.show_column(data_base=data_bas)
+            data_base.edit.remove_column(data_base=data_bas, column=str(input('Column to remove: ')))
         choice=''
