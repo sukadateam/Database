@@ -52,9 +52,6 @@ if sys.version[0:len(required_version)] == required_version:
             ah=open('history.txt','a')
             ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user))
             ah.close()
-            #Created user
-            #Removed user
-            #Edited user
     class optimize():
         def determ(letter=None, set=None, test=False):
             for i in range(26):
@@ -241,8 +238,8 @@ if sys.version[0:len(required_version)] == required_version:
                 pass
         def data(password):
             try:
-                pyAesCrypt.decryptFile('data.aes','data.py',password)
-                os.remove('data.aes')
+                pyAesCrypt.decryptFile('data_save.aes','data_save.py',password)
+                os.remove('data_save.aes')
             except:
                 pass
         def cache(password):
@@ -288,16 +285,16 @@ if sys.version[0:len(required_version)] == required_version:
             failed=False
             if fail_safe==True:
                 try:
-                    open('data.aes','r')
+                    open('data_save.aes','r')
                     print('Existing file found. Cannot encrypt.')
                     failed=True
                 except:
                     pass
             if failed == False:
                 global do_not_remove
-                pyAesCrypt.encryptFile('data.py','data.aes',password)
+                pyAesCrypt.encryptFile('data_save.py','data_save.aes',password)
                 if do_not_remove==False:
-                    os.remove('data.py')
+                    os.remove('data_save.py')
         def cache(password):
             global do_not_remove
             pyAesCrypt.encryptFile('cache.py','cache.aes',password)
