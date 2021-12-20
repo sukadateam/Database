@@ -8,7 +8,7 @@ password=None
 from settings import *
 if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
-    print('Current python version:',sys.version[0:len(required_version)])
+    print('Current python version:', sys.version[0:len(required_version)])
 if sys.version[0:len(required_version)] == required_version:
     alphabet='abcdefghijklmnopqrstuvwxyz'
     from settings import *
@@ -33,6 +33,12 @@ if sys.version[0:len(required_version)] == required_version:
         except:
             pass
     import pyAesCrypt
+    def encrypt_check():
+        try:
+            open('data.aes', 'r')
+            return 1
+        except:
+            return 0
     class history:
         def delete():
             os.remove('history.txt')
@@ -60,9 +66,11 @@ if sys.version[0:len(required_version)] == required_version:
                         a=a[i]
                         return a
         def run(save_optimizations=True):
-            global data_bases, opto_data, opto_row, row, opto_lists, lists, debug
+            global data_bases, opto_data, opto_row, row, opto_lists, lists, debug, user_permission, user_logged
             history.create_history(None, 'Optimize')
             try:
+                user_logged=None
+                user_permission=None
                 opto_data=optimize.count(var='data_bases')
                 data_bases=optimize.list_org(var='data_bases')
                 opto_row=optimize.count(var='row')
@@ -178,6 +186,14 @@ if sys.version[0:len(required_version)] == required_version:
             global program_version
             return program_version
     class get:
+        def try_password(password):
+            global drive_letter
+            try:
+                pyAesCrypt.decryptFile(drive_letter+':/hash.aes',drive_letter+':/hash.txt',password)
+                pyAesCrypt.encryptFile(drive_letter+':/hash.txt',drive_letter+':/hash.aes',password)
+                return 1
+            except:
+                return 0
         def get_hash():
             try:
                 password = get.password()
@@ -214,8 +230,8 @@ if sys.version[0:len(required_version)] == required_version:
                 file.close()
     class decrypt:
         def hash(password):
-            pyAesCrypt.decryptFile('E:/hash.aes','E:/hash.txt',password)
             global drive_letter
+            pyAesCrypt.decryptFile(drive_letter+':/hash.aes',drive_letter+':/hash.txt',password)
             return open(drive_letter+':/hash.txt','r').read()
         def history(password):
             try:
@@ -243,6 +259,7 @@ if sys.version[0:len(required_version)] == required_version:
                 decrypt.history(d_password)
             except ValueError:
                 print('Wrong password.')
+                return 1
             try:
                 global drive_letter
                 os.remove(drive_letter+':/hash.txt')
@@ -306,6 +323,7 @@ if sys.version[0:len(required_version)] == required_version:
                     pass
             except ValueError:
                 print('Wrong password.')
+                return 1
     class save:
         def all():
             from vars_to_save import list
@@ -369,6 +387,12 @@ if sys.version[0:len(required_version)] == required_version:
             global known_users, passwords, permissions
             num1=check(new_user)
             num2=check(new_password)
+            try:
+                new_user=new_user.lower()
+                new_password=new_password.lower()
+                new_permission=new_permission.lower()
+            except:
+                pass
             if new_permission not in allowed_users:
                 print(errors.incorrect_perm())
             if num1 == False and num2 == False and new_permission in allowed_users:
@@ -384,7 +408,7 @@ if sys.version[0:len(required_version)] == required_version:
                                 history.create_history(new_user, 'Created user')
                                 known_users.append(new_user)
                                 passwords.append(new_password)
-                                permissions.append(new_password)
+                                permissions.append(new_permission)
                                 active_users.append(True)
                     if isinstance(new_user, str) == False:
                         print('new_user must be str')
@@ -397,6 +421,7 @@ if sys.version[0:len(required_version)] == required_version:
         def remove(user=None):
             num=check(user)
             if num == False:
+                user=user.lower()
                 found=False
                 global known_users, passwords, permissions
                 for i in range(len(known_users)):
@@ -458,6 +483,8 @@ if sys.version[0:len(required_version)] == required_version:
                     if user in known_users:
                         for i in range(len(known_users)):
                             if known_users[i]==user:
+                                if passwords[i] != password:
+                                    print('Password is incorrect.')
                                 if passwords[i]==password:
                                     if active_users[i]==True:
                                         user_logged=known_users[i]
