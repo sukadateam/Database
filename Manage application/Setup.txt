@@ -1,0 +1,7 @@
+Temporary fix for linux.
+
+goto Database/database
+install all items manually in requirements.txt
+run get_directory.py
+
+And your all set!
