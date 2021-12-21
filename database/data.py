@@ -1,18 +1,18 @@
-data_bases=[['chance', True, 'all', 'list'], ['basic', True, 'all', 'column_row', ['name','id','gender']]]
+data_bases=[['tools', True, 'all', 'column_row', ['name','id']]]
 #Name, Active status, owner, type, columns
-row=[['basic',['Brandon','123456','Male']],['basic', ['Gertie','124551','Male']], ['basic', ['Fluffy','124411','Trans']]]
+row=[]
 #Side to side
 #Data_base, items in row
-lists=[['chance', ['money','today']]]
+lists=[]
 #Lists
 #Data_base, items in list
 
 #Authentication
-known_users=['admin','brandon','gertie']
-passwords=['admin','Hello','Hello']
+known_users=['admin','brandon','abdullahi','tripp']
+passwords=['admin','Hello','snake','solid']
 #Passwords can be none. Restrictions can also be set.
-permissions=['admin','admin','student']
-active_users=[True, True, True]
+permissions=['admin','admin','admin','admin']
+active_users=[True, True, True, True]
 
 #Current user logged in
 user_logged=None
