@@ -2,10 +2,12 @@
 #Fix compadability issues with linux.
 #Find a fix for path variable. May cause issues on some devices.
 #Implement global_password variable
+#Implement profanity filter
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
 password=None
 from settings import *
+list1=[]
 if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:', sys.version[0:len(required_version)])
@@ -33,6 +35,23 @@ if sys.version[0:len(required_version)] == required_version:
         except:
             pass
     import pyAesCrypt
+    class profanityfilter:
+        def activate():
+            global profanity_filter
+            profanity_filter=True
+        def deactivate():
+            global profanity_filter
+            profanity_filter=False
+        def setup():
+            global profanity_filter
+            #Check profanity.txt to see if input matches.
+            if profanity_filter==True:
+                global list1
+                with open("profanity.txt") as file_in:
+                    for line in file_in:
+                        list1.append(line.replace('\n',''))
+        def filter(var):
+            pass
     def encrypt_check():
         try:
             open('data.aes', 'r')
@@ -475,7 +494,7 @@ if sys.version[0:len(required_version)] == required_version:
             user=str(user)
             password=str(password)
             if user != None and password != None or password==None:
-                global known_users, passwords, user_logged, user_permission
+                global known_users, passwords, user_logged, user_permission, profanity_filter, disable_filter_admin
                 if isinstance(user, str)==True and isinstance(password, str)==True or password == None:
                     if user in known_users:
                         for i in range(len(known_users)):
@@ -486,6 +505,9 @@ if sys.version[0:len(required_version)] == required_version:
                                     if active_users[i]==True:
                                         user_logged=known_users[i]
                                         user_permission=permissions[i]
+                                        if user_permission=="admin":
+                                            if disable_filter_admin==True:
+                                                profanity_filter=False
                                         return True
                                     if active_users[i]==False:
                                         print('User is not active.')
@@ -500,7 +522,10 @@ if sys.version[0:len(required_version)] == required_version:
             if user == None:
                 print(errors.cannot_call_func('users.login_request()'))
         def logout():
-            global user_logged, user_permission
+            global user_logged, user_permission, profanity_filter, disable_filter_admin
+            if user_permission=="admin":
+                if disable_filter_admin==True:
+                    profanity_filter=True
             user_permission=None
             user_logged=None
         def return_login_cred():
@@ -978,5 +1003,6 @@ if sys.version[0:len(required_version)] == required_version:
         def incorrect_perm():
             history.create_history('incorrect_perm','Error')
             return '(Error) The permission requested is not allowed.'
+    profanityfilter.setup() #Do not remove
     #Test bench
     #<--Indent to here
