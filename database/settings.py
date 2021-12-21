@@ -11,3 +11,7 @@ drive_letter='E'
 drive_name='Computer'
 #Operating System or OS. Can be windows or linux. Must be lowercase.
 system='windows'
+#Filters bad words that people should not be using.
+profanity_filter=True
+#Disable profanity filter for admin
+disable_filter_admin=False
