@@ -1,5 +1,5 @@
 # Database
-Discord Server: https://discord.gg/dKCpdGzyHW
+Discord Server: https://discord.gg/6BWRxTQD
 <br>A custom database handler. Still in development.
 
 To setup application in windows: Manage application/Windows/setup.bat
