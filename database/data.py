@@ -9,18 +9,18 @@ lists=[['chance', ['money','today']]]
 
 #Authentication
 known_users=['admin','brandon','gertie']
-passwords=[None,'Hello','Hello']
+passwords=['admin','Hello','Hello']
 #Passwords can be none. Restrictions can also be set.
-permissions=['admin','all','student']
+permissions=['admin','admin','student']
 active_users=[True, True, True]
 
 #Current user logged in
 user_logged=None
 user_permission=None
 
-global_password=None #A password that can be used on anything. If none, then no global_password is allowed.
+#Others
 allowed_types=['column_row', 'list', 'grid']
-allowed_users=['all', 'admin', 'student', 'teacher', 'None']
+allowed_users=['admin', 'student', 'teacher']
 denied_inputs=['',' ',None]
 denied_names=[]
 min_length=5 #Min password length
