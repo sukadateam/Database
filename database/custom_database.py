@@ -2,7 +2,6 @@
 #Fix compadability issues with linux.
 #Find a fix for path variable. May cause issues on some devices.
 #Implement global_password variable
-#Implement profanity filter
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
 password=None
@@ -35,7 +34,11 @@ if sys.version[0:len(required_version)] == required_version:
         except:
             pass
     import pyAesCrypt
-    class profanityfilter:
+    class profanityFilter:
+        def disable():
+            profanityFilter.deactivate()
+        def enable():
+            profanityFilter.activate()
         def activate():
             global profanity_filter
             profanity_filter=True
@@ -51,7 +54,14 @@ if sys.version[0:len(required_version)] == required_version:
                     for line in file_in:
                         list1.append(line.replace('\n',''))
         def filter(var):
-            pass
+            if isinstance(var, str) == True:
+                global list1
+                for i in range(len(list1)):
+                    if str(var) == list1[i]:
+                        return 1
+                return 0
+            else:
+                print(errors.not_str())
     def encrypt_check():
         try:
             open('data.aes', 'r')
@@ -67,6 +77,8 @@ if sys.version[0:len(required_version)] == required_version:
             ah.write('File created: '+d1)
             ah.close()
         def create_history(user, usage):
+            if user==None:
+                user='Null'
             global d1
             ah=open('history.txt','a')
             ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user))
@@ -210,40 +222,62 @@ if sys.version[0:len(required_version)] == required_version:
                 return 1
             except:
                 return 0
+        def get_other_hash(password):
+            try:
+                decrypt.hash(password)
+                global drive_letter
+                file=open(drive_letter+':/hash_other.txt','r').read()
+                os.remove(drive_letter+':/hash_other.txt','r')
+                return file
+            except ValueError:
+                print('Incorrect password!')
         def get_hash():
             try:
                 password = get.password()
                 decrypt.hash(password)
                 global drive_letter
                 file=open(drive_letter+':/hash.txt','r').read()
+                os.remove(drive_letter+':/hash.txt','r')
                 return file
             except ValueError:
-                print('Incorrect password!')
+                global global_password
+                if global_password==True:
+                    get.get_other_hash(password)
         def new_hash(passw=None):
             get.random_hash()
             get.encrypt_hash(passw)
             password=None
-        def encrypt_hash(passw=None):
+        def encrypt_hash(passw=None, other=None):
             if passw != None:
                 password=passw
             if passw == None:
                 password=get.password()
-            global drive_letter
+            global drive_letter, global_password
             pyAesCrypt.encryptFile(drive_letter+':/hash.txt', drive_letter+':/hash.aes', password)
             os.remove(drive_letter+':/hash.txt')
+            if other == None:
+                if global_password==True:
+                    pyAesCrypt.encryptFile(drive_letter+':/hash_other.txt', drive_letter+':/hash_other.aes', password)
+                    os.remove(drive_letter+':/hash_other.txt')
         def password():
             return input('Password: ')
-        def random_hash(length=100):
+        def random_hash(length=100, normal=True):
             if isinstance(length, int) == False:
                 print(errors.not_int())
             if isinstance(length, int) == True:
                 ah=''
                 for i in range(length): 
                     ah+=random.choice('ajfygweuoichwgbuieucr73rwecb638781417983b 623v9923 r t72344y 23uc3u2b4n9832 4b2c794y 237bc2423nc482b3c427 rfgshdfuw38263872guihfef86w4t878whryfeg48tg34hf7w')
-                global drive_letter
-                file=open(drive_letter+':/hash.txt','w')
-                file.write(ah)
-                file.close()
+                if normal==True: 
+                    global drive_letter
+                    file=open(drive_letter+':/hash.txt','w')
+                    file.write(ah)
+                    file.close()
+                    file=open(drive_letter+':/hash_other.txt','w')
+                    file.write(ah)
+                    file.close()
+                if normal==False:
+                    return ah
     class decrypt:
         def hash(password):
             global drive_letter
@@ -342,6 +376,7 @@ if sys.version[0:len(required_version)] == required_version:
                 return 1
     class save:
         def all():
+            history.create_history(None, 'Save')
             from vars_to_save import list
             file=open('data_save.py','w')
             for i in range(len(list)):
@@ -1003,6 +1038,6 @@ if sys.version[0:len(required_version)] == required_version:
         def incorrect_perm():
             history.create_history('incorrect_perm','Error')
             return '(Error) The permission requested is not allowed.'
-    profanityfilter.setup() #Do not remove
+    profanityFilter.setup() #Do not remove
     #Test bench
     #<--Indent to here
