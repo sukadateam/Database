@@ -11,7 +11,9 @@ drive_letter='E'
 drive_name='Computer'
 #Operating System or OS. Can be windows or linux. Must be lowercase.
 system='windows'
-#Filters bad words that people should not be using.
-profanity_filter=True
-#Disable profanity filter for admin
+#Filters bad words that people should not be using. USE AT YOUR OWN RISK. Currently in development phaze.
+profanity_filter=False
+#Disable profanity filter for admin. USE AT YOUR OWN RISK. Currently in development phaze.
 disable_filter_admin=False
+#A backup password in case the other is forgotten. USE AT YOUR OWN RISK. Currently in development phaze.
+global_password=False
