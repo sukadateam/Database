@@ -64,7 +64,7 @@ if sys.version[0:len(required_version)] == required_version:
                 print(errors.not_str())
     def encrypt_check():
         try:
-            open('data.aes', 'r')
+            open('data_save.aes', 'r')
             return 1
         except:
             return 0
@@ -440,7 +440,6 @@ if sys.version[0:len(required_version)] == required_version:
             num2=check(new_password)
             try:
                 new_user=new_user.lower()
-                new_password=new_password.lower()
                 new_permission=new_permission.lower()
             except:
                 pass
@@ -483,6 +482,7 @@ if sys.version[0:len(required_version)] == required_version:
                         permissions.pop(i)
                         active_users.pop(i)
                         found=True
+                        break
                 if found==False:
                     print(errors.user_not_found())
             if num == True:
@@ -523,6 +523,7 @@ if sys.version[0:len(required_version)] == required_version:
             if num == True:
                 print(errors.cannot_call_func('users.change_password()'))
         def return_users():
+            global known_users
             return known_users
         def login_request(user=None, password=None):
             #Will return True if credentials are correct, if not will return False
@@ -569,7 +570,6 @@ if sys.version[0:len(required_version)] == required_version:
     class data_base:
         class edit:
             def add_row_term():
-                data=str(input('Database: ')).lower()
                 ah=list_count(data_base=data)
                 aa=[]
                 bra=False
@@ -626,7 +626,8 @@ if sys.version[0:len(required_version)] == required_version:
             def add_row(data_base=None, new_row=None):
                 history.create_history(new_row, 'Add row')
                 #You can add as many objects to a row as you please, but it may not fit in your assinged constraints. No problems will occur though.
-                new_row=new_row.split() 
+                if isinstance(new_row, str) == True:
+                    new_row=new_row.split()
                 print(new_row)
                 num1=check(data_base)
                 num2=check(new_row)
