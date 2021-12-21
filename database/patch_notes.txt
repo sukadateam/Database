@@ -13,3 +13,5 @@
 13. Added a setting to enable profanity filter.
 14. Added a setting to disable profnity filter for admins.
 15. Added a setting to enable global_password.
+16. Fixed a problem when trying to remove a user at the end of a list.
+17. Add row can now accept lists along with strings.
