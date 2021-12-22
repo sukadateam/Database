@@ -1,5 +1,6 @@
 #If True system will not remove files after encrypt and decrypt. Will remove files if set to False.
 do_not_remove=False
+#Do not disable failsafe unless needed! Trust me. Don't disable it.
 fail_safe=True
 #Required python version to run program.
 required_version='3.10.1'
@@ -15,5 +16,7 @@ system='windows'
 profanity_filter=False
 #Disable profanity filter for admin. USE AT YOUR OWN RISK. Currently in development phaze.
 disable_filter_admin=False
-#A backup password in case the other is forgotten. USE AT YOUR OWN RISK. Currently in development phaze.
-global_password=False
+#A backup password in case the other is forgotten.
+global_password=True
+#Don't load save file. True: Skip save file -- False: Load defualt file not save file. USE AT YOUR OWN RISK. Currently in development phaze.
+dont_load_save=False
