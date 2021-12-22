@@ -25,14 +25,22 @@ if sys.version[0:len(required_version)] == required_version:
     today=date.today()
     d1 = today.strftime("%m/%d/%Y")
     try:
-        from data_save import *
-        import_type='data_save'
+        if dont_load_save==False:
+            from data_save import *
+            import_type='data_save'
+        if dont_load_save==True:
+            from data import *
+            import_type='data'
     except:
         try:
             from data import *
             import_type='data'
         except:
             pass
+    if import_type=="data":
+        print('Import type: Default')
+    if import_type=="data_save":
+        print('Import type: Save file')
     import pyAesCrypt
     class profanityFilter:
         def disable():
@@ -247,15 +255,16 @@ if sys.version[0:len(required_version)] == required_version:
             get.random_hash()
             get.encrypt_hash(passw)
             password=None
-        def encrypt_hash(passw=None, other=None):
+        def encrypt_hash(passw=None, other=False):
+            global drive_letter, global_password
             if passw != None:
                 password=passw
             if passw == None:
                 password=get.password()
-            global drive_letter, global_password
-            pyAesCrypt.encryptFile(drive_letter+':/hash.txt', drive_letter+':/hash.aes', password)
-            os.remove(drive_letter+':/hash.txt')
-            if other == None:
+            if other == False:
+                pyAesCrypt.encryptFile(drive_letter+':/hash.txt', drive_letter+':/hash.aes', password)
+                os.remove(drive_letter+':/hash.txt')
+            if other == True:
                 if global_password==True:
                     pyAesCrypt.encryptFile(drive_letter+':/hash_other.txt', drive_letter+':/hash_other.aes', password)
                     os.remove(drive_letter+':/hash_other.txt')
@@ -281,8 +290,12 @@ if sys.version[0:len(required_version)] == required_version:
     class decrypt:
         def hash(password):
             global drive_letter
-            pyAesCrypt.decryptFile(drive_letter+':/hash.aes',drive_letter+':/hash.txt',password)
-            return open(drive_letter+':/hash.txt','r').read()
+            try:
+                pyAesCrypt.decryptFile(drive_letter+':/hash.aes',drive_letter+':/hash.txt',password)
+                return open(drive_letter+':/hash.txt','r').read()
+            except:
+                pyAesCrypt.decryptFile(drive_letter+':/hash_other.aes',drive_letter+':/hash_other.txt',password)
+                return open(drive_letter+':/hash_other.txt','r').read()
         def history(password):
             try:
                 pyAesCrypt.decryptFile('history.aes','history.txt',password)
@@ -315,6 +328,10 @@ if sys.version[0:len(required_version)] == required_version:
                 os.remove(drive_letter+':/hash.txt')
             except:
                 pass
+            try:
+                os.remove(drive_letter+':/hash_other.txt')
+            except:
+                pass
             #decrypt.cache(d_password)
             #decrypt.opt(d_password)
     class encrypt:
@@ -328,6 +345,10 @@ if sys.version[0:len(required_version)] == required_version:
                     failed=True
                 except:
                     pass
+                try:
+                    open('history.txt','r')
+                except:
+                    failed=True
             if failed == False:
                 global do_not_remove
                 pyAesCrypt.encryptFile('history.txt','history.aes',password)
@@ -343,6 +364,10 @@ if sys.version[0:len(required_version)] == required_version:
                     failed=True
                 except:
                     pass
+                try:
+                    open('data_save.py','r')
+                except:
+                    failed=True
             if failed == False:
                 global do_not_remove
                 pyAesCrypt.encryptFile('data_save.py','data_save.aes',password)
@@ -366,13 +391,17 @@ if sys.version[0:len(required_version)] == required_version:
                 encrypt.history(d_password)
                 #encrypt.cache(d_password)
                 #encrypt.opt(d_password)
+                global drive_letter
                 try:
-                    global drive_letter
                     os.remove(drive_letter+':/hash.txt')
                 except:
                     pass
+                try:
+                    os.remove(drive_letter+':/hash_other.txt')
+                except:
+                    pass
             except ValueError:
-                print('Wrong password.')
+                print('Wrong Password.')
                 return 1
     class save:
         def all():
@@ -768,6 +797,17 @@ if sys.version[0:len(required_version)] == required_version:
                     pass
                 #Goes through all lists for the column and changes it to equal None.
                 #Must be column_row
+            #Used for my auto_motive app.
+            class app:
+                def remove_row(data_base=None, name=None):
+                    if isinstance(name, str) == True and isinstance(data_base, str) == True:
+                        global row, data_bases
+                        for i in range(len(row)):
+                            if (row[i])[0] == data_base:
+                                if ((row[i])[1])[0] == name:
+                                    row.pop(i)
+                    else:
+                        print(errors.not_str())
         class empty:
             #Clear all info in 1 or more databases.
             def all():
@@ -1040,5 +1080,7 @@ if sys.version[0:len(required_version)] == required_version:
             history.create_history('incorrect_perm','Error')
             return '(Error) The permission requested is not allowed.'
     profanityFilter.setup() #Do not remove
+    #Gertie normal password
+    #W3rS3cur3 global password
     #Test bench
     #<--Indent to here
