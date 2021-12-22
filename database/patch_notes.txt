@@ -1,18 +1,3 @@
-1. Fixed a problem where if system states that's a database cannot be made, it will still create it, later causing errors.
-2. Fixed a problem where remove_column would not give notice if database selected does not exist.
-3. Fixed a problem where add_column would add a column to a database that does not exist, later causing errors.
-4. Fixed a problem where create database would not create a database even though it meets requirements.
-5. Added a class called history to create a record of all that has been done. This will be automated soon.
-6. Encrypt and decrypt now encrypts and decrypts history.txt.
-7. Database functions now automatically sets database names to .lower()
-8. Temporary fix for linux has been implemented.
-9. Removed reset.py file. Another implementation of this have been added that replaced this.
-10. Fixed a problem where users.create would set permission as password. IDK?
-11. Added a function called encrypt_check to check to see if encryption has already been done.
-12. Fixed a few minor encryption problems.
-13. Added a setting to enable profanity filter.
-14. Added a setting to disable profnity filter for admins.
-15. Added a setting to enable global_password.
-16. Fixed a problem when trying to remove a user at the end of a list.
-17. Add row can now accept lists along with strings.
-18. You can now create a backup password. Also called a global_password.
+1. data_base.edit.add_item() now creates a designated spot for a database in lists if one is not existant.
+2. Added new setting to automatically optimize system on startup.
+3. A flaw has been seen learking in the dark realms of the code. A fix is coming soon. More info later.
