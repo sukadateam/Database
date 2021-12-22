@@ -1,7 +1,8 @@
 #Things to do next:
 #Fix compadability issues with linux.
 #Find a fix for path variable. May cause issues on some devices.
-#Implement global_password variable
+#Implement check_owner on database
+#Some uses of pop have been incorrectly used and may cause problems. Fixes are coming before the big release.
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
 password=None
@@ -598,6 +599,8 @@ if sys.version[0:len(required_version)] == required_version:
             return user_logged, user_permission
     class data_base:
         class edit:
+            def check_owner():
+                pass
             def add_row_term():
                 ah=list_count(data_base=data)
                 aa=[]
@@ -611,7 +614,7 @@ if sys.version[0:len(required_version)] == required_version:
                     data_base.edit.add_row(data_base=data, new_row=aa)
                 except:
                     pass
-            def add_item(data_base=None, item_to_add=None):
+            def add_item(data_base=None, item_to_add=None, create_if_notExist=True):
                 history.create_history(item_to_add, 'Add item')
                 #Used for the list types.
                 global data_bases, lists
@@ -619,12 +622,24 @@ if sys.version[0:len(required_version)] == required_version:
                 num2=check(item_to_add)
                 letter_spot=optimize.determ(letter=data_base[0])
                 if num1 == False and num2 == False:
+                    if create_if_notExist == True:
+                        failed=True
+                        for i in range(len(lists)):
+                            if (lists[i])[0] == data_base:
+                                failed=False
+                                break
+                            failed=True
+                        if failed==True:
+                            lists.append([data_base,[]])
                     data_base=data_base.lower()
                     for i in range(len(data_bases)):
                         if (data_bases[i+letter_spot])[0] == data_base:
+                            print(1)
                             if (data_bases[i+letter_spot])[3]=="list":
+                                print(2)
                                 for x in range(len(lists)):
                                     if (lists[x])[0]==data_base:
+                                        print(3)
                                         (lists[x])[1].append(item_to_add)
                                         print(lists)
                                         break
@@ -801,11 +816,22 @@ if sys.version[0:len(required_version)] == required_version:
             class app:
                 def remove_row(data_base=None, name=None):
                     if isinstance(name, str) == True and isinstance(data_base, str) == True:
-                        global row, data_bases
+                        global row
                         for i in range(len(row)):
                             if (row[i])[0] == data_base:
                                 if ((row[i])[1])[0] == name:
                                     row.pop(i)
+                                    break
+                    else:
+                        print(errors.not_str())
+                def remove_item(data_base=None, barcode=None):
+                    if isinstance(data_base, str) == True and isinstance(barcode, str) == True:
+                        global lists
+                        for i in range(len(lists)):
+                            if (lists[i])[0]==data_base:
+                                for x in range(len((lists[i])[1])):
+                                    if (((lists[i])[1])[x])[0]==barcode:
+                                        ((lists[i])[1]).pop(x)
                     else:
                         print(errors.not_str())
         class empty:
@@ -1080,6 +1106,8 @@ if sys.version[0:len(required_version)] == required_version:
             history.create_history('incorrect_perm','Error')
             return '(Error) The permission requested is not allowed.'
     profanityFilter.setup() #Do not remove
+    if optimize_on_startup==True:
+        optimize.run()
     #Gertie normal password
     #W3rS3cur3 global password
     #Test bench
