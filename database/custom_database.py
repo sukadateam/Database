@@ -85,13 +85,18 @@ if sys.version[0:len(required_version)] == required_version:
             ah=open('history.txt','w')
             ah.write('File created: '+d1)
             ah.close()
-        def create_history(user, usage):
-            if user==None:
-                user='Null'
-            global d1
-            ah=open('history.txt','a')
-            ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user))
-            ah.close()
+        def create_history(user, usage, manual_record=False):
+            if auto_history_record==True or manual_record==True:
+                if user==None:
+                    user='Null'
+                global d1
+                try:
+                    open('history.txt','r')
+                except:
+                    history.create()
+                ah=open('history.txt','a')
+                ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user))
+                ah.close()
     class optimize():
         def determ(letter=None, set=None, test=False):
             for i in range(26):
@@ -599,11 +604,22 @@ if sys.version[0:len(required_version)] == required_version:
             return user_logged, user_permission
     class data_base:
         class edit:
-            def check_owner():
-                pass
+            def search_rows(data_base=None, id=None):
+                if isinstance(data_base, str) == True and isinstance(id, str) == True:
+                    for i in range(len(row)):
+                        if (row[i])[0] == data_base:
+                            if ((row[i])[1])[1]==id:
+                                return 1
+                    return 0
+            def check_owner(data_base=None, user_perm=None):
+                #Returns 1 is owner matches the database.
+                if isinstance(data_base, str) == True and isinstance(user_perm, str) == True:
+                    for i in range(len(data_bases)):
+                        if (data_bases[i])[2] == user_perm:
+                            return 1
+                    return 0
             def add_row_term():
-                ah=list_count(data_base=data)
-                aa=[]
+                data=input('Database: ')
                 bra=False
                 try:
                     for i in range(len(data_bases)):
@@ -679,11 +695,11 @@ if sys.version[0:len(required_version)] == required_version:
                     data_base=data_base.lower()
                     if isinstance(new_row, list) == True:
                         row.append([data_base,new_row])
+                        print("Added new row!")
                     if isinstance(new_row, list) == False:
                         print(errors.not_list())
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.add_row()'))
-                print("Added new row!")
             def remove_row(data_base=None):
                 num1=check(data_base)
                 if num1 == False:
