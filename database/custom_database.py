@@ -683,10 +683,10 @@ if sys.version[0:len(required_version)] == required_version:
                                         break
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.remove_item()'))
-            def add_row(data_base=None, new_row=None):
+            def add_row(data_base=None, new_row=None, split=True):
                 history.create_history(new_row, 'Add row')
                 #You can add as many objects to a row as you please, but it may not fit in your assinged constraints. No problems will occur though.
-                if isinstance(new_row, str) == True:
+                if split==True:
                     new_row=new_row.split()
                 print(new_row)
                 num1=check(data_base)
@@ -850,6 +850,10 @@ if sys.version[0:len(required_version)] == required_version:
                                         ((lists[i])[1]).pop(x)
                     else:
                         print(errors.not_str())
+                def show_tools(data_base=None):
+                    if isinstance(data_base, str) == True:
+                        for i in range(len(row)):
+                            print('Item:',((row[i])[1])[0],' | Serial:',((row[i])[1])[1])
         class empty:
             #Clear all info in 1 or more databases.
             def all():
