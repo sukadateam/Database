@@ -1,7 +1,6 @@
 #Things to do next:
 #Fix compadability issues with linux.
 #Find a fix for path variable. May cause issues on some devices.
-#Implement check_owner on database
 #Some uses of pop have been incorrectly used and may cause problems. Fixes are coming before the big release.
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
@@ -12,6 +11,11 @@ if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:', sys.version[0:len(required_version)])
 if sys.version[0:len(required_version)] == required_version:
+    if app_version_control==True:
+        from version import setup_version
+        if program_version != setup_version:
+            print('This program was setup on a different version.')
+            exit()
     alphabet='abcdefghijklmnopqrstuvwxyz'
     from settings import *
     import random, shutil
@@ -78,6 +82,9 @@ if sys.version[0:len(required_version)] == required_version:
         except:
             return 0
     class history:
+        def clear():
+            history.delete()
+            history.create()
         def delete():
             os.remove('history.txt')
         def create():
