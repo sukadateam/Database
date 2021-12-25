@@ -5,7 +5,7 @@ fail_safe=True
 #Required python version to run program.
 required_version='3.10.1'
 #Application version. Just for show.
-program_version='0.2.4'
+program_version='0.2.5'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only.
@@ -22,3 +22,7 @@ global_password=True
 dont_load_save=False
 #Automatically optimize on start up. USE AT YOUR OWN RISK. Currently in development phase.
 optimize_on_startup=False
+#Enable automated history_file
+auto_history_record=True
+#App version control --(Disable if needed)--
+app_version_control=True
