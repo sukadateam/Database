@@ -41,5 +41,7 @@ allow_windows_version='10'
 skip_history_copy=False
 #Enable automated history_file for functions
 auto_error_record=True
-#Assign 8 Digit number to history item for a more depth look into the item. And create a database to handle all the data for each assigned item.
-assign_8_digit_forHistory=False
+#Assign Digit number to history item for a more depth look into the item. And create a database to handle all the data for each assigned item.
+assign_digit_forHistory=False
+#How many digits are allowed to be used to store history.
+allowed_digists_forHistory=8
