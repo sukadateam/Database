@@ -8,6 +8,7 @@ from pyAesCrypt.crypto import decryptFile, encryptFile
 password=None
 from settings import *
 list1=[]
+count_history=None
 if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:', sys.version[0:len(required_version)])
@@ -78,6 +79,32 @@ if sys.version[0:len(required_version)] == required_version:
         except:
             return 0
     class history:
+        def assign_letter():
+            global allowed_digists_forHistory
+            try:
+                global count_history
+                if count_history == None:
+                    if sirgw==oiwieof:
+                        pass
+            except:
+                try:
+                    from assign_count import count as count_history
+                except:
+                    file=open('assign_count.py', 'w')
+                    file.write('count="1"')
+                    file.close()
+                from assign_count import count as count_history
+                print('aoifiea')
+            count=int(count_history)
+            a=''
+            for i in range(allowed_digists_forHistory-len(str(count_history))):
+                a+='0'
+            a+=str(count_history)
+            count_history+=1
+            file=open('assign_count.py', 'w')
+            file.write('count='+str(count_history))
+            file.close()
+            return a
         def clear():
             history.delete()
             history.create()
