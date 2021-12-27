@@ -1,7 +1,6 @@
-1. data_base.edit.add_item() now creates a designated spot for a database in lists if one is not existant.
-2. Added new setting to automatically optimize system on startup.
-3. A flaw has been seen learking in the dark realms of the code. A fix is coming soon. More info later.
-4. Fixed a problem that caused the app to crash when using add_row_term. This is used for the terminal.
-5. Added data_base.edit.search_rows(). Used for my custom application.
-6. Added data_base.edit.check_owner(). Used to see what permission is required to use the permission. Database allows anyone though to access the database.
-7. Fixed a minor problem with data_base.edit.add_row() when giving it a list instead of a string. The function now allows lists.
+1. Added a new setting. app_version_control=True
+2. Created a new file called version_config.py to help handle app_version_control setting.
+3. If system not macos, linux or windows, custom_database will return an error.
+4. Added a new setting. set_operating_system=True
+5. Added a new setting. allow_windows_version='10'
+6. Fixed a problem with a function called exit(). exit() would not exit. WHY????????? I know why. That's why it's fixed.
