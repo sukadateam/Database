@@ -1090,43 +1090,43 @@ if sys.version[0:len(required_version)] == required_version:
                 print(errors.cannot_call_func('password_restrictions.set_max_length()'))
     class errors:
         def database_does_not_exist():
-            history.create_history('database_does_not_exist', 'Error')
+            history.create_history('database_does_not_exist', 'Error', manual_record=auto_error_record)
             return '(Error) Database requested could not be found.'
         def cannot_call_func(var):
-            history.create_history('cannot_call_func', 'Error')
+            history.create_history('cannot_call_func', 'Error', manual_record=auto_error_record)
             return '(Error) The function '+var+' that was called is missing 1 or more required variables.'
         def not_list(item=None):
-            history.create_history('not_list', 'Error')
+            history.create_history('not_list', 'Error', manual_record=auto_error_record)
             if item==None:
                 return '(Error) A list was expected, but was not given.'
             if item != None:
                 return '(Error) A list was expected, but was not given. Item: '+str(item)
         def user_not_found():
-            history.create_history('user_not_found', 'Error')
+            history.create_history('user_not_found', 'Error', manual_record=auto_error_record)
             return '(Error) The user specified was not found.'
         def not_str(item=None):
-            history.create_history('not_str', 'Error')
+            history.create_history('not_str', 'Error', manual_record=auto_error_record)
             if item==None:
                 return '(Error) A string was expected, but was not given.'
             if item != None:
                 return '(Error) A string was excepted, but was not given. Item: '+str(item)
         def user_exists():
-            history.create_history('user_exists', 'Error')
+            history.create_history('user_exists', 'Error', manual_record=auto_error_record)
             return('(Error) This user already exists.')
         def not_bool(item=None):
-            history.create_history('not_bool', 'Error')
+            history.create_history('not_bool', 'Error', manual_record=auto_error_record)
             if item==None:
                 return '(Error) A bool was expected, but was not given.'
             if item != None:
                 return '(Error) A bool was expected, but was not given. Item: '+str(item)
         def not_int(item=None):
-            history.create_history('not_int', 'Error')
+            history.create_history('not_int', 'Error', manual_record=auto_error_record)
             if item==None:
                 return '(Error) A int was expected, but was not given.'
             if item != None:
                 return '(Error) A int was expected, but was not given. Item: '+str(item)
         def incorrect_perm():
-            history.create_history('incorrect_perm','Error')
+            history.create_history('incorrect_perm','Error', manual_record=auto_error_record)
             return '(Error) The permission requested is not allowed.'
     profanityFilter.setup() #Do not remove
     if allow_windows_version == "11":
