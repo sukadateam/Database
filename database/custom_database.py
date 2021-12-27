@@ -2,6 +2,7 @@
 #Fix compadability issues with linux.
 #Find a fix for path variable. May cause issues on some devices.
 #Some uses of pop have been incorrectly used and may cause problems. Fixes are coming before the big release.
+#Create support for macos.
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
 password=None
@@ -11,11 +12,9 @@ if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:', sys.version[0:len(required_version)])
 if sys.version[0:len(required_version)] == required_version:
-    if app_version_control==True:
-        from version import setup_version
-        if program_version != setup_version:
-            print('This program was setup on a different version.')
-            exit()
+    from datetime import date
+    today=date.today()
+    d1 = today.strftime("%m/%d/%Y")
     alphabet='abcdefghijklmnopqrstuvwxyz'
     from settings import *
     import random, shutil
@@ -26,9 +25,6 @@ if sys.version[0:len(required_version)] == required_version:
     except ModuleNotFoundError:
         print('custom_database is not setup. Please setup with .bat or .sh file to enable this program.')
         exit()
-    from datetime import date
-    today=date.today()
-    d1 = today.strftime("%m/%d/%Y")
     try:
         if dont_load_save==False:
             from data_save import *
@@ -210,7 +206,7 @@ if sys.version[0:len(required_version)] == required_version:
         if var not in denied_inputs:
             return False
     def exit():
-        exit
+        sys.exit()
     class restore:
         def all():
             from files_to_backup import backup_files
@@ -1133,8 +1129,46 @@ if sys.version[0:len(required_version)] == required_version:
             history.create_history('incorrect_perm','Error')
             return '(Error) The permission requested is not allowed.'
     profanityFilter.setup() #Do not remove
+    if allow_windows_version == "11":
+        allow_windows_version="10"
     if optimize_on_startup==True:
         optimize.run()
+    if app_version_control==True:
+        from version import setup_version
+        if program_version != setup_version:
+            try:
+                open('history.txt','r')
+            except:
+                history.create()
+            ah=open('history.txt','a')
+            ah.write('\n('+d1+')'+' Program Version Control: Incorrect Version')
+            ah.close()
+            print('(Error) This program was setup on a different version.\nTo disable this prompt goto settings and set app_version_control to False.')
+            exit()
+    if system != 'windows' and system != "macos" and system != "linux":
+        print('Invalid setting. system=')
+        history.create_history(usage='Invalid Setting', user='system=Error()')
+    if set_operating_system==True:
+        from sys import platform
+        if platform == "linux" or platform == "linux2":
+            print('Linux Distro.')
+            #Linux
+            if system != "linux":
+                history.create_history(usage='Operating System Exception', user='linux')
+                exit()
+        elif platform == "darwin":
+            print('Mac OS')
+            # OS X
+            if system != "macos":
+                history.create_history(usage='Operating System Exception', user='linux')
+                exit()
+        elif platform == "win32":
+            print('Windows')
+            # Windows...
+            if system != "windows":
+                history.create_history(usage='Operating System Exception', user='linux')
+                exit() 
+    print('Start up Success!')
     #Gertie normal password
     #W3rS3cur3 global password
     #Test bench
