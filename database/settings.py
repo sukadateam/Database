@@ -7,7 +7,7 @@ fail_safe=True
 #Required python version to run program.
 required_version='3.10.1'
 #Application version. Just for show.
-program_version='0.2.5'
+program_version='0.2.6'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only.
@@ -24,8 +24,8 @@ global_password=True
 dont_load_save=False
 #Automatically optimize on start up. USE AT YOUR OWN RISK. Currently in development phase.
 optimize_on_startup=False
-#Enable automated history_file
-auto_history_record=True
+#Enable automated history_file for functions
+auto_history_record=False
 #App version control --(Disable if needed)--
 app_version_control=True
 #Only allow set operating system. Change system variable to your choice. USE AT YOUR OWN RISK. Currently in development phase.
@@ -39,3 +39,7 @@ allow_windows_version='10'
 #Settings coming soon
 #If a record prior what's asked is a duplicate, system will then ignore the task given.
 skip_history_copy=False
+#Enable automated history_file for functions
+auto_error_record=True
+#Assign 8 Digit number to history item for a more depth look into the item. And create a database to handle all the data for each assigned item.
+assign_8_digit_forHistory=False
