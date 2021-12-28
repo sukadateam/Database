@@ -1,8 +1,9 @@
 #Things to do next:
 #Fix compadability issues with linux.
 #Find a fix for path variable. May cause issues on some devices.
-#Some uses of pop have been incorrectly used and may cause problems. Fixes are coming before the big release.
 #Create support for macos.
+from multiprocessing import Process as p
+from multiprocessing.spawn import freeze_support
 import sys, os
 from pyAesCrypt.crypto import decryptFile, encryptFile
 password=None
@@ -56,22 +57,27 @@ if sys.version[0:len(required_version)] == required_version:
             global profanity_filter
             profanity_filter=False
         def setup():
-            global profanity_filter
+            global profanity_filter, auto_filter_profanity_speedBoost, list1
             #Check profanity.txt to see if input matches.
-            if profanity_filter==True:
-                global list1
-                with open("profanity.txt") as file_in:
+            if profanity_filter==True and auto_filter_profanity_speedBoost==False:
+                with open("profanity.txt", encoding="ascii") as file_in:
+                    for line in file_in:
+                        list1.append(line.replace('\n',''))
+            if profanity_filter==True and auto_filter_profanity_speedBoost==True:
+                with open("shorter_profanity.txt") as file_in:
                     for line in file_in:
                         list1.append(line.replace('\n',''))
         def filter(var):
+            global list1
             if isinstance(var, str) == True:
-                global list1
                 for i in range(len(list1)):
                     if str(var) == list1[i]:
                         return 1
                 return 0
             else:
-                print(errors.not_str())
+                for i in range(90):
+                    print()
+                print('(Error) Unknown Class. This will not be recorded. Input must be a string.')
     def encrypt_check():
         try:
             open('data_save.aes', 'r')
@@ -718,14 +724,14 @@ if sys.version[0:len(required_version)] == required_version:
                 #You can add as many objects to a row as you please, but it may not fit in your assinged constraints. No problems will occur though.
                 if split==True:
                     new_row=new_row.split()
-                print(new_row)
+                #print(new_row)
                 num1=check(data_base)
                 num2=check(new_row)
                 if num1 == False and num2 == False:
                     data_base=data_base.lower()
                     if isinstance(new_row, list) == True:
                         row.append([data_base,new_row])
-                        print("Added new row!")
+                        #print("Added new row!")
                     if isinstance(new_row, list) == False:
                         print(errors.not_list())
                 if num1 == True or num2 == True:
@@ -924,7 +930,9 @@ if sys.version[0:len(required_version)] == required_version:
                 if num == False:
                     for x in range(len(row)):
                         if (row[x])[0]==data_base:
-                            print(row[x])
+                            pass
+                            #print(row[x])
+                print('Complete')
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.show_row()'))
             def show_lists(data_base=None):
@@ -936,15 +944,15 @@ if sys.version[0:len(required_version)] == required_version:
                             print(lists[x])
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.show_lists'))
-            def all_in_database(data_base=None):
-                num=check(data_base)
+            def all_in_database(database=None):
+                num=check(database)
                 global data_bases, row, debug, sets, rows, type
                 sets=[]
                 rows=[]
                 type=None
                 if num == False:
                     for i in range(len(data_bases)):
-                        if (data_bases[i])[0] == data_base:
+                        if (data_bases[i])[0] == database:
                             if (data_bases[i])[3] == 'list':
                                 if debug==True:
                                     print('(System) List found')
@@ -956,17 +964,23 @@ if sys.version[0:len(required_version)] == required_version:
                                     type='column_row'
                                     break
                     if type == "column_row":
-                        for x in range(len((data_bases[i])[4])):
-                            sets.append(((data_bases[i])[4])[x])
-                        for n in range(len(row)):
-                            if (row[n])[0] == data_base:
-                                rows.append((row[n])[1])
-                        print(sets)
-                        for i in range(len(rows)):
-                            print(rows[i])
+                        if multi_process==True:
+                            a= p(target=data_base.show.show_row(data_base=database))
+                            a.start()
+                            a.join()
+                            freeze_support()
+                        if multi_process==False:
+                            for x in range(len((data_bases[i])[4])):
+                                sets.append(((data_bases[i])[4])[x])
+                            for n in range(len(row)):
+                                if (row[n])[0] == database:
+                                    rows.append((row[n])[1])
+                            print(sets)
+                            for i in range(len(rows)):
+                                print(rows[i])
                     if type == "list":
                         for i in range(len(lists)):
-                            if (lists[i])[0]==data_base:
+                            if (lists[i])[0]==database:
                                 print((lists[i])[1])
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.all()'))
@@ -1155,7 +1169,8 @@ if sys.version[0:len(required_version)] == required_version:
         def incorrect_perm():
             history.create_history('incorrect_perm','Error', manual_record=auto_error_record)
             return '(Error) The permission requested is not allowed.'
-    profanityFilter.setup() #Do not remove
+    if profanity_filter==True:
+        profanityFilter.setup()
     if allow_windows_version == "11":
         allow_windows_version="10"
     if optimize_on_startup==True:
@@ -1187,16 +1202,21 @@ if sys.version[0:len(required_version)] == required_version:
             print('Mac OS')
             # OS X
             if system != "macos":
-                history.create_history(usage='Operating System Exception', user='linux')
+                history.create_history(usage='Operating System Exception', user='macos')
                 exit()
         elif platform == "win32":
             print('Windows')
             # Windows...
             if system != "windows":
-                history.create_history(usage='Operating System Exception', user='linux')
+                history.create_history(usage='Operating System Exception', user='windows')
                 exit() 
-    print('Start up Success!')
     #Gertie normal password
     #W3rS3cur3 global password
     #Test bench
     #<--Indent to here
+    
+
+
+    #Do not remove this!!!!!!
+    if __name__ == '__main__':
+        freeze_support()
