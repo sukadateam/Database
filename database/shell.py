@@ -26,7 +26,18 @@ while True:
             optimize.run(save_optimizations=False)
         choice = ''
     if choice == "7":
-        choice=input('\n\n\n(1)Users\n(2)Add to row\n(3)Show databases\n(4)Delete database\n(5)Remove row\n(6)Show items in database\n(7)Add Column\n(8)Remove Column\nYour choice: ')
+        choice=input('\n\n\n(1)Users\n(2)Add to row\n(3)Show databases\n(4)Delete database\n(5)Remove row\n(6)Show items in database\n(7)Add Column\n(8)Remove Column\n(9)Overload\nYour choice: ')
+        if choice == "9":
+            import random
+            for i in range(999999):
+                a=''
+                b=''
+                for i in range(8):
+                    a+=random.choice('12q9fhecycgy43gf6ucw4b6fxnc')
+                for i in range(8):
+                    b+=random.choice('12q9fhecycgy43gf6ucw4b6fxnc')
+                data_base.edit.add_row(data_base='tools', new_row=[a, b], split=False)
+            save.all()
         if choice == "1":
             other=input('\n\n\n(1)Create user\n(2)Remove user\nYour choice: ')
             if other == "1":
