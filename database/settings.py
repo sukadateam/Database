@@ -43,7 +43,7 @@ skip_history_copy=False
 auto_error_record=True
 #Assign Digit number to history item for a more depth look into the item. And create a database to handle all the data for each assigned item.
 assign_digit_forHistory=False
-#How many digits are allowed to be used to store history.
+#How many digits are allowed to be used to store history. Max 30.
 allowed_digists_forHistory=8
 #An attempt to use more than one cpu core.
 multi_process=True
@@ -51,3 +51,5 @@ multi_process=True
 auto_filter_profanity=False
 #Attempt to speed up the search on inputs by using a smaller version of profanity.txt. Only works if auto_filter_profanity is set to True.
 auto_filter_profanity_speedBoost=False
+#Quit app if one or more settings are incorrect. For safety purposes do not disable.
+quit_ifIncorrect=True
