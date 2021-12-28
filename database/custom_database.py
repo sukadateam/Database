@@ -45,6 +45,107 @@ if sys.version[0:len(required_version)] == required_version:
     if import_type=="data_save":
         print('Import type: Save file')
     import pyAesCrypt
+    def check_settings():
+        print('\nIncorrect settings: ')
+        error_found=False
+        if isinstance(do_not_remove, bool) != True:
+            print('  do_not_remove')
+            error_found=True
+        if isinstance(fail_safe, bool) != True:
+            print('  fail_safe')
+            error_found=True
+        if isinstance(required_version, str) != True:
+            print('  required_version')
+            error_found=True
+        if isinstance(program_version, str) != True:
+            print('  program_version')
+            error_found=True
+        if isinstance(drive_letter, str) != True:
+            print('  drive_letter')
+            error_found=True
+        if isinstance(drive_name, str) != True:
+            print('  drive_name')
+            error_found=True
+        if isinstance(system, str) != True:
+            print('  system')
+            error_found=True
+        if isinstance(profanity_filter, bool) != True:
+            print('  profanity_filter')
+            error_found=True
+        if isinstance(disable_filter_admin, bool) != True:
+            print('  disable_filter_admin')
+            error_found=True
+        if isinstance(global_password, bool) != True:
+            print('  global_password')
+            error_found=True
+        if isinstance(dont_load_save, bool) != True:
+            print('  dont_load_save')
+            error_found=True
+        if isinstance(optimize_on_startup, bool) != True:
+            print('  optimize_on_startup')
+            error_found=True
+        if isinstance(auto_history_record, bool) != True:
+            print('  auto_history_record')
+            error_found=True
+        if isinstance(app_version_control, bool) != True:
+            print('  app_version_control')
+            error_found=True
+        if isinstance(set_operating_system, bool) != True:
+            print('  set_operating_system')
+            error_found=True
+        if isinstance(allow_windows_version, str) != True:
+            print('  allow_windows_version')
+            error_found=True
+        if isinstance(skip_history_copy, bool) != True:
+            print('  skip_history_copy')
+            error_found=True
+        if isinstance(auto_error_record, bool) != True:
+            print('  auto_error_record')
+            error_found=True
+        if isinstance(assign_digit_forHistory, bool) != True:
+            print('  assign_digit_forHistory')
+            error_found=True
+        if isinstance(allowed_digists_forHistory, int) != True:
+            print('  allowed_digists_forHistory')
+            error_found=True
+        if isinstance(multi_process, bool) != True:
+            print('  multi_process')
+            error_found=True
+        if isinstance(auto_filter_profanity, bool) != True:
+            print('  auto_filter_profanity')
+            error_found=True
+        if isinstance(auto_filter_profanity_speedBoost, bool) != True:
+            print('  auto_filter_profanity_speedBoost')
+            error_found=True
+        if isinstance(quit_ifIncorrect, bool) != True:
+            print('  quit_ifIncorrect')
+            error_found=True
+        if error_found==False:
+            print('  None')
+        error_found1=False
+        print('\nOthers:')
+        list2=['7', '8','10','11']
+        found=True
+        for i in range(len(list2)):
+            if allow_windows_version != list2[i]:
+                found=False
+            if allow_windows_version == list2[i]:
+                found=True
+                break
+        if found==False:
+            print('  allow_windows_version must be set to 7, 8, 10, or 11')
+            error_found1=True
+        if len(drive_letter)>1 or len(drive_letter)<1:
+            print('  drive_letter must be 1 character')
+            error_found1=True
+        if allowed_digists_forHistory>30 or allowed_digists_forHistory<1:
+            print('  allowed_digists_forHistory can only be upto 30 and no less than 1.')
+            error_found1=True
+        if error_found1==False:
+            print('  None')
+        if quit_ifIncorrect == True:
+            if error_found==True or error_found1==True:
+                exit()
     class profanityFilter:
         def disable():
             profanityFilter.deactivate()
@@ -1173,9 +1274,12 @@ if sys.version[0:len(required_version)] == required_version:
         profanityFilter.setup()
     if allow_windows_version == "11":
         allow_windows_version="10"
+        #Windows 11 still thinks it's windows 10. I know it's weird.
     if optimize_on_startup==True:
         optimize.run()
+        #Optmize on startup if setting is set to True.
     if app_version_control==True:
+        #Checks what version the app was setup at.
         from version import setup_version
         if program_version != setup_version:
             try:
@@ -1193,29 +1297,30 @@ if sys.version[0:len(required_version)] == required_version:
     if set_operating_system==True:
         from sys import platform
         if platform == "linux" or platform == "linux2":
-            print('Linux Distro.')
+            print('OS: Linux Distro.')
             #Linux
             if system != "linux":
                 history.create_history(usage='Operating System Exception', user='linux')
                 exit()
         elif platform == "darwin":
-            print('Mac OS')
+            print('OS: Mac OS')
             # OS X
             if system != "macos":
                 history.create_history(usage='Operating System Exception', user='macos')
                 exit()
         elif platform == "win32":
-            print('Windows')
+            print('OS: Windows')
             # Windows...
             if system != "windows":
                 history.create_history(usage='Operating System Exception', user='windows')
                 exit() 
+    check_settings()
+    print('System Started Correctly!')
     #Gertie normal password
     #W3rS3cur3 global password
     #Test bench
     #<--Indent to here
     
-
 
     #Do not remove this!!!!!!
     if __name__ == '__main__':
