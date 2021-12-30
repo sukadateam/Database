@@ -1,5 +1,5 @@
 #Things to do next:
-#Fix compadability issues with linux.
+#Fix support issues with linux.
 #Find a fix for path variable. May cause issues on some devices.
 #Create support for macos.
 from multiprocessing import Process as p
@@ -186,6 +186,23 @@ if sys.version[0:len(required_version)] == required_version:
         except:
             return 0
     class history:
+        def check_forDuplicate(user, usage):
+            global debug
+            file=open('history.txt').read()
+            a=len(file)
+            a1=len(user)
+            a2=len(usage)
+            a3=a1+a2+2
+            last_object=(file[a-a3: a])
+            current_object=(user+': '+usage)
+            if current_object==last_object:
+                if debug==True:
+                    print('Match Found. Skipping write to history file.')
+                return 1
+            else:
+                if debug==True:
+                    print('No match found. Writing to history file.')
+                return 0
         def assign_letter():
             global allowed_digists_forHistory
             try:
@@ -231,9 +248,14 @@ if sys.version[0:len(required_version)] == required_version:
                     open('history.txt','r')
                 except:
                     history.create()
-                ah=open('history.txt','a')
-                ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user))
-                ah.close()
+                allow=True
+                if skip_history_copy==True:
+                    if history.check_forDuplicate(user=user, usage=usage) == 1:
+                        allow=False
+                if allow==True:
+                    ah=open('history.txt','a')
+                    ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user))
+                    ah.close()
     class optimize():
         def determ(letter=None, set=None, test=False):
             for i in range(26):
