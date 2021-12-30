@@ -32,15 +32,16 @@ app_version_control=True
 set_operating_system=True
 #Allowed windows versions. You can choose 7, 8, 10, 11. Only works if system setting is set to windows.
 allow_windows_version='10'
-
-
-
-
-#Settings coming soon. Do not change unless your a dare devil.
 #If a record prior what's asked is a duplicate, system will then ignore the task given.
 skip_history_copy=False
 #Enable automated history_file for functions. 
 auto_error_record=True
+#Quit app if one or more settings are incorrect. For safety purposes do not disable.
+quit_ifIncorrect=True
+
+
+
+#Settings coming soon. Do not change unless your a dare devil.
 #Assign Digit number to history item for a more depth look into the item. And create a database to handle all the data for each assigned item.
 assign_digit_forHistory=False
 #How many digits are allowed to be used to store history. Max 30.
@@ -51,5 +52,3 @@ multi_process=True
 auto_filter_profanity=False
 #Attempt to speed up the search on inputs by using a smaller version of profanity.txt. Only works if auto_filter_profanity is set to True.
 auto_filter_profanity_speedBoost=False
-#Quit app if one or more settings are incorrect. For safety purposes do not disable.
-quit_ifIncorrect=True
