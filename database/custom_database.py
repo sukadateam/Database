@@ -190,12 +190,13 @@ if sys.version[0:len(required_version)] == required_version:
             global debug
             file=open('history.txt').read()
             a=len(file)
-            a1=len(user)
-            a2=len(usage)
-            a3=a1+a2+2
+            a3=len(user)+len(usage)+2
             last_object=(file[a-a3: a])
-            current_object=(user+': '+usage)
-            if current_object==last_object:
+            current_object=(usage+': '+user)
+            if debug==True:
+                print('Current:', current_object)
+                print('Last:', last_object)
+            if str(current_object)==str(last_object):
                 if debug==True:
                     print('Match Found. Skipping write to history file.')
                 return 1
