@@ -637,6 +637,11 @@ if sys.version[0:len(required_version)] == required_version:
                 file.write(list[i]+'='+str(globals()[list[i]])+'\n')
             file.write('\n')
             file.close()
+            if advanced_history==True:
+                file=open('history_desc.py', 'w')
+                file.write('history_id='+str(history_id))
+                file.write('\nhistory_description='+str(history_description))
+                file.write('\ncount='+str(count))
     class clear:
         def normal():
             for i in range(100):
