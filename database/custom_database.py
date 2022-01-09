@@ -6,7 +6,10 @@
 from multiprocessing import Process as p
 from multiprocessing.spawn import freeze_support
 import sys, os
-from pyAesCrypt import decryptFile, encryptFile
+try:
+    from pyAesCrypt import decryptFile, encryptFile
+except:
+    print('Please manually install all required items in requirements.txt.')
 password=None
 from settings import *
 found=True
