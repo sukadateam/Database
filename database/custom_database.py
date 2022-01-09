@@ -9,6 +9,16 @@ import sys, os
 from pyAesCrypt import decryptFile, encryptFile
 password=None
 from settings import *
+found=True
+try:
+    import directory
+    import version
+except:
+    found=False
+if found==False:
+    print('Automatic setup in progess.')
+    import get_directory
+    import version_config
 list1=[]
 try:
     from history_desc import *
@@ -1421,7 +1431,7 @@ if sys.version[0:len(required_version)] == required_version:
     #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
-    
+    save.all()
 
     #Do not remove this!!!!!!
     if __name__ == '__main__':
