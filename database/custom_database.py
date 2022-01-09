@@ -2,14 +2,17 @@
 #Fix support issues with linux.
 #Find a fix for path variable. May cause issues on some devices.
 #Create support for macos.
+#Create a python test file to test all functions.
 from multiprocessing import Process as p
 from multiprocessing.spawn import freeze_support
 import sys, os
-from pyAesCrypt.crypto import decryptFile, encryptFile
+from pyAesCrypt import decryptFile, encryptFile
 password=None
 from settings import *
 list1=[]
 count_history=None
+print('This Project is hosted on github. github.com/sukadateam')
+print('If problems occur, try to check if a new version exists.')
 if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:', sys.version[0:len(required_version)])
@@ -44,8 +47,18 @@ if sys.version[0:len(required_version)] == required_version:
         print('Import type: Default')
     if import_type=="data_save":
         print('Import type: Save file')
+    #On linux this import line may say could not import, but it will if the package is installed.
     import pyAesCrypt
+    class inventory:
+        def calc():
+            #Gives a informed idea if items, how many are in the system, how many are currently being used, and how many are not being used.
+            pass
+        def display():
+            #Displays the calculations.
+            pass
     def check_settings():
+        #Checks settings.py to make sure all settings are correct and will not cause a proplem.
+        #If one or more items come back as a problem they will be listed,
         print('\nIncorrect settings: ')
         error_found=False
         if isinstance(do_not_remove, bool) != True:
@@ -148,16 +161,21 @@ if sys.version[0:len(required_version)] == required_version:
                 exit()
     class profanityFilter:
         def disable():
+            #Redirect
             profanityFilter.deactivate()
         def enable():
+            #Redirect
             profanityFilter.activate()
         def activate():
+            #Enables profanity filter
             global profanity_filter
             profanity_filter=True
         def deactivate():
+            #Disables profanity filter
             global profanity_filter
             profanity_filter=False
         def setup():
+            #Called on startup if enabled to setup the filter.
             global profanity_filter, auto_filter_profanity_speedBoost, list1
             #Check profanity.txt to see if input matches.
             if profanity_filter==True and auto_filter_profanity_speedBoost==False:
@@ -169,6 +187,8 @@ if sys.version[0:len(required_version)] == required_version:
                     for line in file_in:
                         list1.append(line.replace('\n',''))
         def filter(var):
+            #Give this function a string to check.
+            #If a match is found 1 is returned. If none, 0 is returned.
             global list1
             if isinstance(var, str) == True:
                 for i in range(len(list1)):
@@ -180,6 +200,8 @@ if sys.version[0:len(required_version)] == required_version:
                     print()
                 print('(Error) Unknown Class. This will not be recorded. Input must be a string.')
     def encrypt_check():
+        #Check to see if save file is encrypted.
+        #Return 1 if encrypted, if not return 0.
         try:
             open('data_save.aes', 'r')
             return 1
@@ -187,6 +209,7 @@ if sys.version[0:len(required_version)] == required_version:
             return 0
     class history:
         def check_forDuplicate(user, usage):
+            #Prevents duplicate items to be recorded.
             global debug
             file=open('history.txt').read()
             a=len(file)
@@ -205,6 +228,7 @@ if sys.version[0:len(required_version)] == required_version:
                     print('No match found. Writing to history file.')
                 return 0
         def assign_letter():
+            #Not in use yet.
             global allowed_digists_forHistory
             try:
                 global count_history
@@ -231,16 +255,20 @@ if sys.version[0:len(required_version)] == required_version:
             file.close()
             return a
         def clear():
+            #Clears history file
             history.delete()
             history.create()
         def delete():
+            #Removes history file
             os.remove('history.txt')
         def create():
+            #Creates history file
             global d1
             ah=open('history.txt','w')
             ah.write('File created: '+d1)
             ah.close()
         def create_history(user, usage, manual_record=False):
+            #Adds items to history file
             if auto_history_record==True or manual_record==True:
                 if user==None:
                     user='Null'
@@ -363,6 +391,7 @@ if sys.version[0:len(required_version)] == required_version:
         if var not in denied_inputs:
             return False
     def exit():
+        print('Application Closed')
         sys.exit()
     class restore:
         def all():
@@ -389,29 +418,49 @@ if sys.version[0:len(required_version)] == required_version:
             return program_version
     class get:
         def try_password(password):
-            global drive_letter
-            try:
-                pyAesCrypt.decryptFile(drive_letter+':/hash.aes',drive_letter+':/hash.txt',password)
-                pyAesCrypt.encryptFile(drive_letter+':/hash.txt',drive_letter+':/hash.aes',password)
-                return 1
-            except:
-                return 0
-        def get_other_hash(password):
-            try:
-                decrypt.hash(password)
+            if system=='windows':
                 global drive_letter
-                file=open(drive_letter+':/hash_other.txt','r').read()
-                os.remove(drive_letter+':/hash_other.txt','r')
-                return file
-            except ValueError:
-                print('Incorrect password!')
+                try:
+                    pyAesCrypt.decryptFile(drive_letter+':/hash.aes',drive_letter+':/hash.txt',password)
+                    pyAesCrypt.encryptFile(drive_letter+':/hash.txt',drive_letter+':/hash.aes',password)
+                    return 1
+                except:
+                    return 0
+            else:
+                try:
+                    pyAesCrypt.decryptFile('hash.aes','hash.txt',password)
+                    pyAesCrypt.encryptFile('hash.txt','hash.aes',password)
+                    return 1
+                except:
+                    return 0
+        def get_other_hash(password):
+            if system=="windows":
+                try:
+                    decrypt.hash(password)
+                    global drive_letter
+                    file=open(drive_letter+':/hash_other.txt','r').read()
+                    os.remove(drive_letter+':/hash_other.txt')
+                    return file
+                except ValueError:
+                    print('Incorrect Password!')
+            else:
+                try:
+                    decrypt.hash(password)
+                    file=open('hash_other.txt','r').read()
+                    os.remove('hash_other.txt')
+                except ValueError:
+                    print('Incorrect Password')
         def get_hash():
             try:
                 password = get.password()
                 decrypt.hash(password)
                 global drive_letter
-                file=open(drive_letter+':/hash.txt','r').read()
-                os.remove(drive_letter+':/hash.txt','r')
+                if system=='windows':
+                    file=open(drive_letter+':/hash.txt','r').read()
+                    os.remove(drive_letter+':/hash.txt')
+                else:
+                    file=open('hash.txt','r')
+                    os.remove('hash.txt')
                 return file
             except ValueError:
                 global global_password
@@ -428,12 +477,20 @@ if sys.version[0:len(required_version)] == required_version:
             if passw == None:
                 password=get.password()
             if other == False:
-                pyAesCrypt.encryptFile(drive_letter+':/hash.txt', drive_letter+':/hash.aes', password)
-                os.remove(drive_letter+':/hash.txt')
+                if system=='windows':
+                    pyAesCrypt.encryptFile(drive_letter+':/hash.txt', drive_letter+':/hash.aes', password)
+                    os.remove(drive_letter+':/hash.txt')
+                else:
+                    pyAesCrypt.encryptFile('hash.txt','hash.aes',password)
+                    os.remove('hash.txt')
             if other == True:
                 if global_password==True:
-                    pyAesCrypt.encryptFile(drive_letter+':/hash_other.txt', drive_letter+':/hash_other.aes', password)
-                    os.remove(drive_letter+':/hash_other.txt')
+                    if system=="windows":
+                        pyAesCrypt.encryptFile(drive_letter+':/hash_other.txt', drive_letter+':/hash_other.aes', password)
+                        os.remove(drive_letter+':/hash_other.txt')
+                    else:
+                        pyAesCrypt.encryptFile('hash_other.txt', 'hash_other.aes', password)
+                        os.remove('hash_other.txt')
         def password():
             return input('Password: ')
         def random_hash(length=100, normal=True):
@@ -445,10 +502,12 @@ if sys.version[0:len(required_version)] == required_version:
                     ah+=random.choice('ajfygweuoichwgbuieucr73rwecb638781417983b 623v9923 r t72344y 23uc3u2b4n9832 4b2c794y 237bc2423nc482b3c427 rfgshdfuw38263872guihfef86w4t878whryfeg48tg34hf7w')
                 if normal==True: 
                     global drive_letter
-                    file=open(drive_letter+':/hash.txt','w')
+                    if system=="windows": file=open(drive_letter+':/hash.txt','w')
+                    else: file=open('hash.txt', 'w')
                     file.write(ah)
                     file.close()
-                    file=open(drive_letter+':/hash_other.txt','w')
+                    if system=="windows": file=open(drive_letter+':/hash_other.txt','w')
+                    else: file=open('hash_other.txt','w')
                     file.write(ah)
                     file.close()
                 if normal==False:
@@ -457,11 +516,19 @@ if sys.version[0:len(required_version)] == required_version:
         def hash(password):
             global drive_letter
             try:
-                pyAesCrypt.decryptFile(drive_letter+':/hash.aes',drive_letter+':/hash.txt',password)
-                return open(drive_letter+':/hash.txt','r').read()
+                if system=='windows':
+                    pyAesCrypt.decryptFile(drive_letter+':/hash.aes',drive_letter+':/hash.txt',password)
+                    return open(drive_letter+':/hash.txt','r').read()
+                else:
+                    pyAesCrypt.decryptFile('hash.aes','hash.txt',password)
+                    return open('hash.txt','r').read()
             except:
-                pyAesCrypt.decryptFile(drive_letter+':/hash_other.aes',drive_letter+':/hash_other.txt',password)
-                return open(drive_letter+':/hash_other.txt','r').read()
+                if system=="windows":
+                    pyAesCrypt.decryptFile(drive_letter+':/hash_other.aes',drive_letter+':/hash_other.txt',password)
+                    return open(drive_letter+':/hash_other.txt','r').read()
+                else:
+                    pyAesCrypt.decryptFile('hash_other.aes','hash_other.txt',password)
+                    return open('hash_other.txt','r').read()
         def history(password):
             try:
                 pyAesCrypt.decryptFile('history.aes','history.txt',password)
@@ -491,11 +558,13 @@ if sys.version[0:len(required_version)] == required_version:
                 return 1
             try:
                 global drive_letter
-                os.remove(drive_letter+':/hash.txt')
+                if system=="windows": os.remove(drive_letter+':/hash.txt')
+                else: os.remove('hash.txt')
             except:
                 pass
             try:
-                os.remove(drive_letter+':/hash_other.txt')
+                if system=="windows": os.remove(drive_letter+':/hash_other.txt')
+                else: os.remove('hash_other.txt')
             except:
                 pass
             #decrypt.cache(d_password)
@@ -1002,6 +1071,7 @@ if sys.version[0:len(required_version)] == required_version:
                         print(errors.not_str())
                 def remove_item(data_base=None, barcode=None):
                     if isinstance(data_base, str) == True and isinstance(barcode, str) == True:
+                        print('Got here')
                         global lists
                         for i in range(len(lists)):
                             if (lists[i])[0]==data_base:
@@ -1015,28 +1085,39 @@ if sys.version[0:len(required_version)] == required_version:
                         for i in range(len(row)):
                             print('Item:',((row[i])[1])[0],' | Serial:',((row[i])[1])[1])
         class empty:
+            def fast_one(database):
+                if multi_process==True:
+                    a= p(target=data_base.empty.one(database, recall=True))
+                    a.start()
+                    a.join()
+                    freeze_support()
             #Clear all info in 1 or more databases.
             def all():
                 history.create_history(None, 'Reset all databases')
                 global lists, row
                 lists=[]
                 row=[]
-            def one(data_base=None):
-                num1=check(data_base)
-                if num1 == False:
-                    a=0
-                    global row, lists
-                    for i in range(len(row)):
-                        if (row[i-a])[0]==data_base:
-                            row.pop(i-a)
-                            a+=1
-                    a=0
-                    for i in range(len(lists)):
-                        if (lists[i-a])[0]==data_base:
-                            lists.pop(i-a)
-                            a+=1
-                if num1 == True:
-                    print(errors.cannot_call_func('data_base.empty.one()'))
+            def one(data_base=None, recall=False):
+                if multi_process==True:
+                    data_base.empty.fast_one(data_base)
+                else:
+                    recall=False
+                if recall==False:
+                    num1=check(data_base)
+                    if num1 == False:
+                        a=0
+                        global row, lists
+                        for i in range(len(row)):
+                            if (row[i-a])[0]==data_base:
+                                row.pop(i-a)
+                                a+=1
+                        a=0
+                        for i in range(len(lists)):
+                            if (lists[i-a])[0]==data_base:
+                                lists.pop(i-a)
+                                a+=1
+                    if num1 == True:
+                        print(errors.cannot_call_func('data_base.empty.one()'))
         class show:
             def show_column(data_base=None):
                 num=check(data_base)
@@ -1054,8 +1135,7 @@ if sys.version[0:len(required_version)] == required_version:
                 if num == False:
                     for x in range(len(row)):
                         if (row[x])[0]==data_base:
-                            pass
-                            #print(row[x])
+                            print((row[x])[1])
                 print('Complete')
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.show_row()'))
@@ -1323,28 +1403,32 @@ if sys.version[0:len(required_version)] == required_version:
             print('OS: Linux Distro.')
             #Linux
             if system != "linux":
+                print('Incorrect OS')
                 history.create_history(usage='Operating System Exception', user='linux')
                 exit()
         elif platform == "darwin":
             print('OS: Mac OS')
             # OS X
             if system != "macos":
+                print('Incorrect OS')
                 history.create_history(usage='Operating System Exception', user='macos')
                 exit()
         elif platform == "win32":
             print('OS: Windows')
             # Windows...
             if system != "windows":
+                print('Incorrect OS')
                 history.create_history(usage='Operating System Exception', user='windows')
                 exit() 
     check_settings()
     print('System Started Correctly!')
-    #Gertie normal password
-    #W3rS3cur3 global password
+    #You must set a Normal level password
+    #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
     
 
     #Do not remove this!!!!!!
     if __name__ == '__main__':
-        freeze_support()
+        if multi_process==True:
+            freeze_support()
