@@ -10,7 +10,10 @@ from pyAesCrypt import decryptFile, encryptFile
 password=None
 from settings import *
 list1=[]
-count_history=None
+try:
+    from history_desc import *
+except:
+    print('Could not find the required file: history_desc.py You may experience problems.')
 print('This Project is hosted on github. github.com/sukadateam')
 print('If problems occur, try to check if a new version exists.')
 if sys.version[0:len(required_version)] != required_version:
@@ -208,6 +211,10 @@ if sys.version[0:len(required_version)] == required_version:
         except:
             return 0
     class history:
+        def add_description(code=None, description=None):
+            if code != None and description != None:
+                if isinstance(code, str)==True and isinstance(description, str)==True:
+                    pass
         def check_forDuplicate(user, usage):
             #Prevents duplicate items to be recorded.
             global debug
@@ -230,29 +237,12 @@ if sys.version[0:len(required_version)] == required_version:
         def assign_letter():
             #Not in use yet.
             global allowed_digists_forHistory
-            try:
-                global count_history
-                if count_history == None:
-                    if sirgw==oiwieof:
-                        pass
-            except:
-                try:
-                    from assign_count import count as count_history
-                except:
-                    file=open('assign_count.py', 'w')
-                    file.write('count="1"')
-                    file.close()
-                from assign_count import count as count_history
-                print('aoifiea')
-            count=int(count_history)
+            count=int(count)
             a=''
-            for i in range(allowed_digists_forHistory-len(str(count_history))):
+            for i in range(allowed_digists_forHistory-len(str(count))):
                 a+='0'
-            a+=str(count_history)
-            count_history+=1
-            file=open('assign_count.py', 'w')
-            file.write('count='+str(count_history))
-            file.close()
+            a+=str(count)
+            count+=1
             return a
         def clear():
             #Clears history file
