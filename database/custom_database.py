@@ -3,6 +3,8 @@
 #Find a fix for path variable. May cause issues on some devices.
 #Create support for macos.
 #Create a python test file to test all functions.
+for i in range(100):
+    print()
 from multiprocessing import Process as p
 from multiprocessing.spawn import freeze_support
 import sys, os
@@ -28,7 +30,7 @@ try:
 except:
     print('Could not find the required file: history_desc.py You may experience problems.')
 print('This Project is hosted on github. github.com/sukadateam')
-print('If problems occur, try to check if a new version exists.')
+print('If problems occur, try to check if a new version exists.\n\n')
 if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:', sys.version[0:len(required_version)])
@@ -224,10 +226,17 @@ if sys.version[0:len(required_version)] == required_version:
         except:
             return 0
     class history:
+        def get_description(code=None):
+            if code!=None:
+                for i in range(len(history_id)):
+                    if history_id[i]==str(code):
+                        print('Code: '+str(code))
+                        print('Message: '+history_description[i])
         def add_description(code=None, description=None):
             if code != None and description != None:
                 if isinstance(code, str)==True and isinstance(description, str)==True:
-                    pass
+                    history_id.append(str(code))
+                    history_description.append(str(description))
         def check_forDuplicate(user, usage):
             #Prevents duplicate items to be recorded.
             global debug
@@ -247,7 +256,7 @@ if sys.version[0:len(required_version)] == required_version:
                 if debug==True:
                     print('No match found. Writing to history file.')
                 return 0
-        def assign_letter():
+        def assign_letter(count):
             #Not in use yet.
             global allowed_digists_forHistory
             count=int(count)
@@ -256,6 +265,7 @@ if sys.version[0:len(required_version)] == required_version:
                 a+='0'
             a+=str(count)
             count+=1
+            save.all()
             return a
         def clear():
             #Clears history file
@@ -270,7 +280,7 @@ if sys.version[0:len(required_version)] == required_version:
             ah=open('history.txt','w')
             ah.write('File created: '+d1)
             ah.close()
-        def create_history(user, usage, manual_record=False):
+        def create_history(user, usage, manual_record=False, add_desc=False, desc=None):
             #Adds items to history file
             if auto_history_record==True or manual_record==True:
                 if user==None:
@@ -285,9 +295,20 @@ if sys.version[0:len(required_version)] == required_version:
                     if history.check_forDuplicate(user=user, usage=usage) == 1:
                         allow=False
                 if allow==True:
-                    ah=open('history.txt','a')
-                    ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user))
-                    ah.close()
+                    if add_desc==True:
+                        if desc!=None:
+                            abc=history.assign_letter(count)
+                            history.add_description(code=abc, description=desc)
+                            ah=open('history.txt','a')
+                            ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user)+' : ('+str(abc)+')')
+                            ah.close()
+                            save.all()
+                        if desc==None:
+                            print('Please give a description to write history.')
+                    if add_desc==False:
+                        ah=open('history.txt','a')
+                        ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user))
+                        ah.close()
     class optimize():
         def determ(letter=None, set=None, test=False):
             for i in range(26):
@@ -1434,7 +1455,7 @@ if sys.version[0:len(required_version)] == required_version:
     #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
-    save.all()
+
 
     #Do not remove this!!!!!!
     if __name__ == '__main__':
