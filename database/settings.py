@@ -7,13 +7,13 @@ fail_safe=True
 #Required python version to run program.
 required_version='3.10.1'
 #Application version. Just for show.
-program_version='0.2.6'
+program_version='0.2.7'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only.
 drive_name='Computer'
 #Operating System or OS. Can be macos, windows or linux. Must be lowercase.
-system='windows'
+system='macos'
 #Filters bad words that people should not be using. USE AT YOUR OWN RISK. Currently in development phase.
 profanity_filter=True
 #Disable profanity filter for admin.
@@ -29,7 +29,7 @@ auto_history_record=False
 #App version control --(Disable if needed)--
 app_version_control=True
 #Only allow set operating system. Change system variable to your choice.
-set_operating_system=True
+set_operating_system=False
 #Allowed windows versions. You can choose 7, 8, 10, 11. Only works if system setting is set to windows.
 allow_windows_version='10'
 #If a record prior what's asked is a duplicate, system will then ignore the task given.
@@ -52,3 +52,12 @@ multi_process=True
 auto_filter_profanity=False
 #Attempt to speed up the search on inputs by using a smaller version of profanity.txt. Only works if auto_filter_profanity is set to True.
 auto_filter_profanity_speedBoost=False
+
+#Settings for application.
+show_background=True
+button_color='white'
+bg_color='#80a8e8'
+text_color='#494b4d'
+button_height=2
+button_width=15
+text_font=30
