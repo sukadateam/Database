@@ -52,6 +52,8 @@ multi_process=True
 auto_filter_profanity=False
 #Attempt to speed up the search on inputs by using a smaller version of profanity.txt. Only works if auto_filter_profanity is set to True.
 auto_filter_profanity_speedBoost=False
+#Record a more informed description of a item in history.txt
+advanced_history=True
 
 #Settings for application.
 show_background=True
