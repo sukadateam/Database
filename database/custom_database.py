@@ -110,84 +110,114 @@ if sys.version[0:len(required_version)] == required_version:
     def check_settings():
         #Checks settings.py to make sure all settings are correct and will not cause a proplem.
         #If one or more items come back as a problem they will be listed,
-        print('\nIncorrect settings: ')
         error_found=False
+        if isinstance(show_incorrect_settings, bool) != True:
+            print('Could not load settings file. Please check to make sure there are no typos.')
+            error_found=True
+            exit()
+        if show_incorrect_settings==True:
+            print('\nIncorrect settings: ')
         if isinstance(do_not_remove, bool) != True:
-            print('  do_not_remove')
+            if show_incorrect_settings==True:
+                print('  do_not_remove')
             error_found=True
         if isinstance(fail_safe, bool) != True:
-            print('  fail_safe')
+            if show_incorrect_settings==True:
+                print('  fail_safe')
             error_found=True
         if isinstance(required_version, str) != True:
-            print('  required_version')
+            if show_incorrect_settings==True:
+                print('  required_version')
             error_found=True
         if isinstance(program_version, str) != True:
-            print('  program_version')
+            if show_incorrect_settings==True:
+                print('  program_version')
             error_found=True
         if isinstance(drive_letter, str) != True:
-            print('  drive_letter')
+            if show_incorrect_settings==True:
+                print('  drive_letter')
             error_found=True
         if isinstance(drive_name, str) != True:
-            print('  drive_name')
+            if show_incorrect_settings==True:
+                print('  drive_name')
             error_found=True
         if isinstance(system, str) != True:
-            print('  system')
+            if show_incorrect_settings==True:
+                print('  system')
             error_found=True
         if isinstance(profanity_filter, bool) != True:
-            print('  profanity_filter')
+            if show_incorrect_settings==True:
+                print('  profanity_filter')
             error_found=True
         if isinstance(disable_filter_admin, bool) != True:
-            print('  disable_filter_admin')
+            if show_incorrect_settings==True:
+                print('  disable_filter_admin')
             error_found=True
         if isinstance(global_password, bool) != True:
-            print('  global_password')
+            if show_incorrect_settings==True:
+                print('  global_password')
             error_found=True
         if isinstance(dont_load_save, bool) != True:
-            print('  dont_load_save')
+            if show_incorrect_settings==True:
+                print('  dont_load_save')
             error_found=True
         if isinstance(optimize_on_startup, bool) != True:
-            print('  optimize_on_startup')
+            if show_incorrect_settings==True:
+                print('  optimize_on_startup')
             error_found=True
         if isinstance(auto_history_record, bool) != True:
-            print('  auto_history_record')
+            if show_incorrect_settings==True:
+                print('  auto_history_record')
             error_found=True
         if isinstance(app_version_control, bool) != True:
-            print('  app_version_control')
+            if show_incorrect_settings==True:
+                print('  app_version_control')
             error_found=True
         if isinstance(set_operating_system, bool) != True:
-            print('  set_operating_system')
+            if show_incorrect_settings==True:
+                print('  set_operating_system')
             error_found=True
         if isinstance(allow_windows_version, str) != True:
-            print('  allow_windows_version')
+            if show_incorrect_settings==True:
+                print('  allow_windows_version')
             error_found=True
         if isinstance(skip_history_copy, bool) != True:
             print('  skip_history_copy')
             error_found=True
         if isinstance(auto_error_record, bool) != True:
-            print('  auto_error_record')
+            if show_incorrect_settings==True:
+                print('  auto_error_record')
             error_found=True
         if isinstance(assign_digit_forHistory, bool) != True:
-            print('  assign_digit_forHistory')
+            if show_incorrect_settings==True:
+                print('  assign_digit_forHistory')
             error_found=True
         if isinstance(allowed_digists_forHistory, int) != True:
-            print('  allowed_digists_forHistory')
+            if show_incorrect_settings==True:
+                print('  allowed_digists_forHistory')
             error_found=True
         if isinstance(multi_process, bool) != True:
-            print('  multi_process')
+            if show_incorrect_settings==True:
+                print('  multi_process')
             error_found=True
         if isinstance(auto_filter_profanity, bool) != True:
-            print('  auto_filter_profanity')
+            if show_incorrect_settings==True:
+                print('  auto_filter_profanity')
             error_found=True
         if isinstance(auto_filter_profanity_speedBoost, bool) != True:
-            print('  auto_filter_profanity_speedBoost')
+            if show_incorrect_settings==True:
+                print('  auto_filter_profanity_speedBoost')
             error_found=True
         if isinstance(quit_ifIncorrect, bool) != True:
-            print('  quit_ifIncorrect')
+            if show_incorrect_settings==True:
+                print('  quit_ifIncorrect')
             error_found=True
         if error_found==False:
-            print('  None')
+            if show_incorrect_settings==True:
+                print('  None')
         error_found1=False
-        print('\nOthers:')
+        if show_incorrect_settings==True:
+           print('\nOthers:')
         list2=['7', '8','10','11']
         found=True
         for i in range(len(list2)):
@@ -197,18 +227,24 @@ if sys.version[0:len(required_version)] == required_version:
                 found=True
                 break
         if found==False:
-            print('  allow_windows_version must be set to 7, 8, 10, or 11')
+            if show_incorrect_settings==True:
+                print('  allow_windows_version must be set to 7, 8, 10, or 11')
             error_found1=True
         if len(drive_letter)>1 or len(drive_letter)<1:
-            print('  drive_letter must be 1 character')
+            if show_incorrect_settings==True:
+                print('  drive_letter must be 1 character')
             error_found1=True
-        if allowed_digists_forHistory>30 or allowed_digists_forHistory<1:
-            print('  allowed_digists_forHistory can only be upto 30 and no less than 1.')
-            error_found1=True
+        if isinstance(allowed_digists_forHistory, int):
+            if allowed_digists_forHistory>30 or allowed_digists_forHistory<1:
+                if show_incorrect_settings==True:
+                    print('  allowed_digists_forHistory can only be upto 30 and no less than 1.')
+                error_found1=True
         if error_found1==False:
-            print('  None')
+            if show_incorrect_settings==True:
+                print('  None')
         if quit_ifIncorrect == True:
             if error_found==True or error_found1==True:
+                print()
                 exit()
     class profanityFilter:
         def disable():
@@ -612,25 +648,28 @@ if sys.version[0:len(required_version)] == required_version:
         def all(password):
             #decrypt.custom_database(password, True) Do not encrypt main file. This file is needed to decrypt!
             try:
-                d_password=decrypt.hash(password)
-                decrypt.data(d_password)
-                decrypt.history(d_password)
-            except ValueError:
-                print('Wrong password.')
-                return 1
-            try:
-                global drive_letter
-                if system=="windows": os.remove(drive_letter+':/hash.txt')
-                else: os.remove('hash.txt')
+                open('history.aes','r')
+                open('data_save.aes','r')
+                try:
+                    d_password=decrypt.hash(password)
+                    decrypt.data(d_password)
+                    decrypt.history(d_password)
+                except ValueError:
+                    print('Wrong password.')
+                    return 1
+                try:
+                    global drive_letter
+                    if system=="windows": os.remove(drive_letter+':/hash.txt')
+                    else: os.remove('hash.txt')
+                except:
+                    pass
+                try:
+                    if system=="windows": os.remove(drive_letter+':/hash_other.txt')
+                    else: os.remove('hash_other.txt')
+                except:
+                    pass
             except:
-                pass
-            try:
-                if system=="windows": os.remove(drive_letter+':/hash_other.txt')
-                else: os.remove('hash_other.txt')
-            except:
-                pass
-            #decrypt.cache(d_password)
-            #decrypt.opt(d_password)
+                print('Cannot decrypt. Encrypted files do not exist.')
     class encrypt:
         def history(password):
             global fail_safe
