@@ -9,4 +9,4 @@ To setup application in windows: Manage application/Windows/setup.bat
 <br><br>Nerdy Stuff:<br>For the absolute latest version download the source code. Not in releases. May cause issues. It won't always be tested before updated. Do not do this if you are looking for a stable version.
 
 <br>Latest Notes:<br>1. macOS, Windows, Linux, and pydroid all support this app.
-<br>2. Updates are slowing down as right now more effort is used on the application using this code.
+<br>2. Updates are increasing to make sure program is stable.
