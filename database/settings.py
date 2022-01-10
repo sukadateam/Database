@@ -14,7 +14,7 @@ drive_letter='E'
 drive_name='Computer'
 #Operating System or OS. Can be macos, windows or linux. Must be lowercase.
 system='macos'
-#Filters bad words that people should not be using. USE AT YOUR OWN RISK. Currently in development phase.
+#Filters bad words that people should not be using. Not currently active.
 profanity_filter=True
 #Disable profanity filter for admin.
 disable_filter_admin=False
@@ -25,7 +25,7 @@ dont_load_save=False
 #Automatically optimize on start up. USE AT YOUR OWN RISK. Currently in development phase.
 optimize_on_startup=False
 #Enable automated history_file for functions
-auto_history_record=False
+auto_history_record=True
 #App version control --(Disable if needed)--
 app_version_control=True
 #Only allow set operating system. Change system variable to your choice.
@@ -38,23 +38,25 @@ skip_history_copy=False
 auto_error_record=True
 #Quit app if one or more settings are incorrect. For safety purposes do not disable.
 quit_ifIncorrect=True
-
-
-
-#Settings coming soon. Do not change unless your a dare devil.
-#Assign Digit number to history item for a more depth look into the item. And create a database to handle all the data for each assigned item.
-assign_digit_forHistory=False
-#How many digits are allowed to be used to store history. Max 30.
-allowed_digists_forHistory=8
-#An attempt to use more than one cpu core.
-multi_process=True
+#Record a more informed description of a item in history.txt
+advanced_history=True
 #Automatically check inputs for profanity. May use more CPU power than normal.
 auto_filter_profanity=False
 #Attempt to speed up the search on inputs by using a smaller version of profanity.txt. Only works if auto_filter_profanity is set to True.
 auto_filter_profanity_speedBoost=False
-#Record a more informed description of a item in history.txt
-advanced_history=True
+#An attempt to use more than one cpu core.
+multi_process=True
+#Assign Digit number to history item for a more depth look into the item. And create a database to handle all the data for each assigned item.
+assign_digit_forHistory=False
+#How many digits are allowed to be used to store history. Max 30.
+allowed_digists_forHistory=8
 
+
+#Settings coming soon. Do not change unless your a dare devil.
+#No settings are pending. Please submit your request on github.
+
+
+#Remove if you aren't using my custom application.
 #Settings for application.
 show_background=True
 button_color='white'
