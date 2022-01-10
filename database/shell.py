@@ -2,12 +2,19 @@
 #remove_column has had no testing done at all.
 #Optimize save file has had no test done at all.
 from custom_database import *
+profanityFilter.setup()
 while True:
     for i in range(10):
         print('')
-    choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\n(8)Optimize save file\nYour choice: ')
+    choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\n(8)Optimize save file\n(9)Check profanity\nYour choice: ')
+    if choice == "9":
+        if profanityFilter.filter(var=input('Your input: ').lower()) == 1:
+            print('Match Found')
+        else:
+            print('Match Not Found')
     if choice == "1":
         get.new_hash() #Makes a new hash
+        get.encrypt_hash(other=True, passw=input('Backup Password: '))
     if choice == "2":
         encrypt.all(password=str(input('Password: ')))
     if choice == "3":
@@ -29,7 +36,7 @@ while True:
         choice=input('\n\n\n(1)Users\n(2)Add to row\n(3)Show databases\n(4)Delete database\n(5)Remove row\n(6)Show items in database\n(7)Add Column\n(8)Remove Column\n(9)Overload\nYour choice: ')
         if choice == "9":
             import random
-            for i in range(999999):
+            for i in range(50):
                 a=''
                 b=''
                 for i in range(8):
@@ -53,7 +60,7 @@ while True:
         if choice == "5":
             data_base.edit.remove_row(data_base=str(input('Database: ')))
         if choice == "6":
-            data_base.show.all_in_database(data_base=str(input('Database: ')))
+            data_base.show.all_in_database(database=str(input('Database: ')))
         if choice == "7":
             data_base.edit.add_column(data_base=str(input('Database: ')), column_name=str(input('What is the new column: ')))
         if choice == "8":
