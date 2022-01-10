@@ -23,6 +23,14 @@ try:
             os.remove('history.txt')
         except:
             print('history.txt not found')
+        try:
+            os.remove('hash_other.aes')
+        except:
+            pass
+        try:
+            os.remove('hash.aes')
+        except:
+            pass
         print('Now remove __pycache__ manually')
         print('Exiting...')
         ex=True
@@ -90,6 +98,17 @@ if sys.version[0:len(required_version)] == required_version:
         print('Import type: Save file')
     #On linux this import line may say could not import, but it will if the package is installed.
     import pyAesCrypt
+    def check_settingsImproved():
+        found=False
+        settings=[auto_filter_profanity_speedBoost, quit_ifIncorrect, allowed_digists_forHistory, multi_process, auto_filter_profanity, skip_history_copy, auto_error_record, assign_digit_forHistory, app_version_control, set_operating_system, allow_windows_version, auto_history_record, show_incorrect_settings, do_not_remove, fail_safe, required_version, program_version, drive_letter, drive_name, system, profanity_filter, disable_filter_admin, global_password, dont_load_save, optimize_on_startup]
+        types=[bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
+        for i in range(len(settings)):
+            if isinstance(settings[i], types[i]) == False:
+                found=True
+        if found==True:
+            print("1 or More settings are incorrect.")
+            exit()
+        check_settings()
     class inventory:
         def determ():
             if multi_process==True:
@@ -110,114 +129,9 @@ if sys.version[0:len(required_version)] == required_version:
     def check_settings():
         #Checks settings.py to make sure all settings are correct and will not cause a proplem.
         #If one or more items come back as a problem they will be listed,
-        error_found=False
-        if isinstance(show_incorrect_settings, bool) != True:
-            print('Could not load settings file. Please check to make sure there are no typos.')
-            error_found=True
-            exit()
-        if show_incorrect_settings==True:
-            print('\nIncorrect settings: ')
-        if isinstance(do_not_remove, bool) != True:
-            if show_incorrect_settings==True:
-                print('  do_not_remove')
-            error_found=True
-        if isinstance(fail_safe, bool) != True:
-            if show_incorrect_settings==True:
-                print('  fail_safe')
-            error_found=True
-        if isinstance(required_version, str) != True:
-            if show_incorrect_settings==True:
-                print('  required_version')
-            error_found=True
-        if isinstance(program_version, str) != True:
-            if show_incorrect_settings==True:
-                print('  program_version')
-            error_found=True
-        if isinstance(drive_letter, str) != True:
-            if show_incorrect_settings==True:
-                print('  drive_letter')
-            error_found=True
-        if isinstance(drive_name, str) != True:
-            if show_incorrect_settings==True:
-                print('  drive_name')
-            error_found=True
-        if isinstance(system, str) != True:
-            if show_incorrect_settings==True:
-                print('  system')
-            error_found=True
-        if isinstance(profanity_filter, bool) != True:
-            if show_incorrect_settings==True:
-                print('  profanity_filter')
-            error_found=True
-        if isinstance(disable_filter_admin, bool) != True:
-            if show_incorrect_settings==True:
-                print('  disable_filter_admin')
-            error_found=True
-        if isinstance(global_password, bool) != True:
-            if show_incorrect_settings==True:
-                print('  global_password')
-            error_found=True
-        if isinstance(dont_load_save, bool) != True:
-            if show_incorrect_settings==True:
-                print('  dont_load_save')
-            error_found=True
-        if isinstance(optimize_on_startup, bool) != True:
-            if show_incorrect_settings==True:
-                print('  optimize_on_startup')
-            error_found=True
-        if isinstance(auto_history_record, bool) != True:
-            if show_incorrect_settings==True:
-                print('  auto_history_record')
-            error_found=True
-        if isinstance(app_version_control, bool) != True:
-            if show_incorrect_settings==True:
-                print('  app_version_control')
-            error_found=True
-        if isinstance(set_operating_system, bool) != True:
-            if show_incorrect_settings==True:
-                print('  set_operating_system')
-            error_found=True
-        if isinstance(allow_windows_version, str) != True:
-            if show_incorrect_settings==True:
-                print('  allow_windows_version')
-            error_found=True
-        if isinstance(skip_history_copy, bool) != True:
-            print('  skip_history_copy')
-            error_found=True
-        if isinstance(auto_error_record, bool) != True:
-            if show_incorrect_settings==True:
-                print('  auto_error_record')
-            error_found=True
-        if isinstance(assign_digit_forHistory, bool) != True:
-            if show_incorrect_settings==True:
-                print('  assign_digit_forHistory')
-            error_found=True
-        if isinstance(allowed_digists_forHistory, int) != True:
-            if show_incorrect_settings==True:
-                print('  allowed_digists_forHistory')
-            error_found=True
-        if isinstance(multi_process, bool) != True:
-            if show_incorrect_settings==True:
-                print('  multi_process')
-            error_found=True
-        if isinstance(auto_filter_profanity, bool) != True:
-            if show_incorrect_settings==True:
-                print('  auto_filter_profanity')
-            error_found=True
-        if isinstance(auto_filter_profanity_speedBoost, bool) != True:
-            if show_incorrect_settings==True:
-                print('  auto_filter_profanity_speedBoost')
-            error_found=True
-        if isinstance(quit_ifIncorrect, bool) != True:
-            if show_incorrect_settings==True:
-                print('  quit_ifIncorrect')
-            error_found=True
-        if error_found==False:
-            if show_incorrect_settings==True:
-                print('  None')
         error_found1=False
         if show_incorrect_settings==True:
-           print('\nOthers:')
+           print('\nUnknown answers:')
         list2=['7', '8','10','11']
         found=True
         for i in range(len(list2)):
@@ -243,7 +157,7 @@ if sys.version[0:len(required_version)] == required_version:
             if show_incorrect_settings==True:
                 print('  None')
         if quit_ifIncorrect == True:
-            if error_found==True or error_found1==True:
+            if error_found1==True:
                 print()
                 exit()
     class profanityFilter:
@@ -747,18 +661,21 @@ if sys.version[0:len(required_version)] == required_version:
                 return 1
     class save:
         def all():
-            history.create_history(None, 'Save')
-            from vars_to_save import list
-            file=open('data_save.py','w')
-            for i in range(len(list)):
-                file.write(list[i]+'='+str(globals()[list[i]])+'\n')
-            file.write('\n')
-            file.close()
-            if advanced_history==True:
-                file=open('history_desc.py', 'w')
-                file.write('history_id='+str(history_id))
-                file.write('\nhistory_description='+str(history_description))
-                file.write('\ncount='+str(count))
+            if disable_save==False:
+                history.create_history(None, 'Save')
+                from vars_to_save import list
+                file=open('data_save.py','w')
+                for i in range(len(list)):
+                    file.write(list[i]+'='+str(globals()[list[i]])+'\n')
+                file.write('\n')
+                file.close()
+                if advanced_history==True:
+                    file=open('history_desc.py', 'w')
+                    file.write('history_id='+str(history_id))
+                    file.write('\nhistory_description='+str(history_description))
+                    file.write('\ncount='+str(count))
+            if disable_save==True:
+                pass
     class clear:
         def normal():
             for i in range(100):
