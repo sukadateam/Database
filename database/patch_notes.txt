@@ -1,2 +1,0 @@
-1. Added lots of new settings.
-2. Added a new feature to check if settings are working correctly.
