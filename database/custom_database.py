@@ -1,8 +1,6 @@
 #Things to do next:
-#Fix support issues with linux.
-#Find a fix for path variable. May cause issues on some devices.
-#Create support for macos.
 #Create a python test file to test all functions.
+#Add new items to profanity.txt
 for i in range(100):
     print()
 from multiprocessing import Process as p
@@ -68,9 +66,19 @@ if sys.version[0:len(required_version)] == required_version:
     #On linux this import line may say could not import, but it will if the package is installed.
     import pyAesCrypt
     class inventory:
+        def determ():
+            if multi_process==True:
+                a= p(target=inventory.calc())
+                a.start()
+                a.join()
+                freeze_support()
+            if multi_process==False:
+                inventory.calc()
         def calc():
             #Gives a informed idea if items, how many are in the system, how many are currently being used, and how many are not being used.
-            pass
+            rows1=[]
+            for i in range(len(row)):
+                pass
         def display():
             #Displays the calculations.
             pass
@@ -227,12 +235,15 @@ if sys.version[0:len(required_version)] == required_version:
             return 0
     class history:
         def get_description(code=None):
+            #Print description of selected history item in terminal if message is found.
             if code!=None:
                 for i in range(len(history_id)):
                     if history_id[i]==str(code):
                         print('Code: '+str(code))
                         print('Message: '+history_description[i])
         def add_description(code=None, description=None):
+            #Create a description for history if requested.
+            #This is automatically called if used.
             if code != None and description != None:
                 if isinstance(code, str)==True and isinstance(description, str)==True:
                     history_id.append(str(code))
@@ -296,7 +307,7 @@ if sys.version[0:len(required_version)] == required_version:
                         allow=False
                 if allow==True:
                     if add_desc==True:
-                        if desc!=None:
+                        if desc!=None and assign_digit_forHistory==True:
                             abc=history.assign_letter(count)
                             history.add_description(code=abc, description=desc)
                             ah=open('history.txt','a')
@@ -340,6 +351,7 @@ if sys.version[0:len(required_version)] == required_version:
                 print('All data saved.')
                 save.all()
         def count(var):
+            #Count items in lists and get a rough count.
             opto=[]
             alphabet='abcdefghijklmnopqrstuvwxyz '
             for i in range(26):
@@ -355,6 +367,7 @@ if sys.version[0:len(required_version)] == required_version:
                 count+=1
             return opto
         def list_org(var):
+            #Creates a list of alphabet count. Hard to explain. It makes opto_ row, list, and data
             org=[]
             max=len(globals()[var])
             current=0
