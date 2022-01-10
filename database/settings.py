@@ -7,7 +7,7 @@ fail_safe=True
 #Required python version to run program.
 required_version='3.10.1'
 #Application version. Just for show.
-program_version='0.2.7'
+program_version='0.2.8'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only.
@@ -29,7 +29,7 @@ auto_history_record=True
 #App version control --(Disable if needed)--
 app_version_control=True
 #Only allow set operating system. Change system variable to your choice.
-set_operating_system=False
+set_operating_system=True
 #Allowed windows versions. You can choose 7, 8, 10, 11. Only works if system setting is set to windows.
 allow_windows_version='10'
 #If a record prior what's asked is a duplicate, system will then ignore the task given.
@@ -50,11 +50,12 @@ multi_process=True
 assign_digit_forHistory=False
 #How many digits are allowed to be used to store history. Max 30.
 allowed_digists_forHistory=8
+#Will still check for incorrect settings if quit_ifIncorrect is True, but won't display anything.
+show_incorrect_settings=True
 
 
 #Settings coming soon. Do not change unless your a dare devil.
-#No settings are pending. Please submit your request on github.
-
+#No settings are pending. Send a request on GitHub for ideas.
 
 #Remove if you aren't using my custom application.
 #Settings for application.
