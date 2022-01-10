@@ -564,7 +564,7 @@ if sys.version[0:len(required_version)] == required_version:
                 global global_password
                 if global_password==True:
                     get.get_other_hash(password)
-        def new_hash(passw=None):
+        def new_hash(passw=None, normal=False):
             get.random_hash()
             get.encrypt_hash(passw)
             password=None
@@ -729,11 +729,17 @@ if sys.version[0:len(required_version)] == required_version:
                 #encrypt.opt(d_password)
                 global drive_letter
                 try:
-                    os.remove(drive_letter+':/hash.txt')
+                    if system=="windows":
+                        os.remove(drive_letter+':/hash.txt')
+                    else:
+                        os.remove('hash.txt')
                 except:
                     pass
                 try:
-                    os.remove(drive_letter+':/hash_other.txt')
+                    if system=="windows":
+                        os.remove(drive_letter+':/hash_other.txt')
+                    else:
+                        os.remove('hash_other.txt')
                 except:
                     pass
             except ValueError:
