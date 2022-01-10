@@ -1,7 +1,8 @@
-Temporary fix for linux.
+For all devices.
 
-goto Database/database
-install all items manually in requirements.txt
-run get_directory.py
+Manually install items in requirements.txt then
+Run custom_database.py
 
-And your all set!
+All done.
+
+Custom_database now automatically sets things up on startup.
