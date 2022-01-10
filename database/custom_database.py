@@ -1,24 +1,49 @@
 #Things to do next:
 #Create a python test file to test all functions.
 #Add new items to profanity.txt
-for i in range(100):
-    print()
+import sys, os
+n = list(sys.argv)
+ex=False
+try:
+    print ('Argument:',n[1])
+    if str(n[1])=="-r":
+        try:
+            os.remove('data_save,py')
+        except:
+            print('data_save.py not found')
+        try:
+            os.remove('version.py')
+        except:
+            print('version.py not found')
+        try:
+            os.remove('directory.py')
+        except:
+            print('directory,py not found')
+        try:
+            os.remove('history.txt')
+        except:
+            print('history.txt not found')
+        print('Now remove __pycache__ manually')
+        print('Exiting...')
+        ex=True
+except:
+    pass
+if ex==True:
+    sys.exit()
 from multiprocessing import Process as p
 from multiprocessing.spawn import freeze_support
-import sys, os
+for i in range(100):
+    print('')
 try:
     from pyAesCrypt import decryptFile, encryptFile
 except:
     print('Please manually install all required items in requirements.txt.')
 password=None
 from settings import *
-found=True
 try:
     import directory
     import version
 except:
-    found=False
-if found==False:
     print('Automatic setup in progess.')
     import get_directory
     import version_config
