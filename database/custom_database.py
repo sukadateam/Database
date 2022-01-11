@@ -708,7 +708,7 @@ if sys.version[0:len(required_version)] == required_version:
                     print(errors.cannot_call_func('check.data_base_exists()'))
     class users:
         def disable(user=None):
-            num=check(user)
+            num=check_input(user)
             #Disables a user
             if num == False:
                 global known_users, active_users
@@ -719,7 +719,7 @@ if sys.version[0:len(required_version)] == required_version:
             if num == True:
                 print(errors.cannot_call_func('users.disable()'))
         def enable(user=None):
-            num=check(user)
+            num=check_input(user)
             #Enables a user
             if num == False:
                 global known_users, active_users
@@ -731,8 +731,8 @@ if sys.version[0:len(required_version)] == required_version:
                 print(errors.cannot_call_func('users.disable()'))
         def create(new_user=None, new_password=None, new_permission=None):
             global known_users, passwords, permissions
-            num1=check(new_user)
-            num2=check(new_password)
+            num1=check_input(new_user)
+            num2=check_input(new_password)
             try:
                 new_user=new_user.lower()
                 new_permission=new_permission.lower()
@@ -764,7 +764,7 @@ if sys.version[0:len(required_version)] == required_version:
             if num1 == True or num2 == True:
                 print(errors.cannot_call_func('users.create()'))
         def remove(user=None):
-            num=check(user)
+            num=check_input(user)
             if num == False:
                 user=user.lower()
                 found=False
@@ -788,8 +788,8 @@ if sys.version[0:len(required_version)] == required_version:
                 print('User: '+known_users[i])
                 print('Permission: '+permissions[i])
         def change_permissions(user=None, new_permission=None):
-            num1=check(user)
-            num2=check(new_permission)
+            num1=check_input(user)
+            num2=check_input(new_permission)
             if num1 == False and num2 == False:
                 for i in range(len(known_users)):
                     if known_users[i]==user:
@@ -798,8 +798,8 @@ if sys.version[0:len(required_version)] == required_version:
             if num1 == True or num2 == True:
                 print(errors.cannot_call_func('users.change_permissions()'))
         def change_name(user=None, new_name=None):
-            num1=check(user)
-            num2=check(new_name)
+            num1=check_input(user)
+            num2=check_input(new_name)
             if num1 == False and num2 == False:
                 for i in range(len(known_users)):
                     if known_users[i]==user:
@@ -809,7 +809,7 @@ if sys.version[0:len(required_version)] == required_version:
                 print(errors.cannot_call_func('users.change_name()'))
         def change_password(user=None, new_password=None):
             global passwords
-            num=check(user)
+            num=check_input(user)
             if num == False:
                 for i in range(len(known_users)):
                     if known_users[i]==user:
@@ -894,8 +894,8 @@ if sys.version[0:len(required_version)] == required_version:
                 history.create_history(item_to_add, 'Add item')
                 #Used for the list types.
                 global data_bases, lists
-                num1=check(data_base)
-                num2=check(item_to_add)
+                num1=check_input(data_base)
+                num2=check_input(item_to_add)
                 letter_spot=optimize.determ(letter=data_base[0])
                 if num1 == False and num2 == False:
                     if create_if_notExist == True:
@@ -920,8 +920,8 @@ if sys.version[0:len(required_version)] == required_version:
             def remove_item(data_base=None, item_to_remove=None):
                 history.create_history(item_to_remove, 'Remove item')
                 #Used for the list types.
-                num1=check(data_base)
-                num2=check(item_to_remove)
+                num1=check_input(data_base)
+                num2=check_input(item_to_remove)
                 global data_bases, lists
                 letter_spot=optimize.determ(letter=data_base[0], set='opto_data')
                 if num1 == False and num2 == False:
@@ -945,8 +945,8 @@ if sys.version[0:len(required_version)] == required_version:
                 if split==True:
                     new_row=new_row.split()
                 #print(new_row)
-                num1=check(data_base)
-                num2=check(new_row)
+                num1=check_input(data_base)
+                num2=check_input(new_row)
                 if num1 == False and num2 == False:
                     data_base=data_base.lower()
                     if isinstance(new_row, list) == True:
@@ -957,7 +957,7 @@ if sys.version[0:len(required_version)] == required_version:
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.add_row()'))
             def remove_row(data_base=None):
-                num1=check(data_base)
+                num1=check_input(data_base)
                 if num1 == False:
                     data_base=data_base.lower()
                     history.create_history(data_base, 'Remove row')
@@ -1008,8 +1008,8 @@ if sys.version[0:len(required_version)] == required_version:
             def add_column(data_base=None, column_name=None):
                 history.create_history(column_name, 'Add column')
                 letter_spot=optimize.determ(letter=data_base[0], set='opto_data')
-                num1=check(data_base)
-                num2=check(column_name)
+                num1=check_input(data_base)
+                num2=check_input(column_name)
                 global debug, data_bases
                 found=False
                 for i in range(len(data_bases)):
@@ -1031,8 +1031,8 @@ if sys.version[0:len(required_version)] == required_version:
             def remove_column(data_base=None, column=None, remove_row=False):
                 try:
                     history.create_history(column, 'Remove Column')
-                    num1=check(data_base)
-                    num2=check(column)
+                    num1=check_input(data_base)
+                    num2=check_input(column)
                     found=False
                     letter_spot=optimize.determ(letter=data_base[0])
                     if num1 == False and num2 == False:
@@ -1129,7 +1129,7 @@ if sys.version[0:len(required_version)] == required_version:
             def one(database=None, recall=False):
                 #Empty all data compiled for one database.
                 if recall==False:
-                    num1=check(database)
+                    num1=check_input(database)
                     if num1 == False:
                         a=0
                         global row, lists
@@ -1146,7 +1146,7 @@ if sys.version[0:len(required_version)] == required_version:
                         print(errors.cannot_call_func('data_base.empty.one()'))
         class show:
             def show_column(data_base=None):
-                num=check(data_base)
+                num=check_input(data_base)
                 if num == False:
                     for i in range(len(data_bases)):
                         if (data_bases[i])[0]==data_base:
@@ -1155,7 +1155,7 @@ if sys.version[0:len(required_version)] == required_version:
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.show_column()'))
             def show_row(data_base=None):
-                num=check(data_base)
+                num=check_input(data_base)
                 #Must be column_row type
                 global row
                 if num == False:
@@ -1166,7 +1166,7 @@ if sys.version[0:len(required_version)] == required_version:
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.show_row()'))
             def show_lists(data_base=None):
-                num=check(data_base)
+                num=check_input(data_base)
                 global lists
                 if num == False:
                     for x in range(len(lists)):
@@ -1175,7 +1175,7 @@ if sys.version[0:len(required_version)] == required_version:
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.show_lists'))
             def all_in_database(database=None):
-                num=check(database)
+                num=check_input(database)
                 global data_bases, row, debug, sets, rows, type
                 sets=[]
                 rows=[]
@@ -1220,7 +1220,7 @@ if sys.version[0:len(required_version)] == required_version:
                 for i in range(len(data_bases)):
                     print('  ',(data_bases[i])[0])
             def info(data_base=None):
-                num=check(data_base)
+                num=check_input(data_base)
                 global data_bases, type
                 if num == False:
                     type=None
@@ -1257,7 +1257,7 @@ if sys.version[0:len(required_version)] == required_version:
                 row=[]
             def one_set(data_base=None):
                 history.create_history(None, 'Remove One Set')
-                num=check(data_base)
+                num=check_input(data_base)
                 global data_bases, row, lists
                 if num == False:
                     found=False
@@ -1316,8 +1316,8 @@ if sys.version[0:len(required_version)] == required_version:
                 #If database doesn't exist continue on creating it.
                 if found3 == True and found2 == True and found1 == False:
                     print('Database created!')
-                    num1=check(data_base)
-                    num2=check(type)
+                    num1=check_input(data_base)
+                    num2=check_input(type)
                     if num1 == False and num2 == False:
                         if isinstance(owner, str) == True and isinstance(type, str) == True and isinstance(owner, str) == True and isinstance(status, bool) :
                             if columns==None or isinstance(columns, list) == True:
@@ -1344,7 +1344,7 @@ if sys.version[0:len(required_version)] == required_version:
         def set_min_length(value=None):
             history.create_history(str(value), 'Set min length')
             global min_length
-            num=check(value)
+            num=check_input(value)
             if num==False and isinstance(value, int) == True:
                 min_length=value
             if isinstance(value, int) == False:
@@ -1354,7 +1354,7 @@ if sys.version[0:len(required_version)] == required_version:
         def set_max_length(value=None):
             history.create_history(str(value), 'Set max length')
             global max_length
-            num=check(value)
+            num=check_input(value)
             if num == False and isinstance(value, int) == True:
                 max_length=value
             if num == True:
