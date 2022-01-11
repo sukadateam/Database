@@ -7,7 +7,7 @@ fail_safe=True
 #Required python version to run program.
 required_version='3.10.1'
 #Application version. Just for show.
-program_version='0.2.8'
+program_version='0.2.9'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only.
@@ -21,7 +21,7 @@ disable_filter_admin=False
 #A backup password in case the other is forgotten.
 global_password=True
 #Don't load save file. True: Skip save file -- False: Load defualt file not save file.
-dont_load_save=False
+dont_load_save=True
 #Automatically optimize on start up. USE AT YOUR OWN RISK. Currently in development phase.
 optimize_on_startup=False
 #Enable automated history_file for functions
@@ -33,7 +33,7 @@ set_operating_system=True
 #Allowed windows versions. You can choose 7, 8, 10, 11. Only works if system setting is set to windows.
 allow_windows_version='10'
 #If a record prior what's asked is a duplicate, system will then ignore the task given.
-skip_history_copy=False
+skip_history_copy=True
 #Enable automated history_file for functions. 
 auto_error_record=True
 #Quit app if one or more settings are incorrect. For safety purposes do not disable.
@@ -45,17 +45,26 @@ auto_filter_profanity=False
 #Attempt to speed up the search on inputs by using a smaller version of profanity.txt. Only works if auto_filter_profanity is set to True.
 auto_filter_profanity_speedBoost=False
 #An attempt to use more than one cpu core.
-multi_process=True
+multi_process=False
 #Assign Digit number to history item for a more depth look into the item. And create a database to handle all the data for each assigned item.
 assign_digit_forHistory=False
 #How many digits are allowed to be used to store history. Max 30.
 allowed_digists_forHistory=8
 #Will still check for incorrect settings if quit_ifIncorrect is True, but won't display anything.
 show_incorrect_settings=True
-
+#Will deny the program from saving. No matter what. Will cause problems for long term.
+disable_save=True
 
 #Settings coming soon. Do not change unless your a dare devil.
 #No settings are pending. Send a request on GitHub for ideas.
+#If a setting is missing, not present, or not there, skip it.
+skip_missing_settings=False
+strict_password=True
+
+#min and max password lengths, and allowed characters
+min_length=5
+max_length=8
+allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'
 
 #Remove if you aren't using my custom application.
 #Settings for application.
