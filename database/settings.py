@@ -54,17 +54,18 @@ allowed_digists_forHistory=8
 show_incorrect_settings=True
 #Will deny the program from saving. No matter what. Will cause problems for long term.
 disable_save=True
+#min and max password lengths, and allowed characters
+min_length=5
+max_length=8
+allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'
+#Passwords have to meet the requirments set above.
+strict_password=True
 
 #Settings coming soon. Do not change unless your a dare devil.
 #No settings are pending. Send a request on GitHub for ideas.
 #If a setting is missing, not present, or not there, skip it.
 skip_missing_settings=False
-strict_password=True
 
-#min and max password lengths, and allowed characters
-min_length=5
-max_length=8
-allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'
 
 #Remove if you aren't using my custom application.
 #Settings for application.
