@@ -675,7 +675,7 @@ if sys.version[0:len(required_version)] == required_version:
                     file.write('\nhistory_description='+str(history_description))
                     file.write('\ncount='+str(count))
             if disable_save==True:
-                pass
+                history.create_history(user='True', usage='Skip Save', manual_record=auto_error_record)
     class clear:
         def normal():
             for i in range(100):
@@ -741,26 +741,29 @@ if sys.version[0:len(required_version)] == required_version:
             if new_permission not in allowed_users:
                 print(errors.incorrect_perm())
             if num1 == False and num2 == False and new_permission in allowed_users:
-                skip=False
-                for i in range(len(known_users)):
-                    if known_users[i]==new_user:
-                        skip=True
-                        print(errors.user_exists())
-                if skip == False:
-                    if isinstance(new_user, str) == True:
-                        if isinstance(new_password, str) == True:
-                            if isinstance(new_permission, str) == True or new_permission==None:
-                                history.create_history(new_user, 'Created user')
-                                known_users.append(new_user)
-                                passwords.append(new_password)
-                                permissions.append(new_permission)
-                                active_users.append(True)
-                    if isinstance(new_user, str) == False:
-                        print('new_user must be str')
-                    if isinstance(new_permission, str) == False:
-                        print('new_permission must be str')
-                    if isinstance(new_permission, str) == False and new_permission != None:
-                        print('new_password must be str or None') 
+                if password_restrictions.check_password(new_password) == 1 or strict_password==False:
+                    skip=False
+                    for i in range(len(known_users)):
+                        if known_users[i]==new_user:
+                            skip=True
+                            print(errors.user_exists())
+                    if skip == False:
+                        if isinstance(new_user, str) == True:
+                            if isinstance(new_password, str) == True:
+                                if isinstance(new_permission, str) == True or new_permission==None:
+                                    history.create_history(new_user, 'Created user')
+                                    known_users.append(new_user)
+                                    passwords.append(new_password)
+                                    permissions.append(new_permission)
+                                    active_users.append(True)
+                        if isinstance(new_user, str) == False:
+                            print('new_user must be str')
+                        if isinstance(new_permission, str) == False:
+                            print('new_permission must be str')
+                        if isinstance(new_permission, str) == False and new_permission != None:
+                            print('new_password must be str or None') 
+                else:
+                    print(errors.doesNotObeyRestrictions())
             if num1 == True or num2 == True:
                 print(errors.cannot_call_func('users.create()'))
         def remove(user=None):
@@ -1341,9 +1344,19 @@ if sys.version[0:len(required_version)] == required_version:
                     if num1 == True and num2 == True:
                         print(errors.cannot_call_func('data_base.create.datebase()'))
     class password_restrictions:
+        def check_password(password):
+            pass_1=0
+            if len(password)>min_length-1 and len(password)-1<max_length:
+                for i in range(len(password)):
+                    if password[i] in allowedPassword_chars:
+                        pass_1=1
+                    else:
+                        print('Incorrect Item:',password[i])
+                        return 0
+            return pass_1
+
         def set_min_length(value=None):
             history.create_history(str(value), 'Set min length')
-            global min_length
             num=check_input(value)
             if num==False and isinstance(value, int) == True:
                 min_length=value
@@ -1353,13 +1366,15 @@ if sys.version[0:len(required_version)] == required_version:
                 print(errors.cannot_call_func('password_restrictions.set_min_length()'))
         def set_max_length(value=None):
             history.create_history(str(value), 'Set max length')
-            global max_length
             num=check_input(value)
             if num == False and isinstance(value, int) == True:
                 max_length=value
             if num == True:
                 print(errors.cannot_call_func('password_restrictions.set_max_length()'))
     class errors:
+        def doesNotObeyRestrictions():
+            history.create_history('doesNotObeyRestrictions', 'Error', manual_record=auto_error_record)
+            return('(Error) Password given does not meet the requirments.')
         def database_does_not_exist():
             history.create_history('database_does_not_exist', 'Error', manual_record=auto_error_record)
             return '(Error) Database requested could not be found.'
