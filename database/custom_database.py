@@ -5,7 +5,14 @@ import sys, os
 n = list(sys.argv)
 ex=False
 try:
-    print ('Argument:',n[1])
+    #print ('Argument:',n[1])
+    if str(n[1])=="-v":
+        print('Current Version: '+program_version)
+        ex=True
+    if str(n[1])=="-info":
+        print('Created By Brandon Robinson.')
+        print('GitHub: github.com/sukadateam')
+        ex=True
     if str(n[1])=="-r":
         try:
             os.remove('data_save,py')
@@ -100,11 +107,12 @@ if sys.version[0:len(required_version)] == required_version:
     import pyAesCrypt
     def check_settingsImproved():
         found=False
-        settings=[auto_filter_profanity_speedBoost, quit_ifIncorrect, allowed_digists_forHistory, multi_process, auto_filter_profanity, skip_history_copy, auto_error_record, assign_digit_forHistory, app_version_control, set_operating_system, allow_windows_version, auto_history_record, show_incorrect_settings, do_not_remove, fail_safe, required_version, program_version, drive_letter, drive_name, system, profanity_filter, disable_filter_admin, global_password, dont_load_save, optimize_on_startup]
-        types=[bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
-        for i in range(len(settings)):
-            if isinstance(settings[i], types[i]) == False:
+        settings1=[allowedPassword_chars, min_length, max_length,strict_password,auto_filter_profanity_speedBoost, quit_ifIncorrect, allowed_digists_forHistory, multi_process, auto_filter_profanity, skip_history_copy, auto_error_record, assign_digit_forHistory, app_version_control, set_operating_system, allow_windows_version, auto_history_record, show_incorrect_settings, do_not_remove, fail_safe, required_version, program_version, drive_letter, drive_name, system, profanity_filter, disable_filter_admin, global_password, dont_load_save, optimize_on_startup]
+        types=[str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
+        for i in range(len(settings1)):
+            if isinstance(settings1[i], types[i]) == False:
                 found=True
+                print(str(settings1[i]))
         if found==True:
             print("1 or More settings are incorrect.")
             exit()
@@ -205,9 +213,11 @@ if sys.version[0:len(required_version)] == required_version:
         #Return 1 if encrypted, if not return 0.
         try:
             open('data_save.aes', 'r')
+            open('history.aes', 'r')
             return 1
         except:
-            return 0
+            pass
+        return 0
     class history:
         def get_description(code=None):
             #Print description of selected history item in terminal if message is found.
@@ -479,7 +489,7 @@ if sys.version[0:len(required_version)] == required_version:
                 if global_password==True:
                     get.get_other_hash(password)
         def new_hash(passw=None, normal=False):
-            get.random_hash()
+            get.random_hash(single=normal)
             get.encrypt_hash(passw)
             password=None
         def encrypt_hash(passw=None, other=False):
@@ -505,7 +515,7 @@ if sys.version[0:len(required_version)] == required_version:
                         os.remove('hash_other.txt')
         def password():
             return input('Password: ')
-        def random_hash(length=100, normal=True):
+        def random_hash(length=100, normal=True, single=False):
             if isinstance(length, int) == False:
                 print(errors.not_int())
             if isinstance(length, int) == True:
@@ -518,10 +528,11 @@ if sys.version[0:len(required_version)] == required_version:
                     else: file=open('hash.txt', 'w')
                     file.write(ah)
                     file.close()
-                    if system=="windows": file=open(drive_letter+':/hash_other.txt','w')
-                    else: file=open('hash_other.txt','w')
-                    file.write(ah)
-                    file.close()
+                    if single==False:
+                        if system=="windows": file=open(drive_letter+':/hash_other.txt','w')
+                        else: file=open('hash_other.txt','w')
+                        file.write(ah)
+                        file.close()
                 if normal==False:
                     return ah
     class decrypt:
@@ -943,7 +954,8 @@ if sys.version[0:len(required_version)] == required_version:
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.remove_item()'))
             def add_row(data_base=None, new_row=None, split=True):
-                history.create_history(new_row, 'Add row')
+                if isinstance(new_row, str)==True:
+                    history.create_history(new_row, 'Add row')
                 #You can add as many objects to a row as you please, but it may not fit in your assinged constraints. No problems will occur though.
                 if split==True:
                     new_row=new_row.split()
@@ -1461,7 +1473,7 @@ if sys.version[0:len(required_version)] == required_version:
                 print('Incorrect OS')
                 history.create_history(usage='Operating System Exception', user='windows')
                 exit() 
-    check_settings()
+    check_settingsImproved()
     print('System Started Correctly!')
     #You must set a Normal level password
     #You can set a global password if need be. Basically a backup.
