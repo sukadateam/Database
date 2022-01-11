@@ -395,7 +395,7 @@ if sys.version[0:len(required_version)] == required_version:
         for i in range(len(data_bases)):
             if (data_bases[i])[0]==data_base:
                 return len((data_bases[i])[4])
-    def check(var):
+    def check_input(var):
         global denied_inputs
         for i in range(len(denied_inputs)):
             if var==denied_inputs[i]:
@@ -680,8 +680,9 @@ if sys.version[0:len(required_version)] == required_version:
         def normal():
             for i in range(100):
                 print('')
-    class check_type:
+    class check:
         def data_format(data_base=None):
+            #Returns database type.
             num=check(data_base)
             #Call to return data_base type.
             if num == False:
@@ -690,8 +691,9 @@ if sys.version[0:len(required_version)] == required_version:
                     if (data_bases[i])[0]==data_base:
                         return (data_bases[i])[3]
             if num == True:
-                print(errors.cannot_call_func('check_type.data_format()'))
+                print(errors.cannot_call_func('check.data_format()'))
         def data_base_exists(data_base=None):
+            #Check to see if database exists,
             if isinstance(data_base, str) == False and data_base != None:
                 print(errors.not_str())
             if isinstance(data_base, str) == True or data_base==None:
@@ -703,7 +705,7 @@ if sys.version[0:len(required_version)] == required_version:
                             found = True
                     return found
                 if data_base == None:
-                    print(errors.cannot_call_func('check_type.data_base_exists()'))
+                    print(errors.cannot_call_func('check.data_base_exists()'))
     class users:
         def disable(user=None):
             num=check(user)
@@ -908,14 +910,10 @@ if sys.version[0:len(required_version)] == required_version:
                     data_base=data_base.lower()
                     for i in range(len(data_bases)):
                         if (data_bases[i+letter_spot])[0] == data_base:
-                            print(1)
                             if (data_bases[i+letter_spot])[3]=="list":
-                                print(2)
                                 for x in range(len(lists)):
                                     if (lists[x])[0]==data_base:
-                                        print(3)
                                         (lists[x])[1].append(item_to_add)
-                                        print(lists)
                                         break
                 if num1==True or num2==True:
                     print(errors.cannot_call_func('data_base.edit.add_item()'))
@@ -1114,35 +1112,34 @@ if sys.version[0:len(required_version)] == required_version:
                         for i in range(len(row)):
                             print('Item:',((row[i])[1])[0],' | Serial:',((row[i])[1])[1])
         class empty:
-            def fast_one(database):
+            def fast_one(database=None):
+                #A much faster version of one()
                 if multi_process==True:
-                    a= p(target=data_base.empty.one(database, recall=True))
+                    a= p(target=data_base.empty.one(database))
                     a.start()
                     a.join()
                     freeze_support()
             #Clear all info in 1 or more databases.
             def all():
+                #Reset all data compiled for databases.
                 history.create_history(None, 'Reset all databases')
                 global lists, row
                 lists=[]
                 row=[]
-            def one(data_base=None, recall=False):
-                if multi_process==True:
-                    data_base.empty.fast_one(data_base)
-                else:
-                    recall=False
+            def one(database=None, recall=False):
+                #Empty all data compiled for one database.
                 if recall==False:
-                    num1=check(data_base)
+                    num1=check(database)
                     if num1 == False:
                         a=0
                         global row, lists
                         for i in range(len(row)):
-                            if (row[i-a])[0]==data_base:
+                            if (row[i-a])[0]==database:
                                 row.pop(i-a)
                                 a+=1
                         a=0
                         for i in range(len(lists)):
-                            if (lists[i-a])[0]==data_base:
+                            if (lists[i-a])[0]==database:
                                 lists.pop(i-a)
                                 a+=1
                     if num1 == True:
