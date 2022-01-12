@@ -733,10 +733,14 @@ if sys.version[0:len(required_version)] == required_version:
             #Disables a user
             if num == False:
                 global known_users, active_users
+                found=False
                 for i in range(len(known_users)):
                     if known_users[i]==user:
                         history.create_history(user, 'Disable user')
                         active_users[i]=False
+                        found=True
+                if found==False:
+                    print(errors.user_not_found())
             if num == True:
                 print(errors.cannot_call_func('users.disable()'))
         def enable(user=None):
@@ -744,10 +748,14 @@ if sys.version[0:len(required_version)] == required_version:
             #Enables a user
             if num == False:
                 global known_users, active_users
+                found=False
                 for i in range(len(known_users)):
                     if known_users[i]==user:
                         history.create_history(user, 'Enable user')
                         active_users[i]=True
+                        found=True
+                if found==False:
+                    print(errors.user_not_found())
             if num == True:
                 print(errors.cannot_call_func('users.disable()'))
         def create(new_user=None, new_password=None, new_permission=None):
@@ -831,21 +839,33 @@ if sys.version[0:len(required_version)] == required_version:
         def change_name(user=None, new_name=None):
             num1=check_input(user)
             num2=check_input(new_name)
-            if num1 == False and num2 == False:
+            if profanityFilter.filter(new_name)==1:
+                print(errors.profanityDetected(var=new_name, user=user_logged))
+            if num1 == False and num2 == False and profanityFilter.filter(new_name)==0:
+                found=False
                 for i in range(len(known_users)):
                     if known_users[i]==user:
                         history.create_history(user+' to '+new_name, 'Change name')
                         known_users[i]=new_name
+                        found=True
+                if found==False:
+                    print(errors.user_not_found())
             if num1 == True or num2 == True:
                 print(errors.cannot_call_func('users.change_name()'))
         def change_password(user=None, new_password=None):
             global passwords
             num=check_input(user)
-            if num == False:
+            if profanityFilter.filter(new_password)==1:
+                print(errors.profanityDetected(var=new_password, user=user_logged))
+            if num == False and profanityFilter.filter(new_password)==0:
+                found=False
                 for i in range(len(known_users)):
                     if known_users[i]==user:
                         history.create_history(user, 'Change password')
                         passwords[i]=new_password
+                        found=True
+                if found==False:
+                    print(errors.user_not_found())
             if num == True:
                 print(errors.cannot_call_func('users.change_password()'))
         def return_users():
@@ -1501,7 +1521,7 @@ if sys.version[0:len(required_version)] == required_version:
     #Test bench
     #<--Indent to here
     
-    
+
     #Do not remove this!!!!!!
     if __name__ == '__main__':
         if multi_process==True:
