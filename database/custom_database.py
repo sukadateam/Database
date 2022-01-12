@@ -195,19 +195,24 @@ if sys.version[0:len(required_version)] == required_version:
                 with open("shorter_profanity.txt") as file_in:
                     for line in file_in:
                         list1.append(line.replace('\n',''))
-        def filter(var):
+        def filter(var, manual=False):
             #Give this function a string to check.
             #If a match is found 1 is returned. If none, 0 is returned.
-            global list1
-            if isinstance(var, str) == True:
-                for i in range(len(list1)):
-                    if str(var) == list1[i]:
-                        return 1
+            if auto_filter_profanity==True or manual==True:
+                global list1
+                if isinstance(var, str) == True:
+                    for i in range(len(list1)):
+                        if str(var) == list1[i]:
+                            return 1
+                    return 0
+                else:
+                    for i in range(90):
+                        print()
+                    print('(Error) Unknown Class. This will not be recorded. Input must be a string.')
+            if auto_filter_profanity==False:
+                if debug==True:
+                    print('Profanity filter is off.')
                 return 0
-            else:
-                for i in range(90):
-                    print()
-                print('(Error) Unknown Class. This will not be recorded. Input must be a string.')
     def encrypt_check():
         #Check to see if save file is encrypted.
         #Return 1 if encrypted, if not return 0.
@@ -281,7 +286,7 @@ if sys.version[0:len(required_version)] == required_version:
             if auto_history_record==True or manual_record==True:
                 if user==None:
                     user='Null'
-                global d1
+                global d1, count
                 try:
                     open('history.txt','r')
                 except:
@@ -292,12 +297,17 @@ if sys.version[0:len(required_version)] == required_version:
                         allow=False
                 if allow==True:
                     if add_desc==True:
+                        if assign_digit_forHistory==False:
+                            if debug==True:
+                                print('assign_digit_forHistory needs to be enabled for history to add a description.')
                         if desc!=None and assign_digit_forHistory==True:
+                            print('Here')
                             abc=history.assign_letter(count)
                             history.add_description(code=abc, description=desc)
                             ah=open('history.txt','a')
                             ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user)+' : ('+str(abc)+')')
                             ah.close()
+                            count+=1
                             save.all()
                         if desc==None:
                             print('Please give a description to write history.')
@@ -751,7 +761,11 @@ if sys.version[0:len(required_version)] == required_version:
                 pass
             if new_permission not in allowed_users:
                 print(errors.incorrect_perm())
-            if num1 == False and num2 == False and new_permission in allowed_users:
+            if profanityFilter.filter(new_user)==1:
+                print(errors.profanityDetected(new_user, user=user_logged))
+            if profanityFilter.filter(new_password.lower())==1:
+                print(errors.profanityDetected(new_password, user=user_logged))
+            if num1 == False and num2 == False and new_permission in allowed_users and profanityFilter.filter(new_user)==0 and profanityFilter.filter(new_password.lower())==0:
                 if password_restrictions.check_password(new_password) == 1 or strict_password==False:
                     skip=False
                     for i in range(len(known_users)):
@@ -1387,6 +1401,9 @@ if sys.version[0:len(required_version)] == required_version:
             if num == True:
                 print(errors.cannot_call_func('password_restrictions.set_max_length()'))
     class errors:
+        def profanityDetected(var, user):
+            history.create_history(user, 'profanityDetected', manual_record=auto_error_record, add_desc=True, desc=user+' tried to use a curse word knwon as: '+var)
+            print('Not Alllowed: ',var)
         def doesNotObeyRestrictions():
             history.create_history('doesNotObeyRestrictions', 'Error', manual_record=auto_error_record)
             return('(Error) Password given does not meet the requirments.')
@@ -1477,13 +1494,14 @@ if sys.version[0:len(required_version)] == required_version:
                 history.create_history(usage='Operating System Exception', user='windows')
                 exit() 
     check_settingsImproved()
+    profanityFilter.setup()
     print('System Started Correctly!')
     #You must set a Normal level password
     #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
-
-
+    
+    
     #Do not remove this!!!!!!
     if __name__ == '__main__':
         if multi_process==True:
