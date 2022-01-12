@@ -1,6 +1,7 @@
 #Things to do next:
 #Create a python test file to test all functions.
 #Add new items to profanity.txt
+#history_desc needs to be encrypted/decrypted.
 import sys, os
 import zipfile
 n = list(sys.argv)
@@ -110,22 +111,26 @@ if sys.version[0:len(required_version)] == required_version:
     import pyAesCrypt
     class backup:
         def clear_all():
-            pass
+            shutil.rmtree('backups')
+            os.makedirs('backups')
         def remove(backup_name=None):
             #Check if function is called without using backup_name
             if backup_name != None:
                 #Check to see if backup with the name ___ exists.
-                if user_permission in allowed_backupPermissions:
-                    try:
-                        os.chdir('backups')
-                        if os.path.exists(backup_name.lower()+'.zip')==True:
-                            os.remove(backup_name.lower()+'.zip')
-                            os.chdir(path)
-                    except:
-                        print() #Create error file does not exist.
-                else:
-                    os.chdir(path)
-                    print(errors.incorrect_perm())
+                try:
+                    if user_permission in allowed_backupPermissions:
+                        try:
+                            os.chdir('backups')
+                            if os.path.exists(backup_name.lower()+'.zip')==True:
+                                os.remove(backup_name.lower()+'.zip')
+                                os.chdir(path)
+                        except:
+                            print(errors.FileDoesNotExist())
+                    else:
+                        os.chdir(path)
+                        print(errors.incorrect_perm())
+                except NameError:
+                    print(errors.NotSignedIn())
         def create(backup_name=None, password=None):
             #Check idf function is called without using backup_name
             if backup_name != None:
@@ -146,35 +151,17 @@ if sys.version[0:len(required_version)] == required_version:
                             os.chdir(path)
                             save.all()
                             if encrypt.all(password) != 1:
+                                list2=['custom_database.py','history_desc.py','vars_to_save','data_save.aes','history.aes', 'settings.py','paths.png','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
                                 try: os.chdir('backups')
                                 except: pass
                                 zipObject= ZipFile(backup_name.lower()+'.zip', 'w')
                                 try: os.chdir(path)
                                 except: pass
-                                try: zipObject.write('data_save.aes')
-                                except: pass
-                                try: zipObject.write('history.aes')
-                                except: pass
-                                zipObject.write('settings.py') #Must be present
-                                zipObject.write('custom_database.py') #Must be present
-                                try: zipObject.write('paths.png')
-                                except: pass
-                                try: zipObject.write('app.py')
-                                except: pass
-                                try: zipObject.write('hash.aes')
-                                except: pass
-                                try: zipObject.write('profanity.txt')
-                                except: pass
-                                try: zipObject.write('shorter_profanity.txt')
-                                except: pass
-                                try: zipObject.write('hash_other.aes')
-                                except: pass
-                                try: zipObject.write('get_directory.py')
-                                except: pass
-                                try: zipObject.write('version_config.py')
-                                except: pass
-                                try: zipObject.write('shell.py')
-                                except: pass
+                                for i in range(len(list2)):
+                                    try:
+                                        zipObject.write(list2[i])
+                                    except:
+                                        pass
                                 try: os.chdir('backups')
                                 except: pass
                                 zipObject.close()
@@ -1510,6 +1497,12 @@ if sys.version[0:len(required_version)] == required_version:
             if num == True:
                 print(errors.cannot_call_func('password_restrictions.set_max_length()'))
     class errors:
+        def FileDoesNotExist(var):
+            history.create_history(var, 'FileDoesNotExist', manual_record=auto_error_record)
+            print('(Error) File does not exist.')
+        def NotSignedIn():
+            history.create_history('None', 'NotSignedIn', manual_record=auto_error_record)
+            print('(Error) No user is signed in to allow this function to work.')
         def BackupNameExists():
             history.create_history('admin', 'BackupNameExists', manual_record=auto_filter_profanity)
             print('(Error) A backup with the same name already exists.')
