@@ -21,7 +21,7 @@ while True:
     if choice == "3":
         decrypt.all(password=str(input('Password: ')))
     if choice == "4":
-        backup.create(backup_name=input('What is your backup name: '))
+        backup.create(backup_name=input('What is your backup name: '), password=input('Enter you encryption Password: '))
     if choice == "5":
         data_base.create.database(data_base=str(input('Enter the new databases name: ')).lower(), type=str(input('column_row or list: ')))
     if choice == "6":
