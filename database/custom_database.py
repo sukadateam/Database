@@ -2,6 +2,7 @@
 #Create a python test file to test all functions.
 #Add new items to profanity.txt
 import sys, os
+import zipfile
 n = list(sys.argv)
 ex=False
 try:
@@ -87,6 +88,7 @@ if sys.version[0:len(required_version)] == required_version:
     except ModuleNotFoundError:
         print('custom_database is not setup. Please setup with .bat or .sh file to enable this program.')
         exit()
+    import_type='None'
     try:
         if dont_load_save==False:
             from data_save import *
@@ -158,6 +160,20 @@ if sys.version[0:len(required_version)] == required_version:
                                 try: zipObject.write('paths.png')
                                 except: pass
                                 try: zipObject.write('app.py')
+                                except: pass
+                                try: zipObject.write('hash.aes')
+                                except: pass
+                                try: zipObject.write('profanity.txt')
+                                except: pass
+                                try: zipObject.write('shorter_profanity.txt')
+                                except: pass
+                                try: zipObject.write('hash_other.aes')
+                                except: pass
+                                try: zipObject.write('get_directory.py')
+                                except: pass
+                                try: zipObject.write('version_config.py')
+                                except: pass
+                                try: zipObject.write('shell.py')
                                 except: pass
                                 try: os.chdir('backups')
                                 except: pass
@@ -1602,8 +1618,3 @@ if sys.version[0:len(required_version)] == required_version:
     if __name__ == '__main__':
         if multi_process==True:
             freeze_support()
-    #data_base.edit.add_item() now uses profanity filter.
-    #data_base.edit.add_column() now uses profanity filter.
-    #data_base.create.database() now uses profanity filter.
-    #Created a much better version of backup.
-    #Updated shell to work with the new backup.
