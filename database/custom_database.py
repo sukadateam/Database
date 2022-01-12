@@ -45,6 +45,7 @@ except:
     pass
 if ex==True:
     sys.exit()
+from zipfile import ZipFile
 from multiprocessing import Process as p
 from multiprocessing.spawn import freeze_support
 for i in range(100):
@@ -105,6 +106,71 @@ if sys.version[0:len(required_version)] == required_version:
         print('Import type: Save file')
     #On linux this import line may say could not import, but it will if the package is installed.
     import pyAesCrypt
+    class backup:
+        def clear_all():
+            pass
+        def remove(backup_name=None):
+            #Check if function is called without using backup_name
+            if backup_name != None:
+                #Check to see if backup with the name ___ exists.
+                if user_permission in allowed_backupPermissions:
+                    try:
+                        os.chdir('backups')
+                        if os.path.exists(backup_name.lower()+'.zip')==True:
+                            os.remove(backup_name.lower()+'.zip')
+                            os.chdir(path)
+                    except:
+                        print() #Create error file does not exist.
+                else:
+                    os.chdir(path)
+                    print(errors.incorrect_perm())
+        def create(backup_name=None, password=None):
+            #Check idf function is called without using backup_name
+            if backup_name != None:
+                os.chdir('backups')
+                if os.path.exists(backup_name+'.zip') == True:
+                    os.chdir(path)
+                    print(errors.BackupNameExists())
+                else:
+                    pass
+                    #If backups with the name ___ does not exist. Create a backup.
+                    user, perm = users.return_login_cred()
+                    if perm in allowed_backupPermissions:
+                        #Check for profanity.
+                        if profanityFilter.filter(backup_name.lower())==1:
+                            print(errors.profanityDetected(var=backup_name, user=user_logged))
+                        else:
+                            #If no profanity is found then create the backup.
+                            os.chdir(path)
+                            save.all()
+                            if encrypt.all(password) != 1:
+                                try: os.chdir('backups')
+                                except: pass
+                                zipObject= ZipFile(backup_name.lower()+'.zip', 'w')
+                                try: os.chdir(path)
+                                except: pass
+                                try: zipObject.write('data_save.aes')
+                                except: pass
+                                try: zipObject.write('history.aes')
+                                except: pass
+                                zipObject.write('settings.py') #Must be present
+                                zipObject.write('custom_database.py') #Must be present
+                                try: zipObject.write('paths.png')
+                                except: pass
+                                try: zipObject.write('app.py')
+                                except: pass
+                                try: os.chdir('backups')
+                                except: pass
+                                zipObject.close()
+                                try: os.chdir(path)
+                                except: pass
+                                decrypt.all(password)
+                    else:
+                        os.chdir(path)
+                        print(errors.incorrect_perm())
+                os.chdir(path)
+                if backup_name == None:
+                    print(errors.cannot_call_func())
     def check_settingsImproved():
         found=False
         settings1=['allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
@@ -432,13 +498,6 @@ if sys.version[0:len(required_version)] == required_version:
             mod_path=path.replace('database','Backups')
             for i in range(len(backup_files)):
                 shutil.copy(mod_path+'\\'+backup_files[i], path+'\\'+backup_files[i])
-    class backup:
-        def all():
-            from files_to_backup import backup_files
-            global path
-            mod_path=path.replace('database','Backups')
-            for i in range(len(backup_files)):
-                shutil.copy(path+'\\'+backup_files[i],mod_path)
     class info:
         def operating_system():
             global system
@@ -947,6 +1006,13 @@ if sys.version[0:len(required_version)] == required_version:
                 global data_bases, lists
                 num1=check_input(data_base)
                 num2=check_input(item_to_add)
+                pass_it=False
+                try:
+                    if profanityFilter.filter(item_to_add)==1:
+                        print(errors.profanityDetected(var=item_to_add, user=user_logged))
+                        pass_it=True
+                except:
+                    pass
                 letter_spot=optimize.determ(letter=data_base[0])
                 if num1 == False and num2 == False:
                     if create_if_notExist == True:
@@ -966,7 +1032,7 @@ if sys.version[0:len(required_version)] == required_version:
                                     if (lists[x])[0]==data_base:
                                         (lists[x])[1].append(item_to_add)
                                         break
-                if num1==True or num2==True:
+                if num1==True or num2==True and pass_it==False:
                     print(errors.cannot_call_func('data_base.edit.add_item()'))
             def remove_item(data_base=None, item_to_remove=None):
                 history.create_history(item_to_remove, 'Remove item')
@@ -1063,23 +1129,26 @@ if sys.version[0:len(required_version)] == required_version:
                 num1=check_input(data_base)
                 num2=check_input(column_name)
                 global debug, data_bases
-                found=False
-                for i in range(len(data_bases)):
-                    if (data_bases[i])[0] == data_base:
-                        found=True
-                        break
-                if found==False:
-                    print(errors.database_does_not_exist())
-                if num1 == False and num2 == False and found==True:
-                    data_base=data_base.lower()
-                    if debug==True:
-                        print("Adding column at",data_base,"with name",column_name.lower())
+                if profanityFilter.filter(column_name) == 1:
+                    print(errors.profanityDetected(var=column_name, user=user_logged))
+                else:
+                    found=False
                     for i in range(len(data_bases)):
-                        if (data_bases[i+letter_spot])[0] == data_base:
-                            if (data_bases[i+letter_spot])[3]=="column_row":
-                                (data_bases[i+letter_spot])[4].append(column_name.lower())
-                if num1 == True or num2 == True:
-                    print(errors.cannot_call_func('data_base.edit.add_column()'))
+                        if (data_bases[i])[0] == data_base:
+                            found=True
+                            break
+                    if found==False:
+                        print(errors.database_does_not_exist())
+                    if num1 == False and num2 == False and found==True:
+                        data_base=data_base.lower()
+                        if debug==True:
+                            print("Adding column at",data_base,"with name",column_name.lower())
+                        for i in range(len(data_bases)):
+                            if (data_bases[i+letter_spot])[0] == data_base:
+                                if (data_bases[i+letter_spot])[3]=="column_row":
+                                    (data_bases[i+letter_spot])[4].append(column_name.lower())
+                    if num1 == True or num2 == True:
+                        print(errors.cannot_call_func('data_base.edit.add_column()'))
             def remove_column(data_base=None, column=None, remove_row=False):
                 try:
                     history.create_history(column, 'Remove Column')
@@ -1365,33 +1434,37 @@ if sys.version[0:len(required_version)] == required_version:
                         found3=False
                         print('Database name can only consist of lowercase letters.')
                         break
+                #Check database for profanity.
+                if profanityFilter.filter(data_base)==1:
+                    print(errors.profanityDetected(var=data_base, user=user_logged))
+                else:
                 #If database doesn't exist continue on creating it.
-                if found3 == True and found2 == True and found1 == False:
-                    print('Database created!')
-                    num1=check_input(data_base)
-                    num2=check_input(type)
-                    if num1 == False and num2 == False:
-                        if isinstance(owner, str) == True and isinstance(type, str) == True and isinstance(owner, str) == True and isinstance(status, bool) :
-                            if columns==None or isinstance(columns, list) == True:
-                                if type == "list":
-                                    data_bases.append([data_base, status, owner, 'list'])
-                                if type == "column_row":
-                                    if columns==None:
-                                        data_bases.append([data_base, status, owner, 'column_row', []])
-                                    if columns != None:
-                                        data_bases.append([data_base, status, owner, 'column_row', columns])
-                        if isinstance(status, bool) == False:
-                            print(errors.not_bool(item='status'))
-                        if columns != None and isinstance(columns, list) == False:
-                            print(errors.not_list(item='columns'))
-                        if isinstance(owner, str) == False:
-                            print(errors.not_str(item='owner'))
-                        if isinstance(data_base, str) == False:
-                            print(errors.not_str(item='type'))
-                        if isinstance(type, str) == False:
-                            print(errors.not_str(item='data_base'))
-                    if num1 == True and num2 == True:
-                        print(errors.cannot_call_func('data_base.create.datebase()'))
+                    if found3 == True and found2 == True and found1 == False:
+                        print('Database created!')
+                        num1=check_input(data_base)
+                        num2=check_input(type)
+                        if num1 == False and num2 == False:
+                            if isinstance(owner, str) == True and isinstance(type, str) == True and isinstance(owner, str) == True and isinstance(status, bool) :
+                                if columns==None or isinstance(columns, list) == True:
+                                    if type == "list":
+                                        data_bases.append([data_base, status, owner, 'list'])
+                                    if type == "column_row":
+                                        if columns==None:
+                                            data_bases.append([data_base, status, owner, 'column_row', []])
+                                        if columns != None:
+                                            data_bases.append([data_base, status, owner, 'column_row', columns])
+                            if isinstance(status, bool) == False:
+                                print(errors.not_bool(item='status'))
+                            if columns != None and isinstance(columns, list) == False:
+                                print(errors.not_list(item='columns'))
+                            if isinstance(owner, str) == False:
+                                print(errors.not_str(item='owner'))
+                            if isinstance(data_base, str) == False:
+                                print(errors.not_str(item='type'))
+                            if isinstance(type, str) == False:
+                                print(errors.not_str(item='data_base'))
+                        if num1 == True and num2 == True:
+                            print(errors.cannot_call_func('data_base.create.datebase()'))
     class password_restrictions:
         def check_password(password):
             pass_1=0
@@ -1421,6 +1494,9 @@ if sys.version[0:len(required_version)] == required_version:
             if num == True:
                 print(errors.cannot_call_func('password_restrictions.set_max_length()'))
     class errors:
+        def BackupNameExists():
+            history.create_history('admin', 'BackupNameExists', manual_record=auto_filter_profanity)
+            print('(Error) A backup with the same name already exists.')
         def profanityDetected(var, user):
             history.create_history(user, 'profanityDetected', manual_record=auto_error_record, add_desc=True, desc=user+' tried to use a curse word knwon as: '+var)
             print('Not Alllowed: ',var)
@@ -1526,3 +1602,8 @@ if sys.version[0:len(required_version)] == required_version:
     if __name__ == '__main__':
         if multi_process==True:
             freeze_support()
+    #data_base.edit.add_item() now uses profanity filter.
+    #data_base.edit.add_column() now uses profanity filter.
+    #data_base.create.database() now uses profanity filter.
+    #Created a much better version of backup.
+    #Updated shell to work with the new backup.
