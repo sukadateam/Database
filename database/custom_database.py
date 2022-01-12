@@ -775,6 +775,9 @@ if sys.version[0:len(required_version)] == required_version:
                             print('new_password must be str or None') 
                 else:
                     print(errors.doesNotObeyRestrictions())
+                    print('Password Min Lnegth:',min_length)
+                    print('Password Max Length:',max_length)
+                    print('Passwoed can only contain:',allowedPassword_chars)
             if num1 == True or num2 == True:
                 print(errors.cannot_call_func('users.create()'))
         def remove(user=None):
