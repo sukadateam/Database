@@ -9,6 +9,7 @@ ex=False
 try:
     #print ('Argument:',n[1])
     if str(n[1])=="-v":
+        from settings import program_version
         print('Current Version: '+program_version)
         ex=True
     if str(n[1])=="-info":
@@ -182,18 +183,20 @@ if sys.version[0:len(required_version)] == required_version:
                 if backup_name == None:
                     if hide==False:
                         print(errors.cannot_call_func())
-    def check_settingsImproved():
+    def check_settingsImproved(hide=False):
         found=False
         settings1=['allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
         types=[str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
         for i in range(len(settings1)):
             if isinstance(globals()[settings1[i]], types[i]) == False:
                 found=True
-                print(str(settings1[i]))
+                if hide==False:
+                    print(str(settings1[i]))
         if found==True:
-            print("1 or More settings are incorrect.")
+            if hide==False:
+                print("1 or More settings are incorrect.")
             exit()
-        check_settings()
+        check_settings(hide=hide)
     class inventory:
         def determ():
             if multi_process==True:
@@ -211,12 +214,13 @@ if sys.version[0:len(required_version)] == required_version:
         def display():
             #Displays the calculations.
             pass
-    def check_settings():
+    def check_settings(hide=False):
         #Checks settings.py to make sure all settings are correct and will not cause a proplem.
         #If one or more items come back as a problem they will be listed,
         error_found1=False
         if show_incorrect_settings==True:
-           print('\nUnknown answers:')
+            if hide==False:
+                print('\nUnknown answers:')
         list2=['7', '8','10','11']
         found=True
         for i in range(len(list2)):
@@ -227,23 +231,28 @@ if sys.version[0:len(required_version)] == required_version:
                 break
         if found==False:
             if show_incorrect_settings==True:
-                print('  allow_windows_version must be set to 7, 8, 10, or 11')
+                if hide==False:
+                    print('  allow_windows_version must be set to 7, 8, 10, or 11')
             error_found1=True
         if len(drive_letter)>1 or len(drive_letter)<1:
             if show_incorrect_settings==True:
-                print('  drive_letter must be 1 character')
+                if hide==False:
+                    print('  drive_letter must be 1 character')
             error_found1=True
         if isinstance(allowed_digists_forHistory, int):
             if allowed_digists_forHistory>30 or allowed_digists_forHistory<1:
                 if show_incorrect_settings==True:
-                    print('  allowed_digists_forHistory can only be upto 30 and no less than 1.')
+                    if hide==False:
+                        print('  allowed_digists_forHistory can only be upto 30 and no less than 1.')
                 error_found1=True
         if error_found1==False:
             if show_incorrect_settings==True:
-                print('  None')
+                if hide==False:
+                    print('  None')
         if quit_ifIncorrect == True:
             if error_found1==True:
-                print()
+                if hide==False:
+                    print()
                 exit()
     class profanityFilter:
         def disable():
@@ -272,9 +281,12 @@ if sys.version[0:len(required_version)] == required_version:
                 with open("shorter_profanity.txt") as file_in:
                     for line in file_in:
                         list1.append(line.replace('\n',''))
-        def filter(var, manual=False):
+        def filter(var, manual=False, hide=False, test=False):
             #Give this function a string to check.
             #If a match is found 1 is returned. If none, 0 is returned.
+            global auto_filter_profanity
+            if test==True:
+                auto_filter_profanity=True
             if auto_filter_profanity==True or manual==True:
                 global list1
                 if isinstance(var, str) == True:
@@ -285,7 +297,8 @@ if sys.version[0:len(required_version)] == required_version:
                 else:
                     for i in range(90):
                         print()
-                    print('(Error) Unknown Class. This will not be recorded. Input must be a string.')
+                    if hide == False:
+                        print('(Error) Unknown Class. This will not be recorded. Input must be a string.')
             if auto_filter_profanity==False:
                 if debug==True:
                     print('Profanity filter is off.')
@@ -301,13 +314,14 @@ if sys.version[0:len(required_version)] == required_version:
             pass
         return 0
     class history:
-        def get_description(code=None):
+        def get_description(code=None, hide=False):
             #Print description of selected history item in terminal if message is found.
             if code!=None:
                 for i in range(len(history_id)):
                     if history_id[i]==str(code):
-                        print('Code: '+str(code))
-                        print('Message: '+history_description[i])
+                        if hide==False:
+                            print('Code: '+str(code))
+                            print('Message: '+history_description[i])
         def add_description(code=None, description=None):
             #Create a description for history if requested.
             #This is automatically called if used.
@@ -315,7 +329,7 @@ if sys.version[0:len(required_version)] == required_version:
                 if isinstance(code, str)==True and isinstance(description, str)==True:
                     history_id.append(str(code))
                     history_description.append(str(description))
-        def check_forDuplicate(user, usage):
+        def check_forDuplicate(user, usage, hide=False):
             #Prevents duplicate items to be recorded.
             global debug
             file=open('history.txt').read()
@@ -328,11 +342,13 @@ if sys.version[0:len(required_version)] == required_version:
                 print('Last:', last_object)
             if str(current_object)==str(last_object):
                 if debug==True:
-                    print('Match Found. Skipping write to history file.')
+                    if hide==False:
+                        print('Match Found. Skipping write to history file.')
                 return 1
             else:
                 if debug==True:
-                    print('No match found. Writing to history file.')
+                    if hide==False:
+                        print('No match found. Writing to history file.')
                 return 0
         def assign_letter(count):
             #Not in use yet.
@@ -349,6 +365,10 @@ if sys.version[0:len(required_version)] == required_version:
             #Clears history file
             history.delete()
             history.create()
+            os.remove('history_desc.py')
+            file=open('history_desc.py', 'w')
+            file.write('history_id=[]\nhistory_description=[]\ncount=1')
+            file.close()
         def delete():
             #Removes history file
             os.remove('history.txt')
@@ -358,7 +378,7 @@ if sys.version[0:len(required_version)] == required_version:
             ah=open('history.txt','w')
             ah.write('File created: '+d1)
             ah.close()
-        def create_history(user, usage, manual_record=False, add_desc=False, desc=None):
+        def create_history(user, usage, manual_record=False, add_desc=False, desc=None, hide=False):
             #Adds items to history file
             if auto_history_record==True or manual_record==True:
                 if user==None:
@@ -370,15 +390,15 @@ if sys.version[0:len(required_version)] == required_version:
                     history.create()
                 allow=True
                 if skip_history_copy==True:
-                    if history.check_forDuplicate(user=user, usage=usage) == 1:
+                    if history.check_forDuplicate(user=user, usage=usage, hide=hide) == 1:
                         allow=False
                 if allow==True:
                     if add_desc==True:
                         if assign_digit_forHistory==False:
                             if debug==True:
-                                print('assign_digit_forHistory needs to be enabled for history to add a description.')
+                                if hide==False:
+                                    print('assign_digit_forHistory needs to be enabled for history to add a description.')
                         if desc!=None and assign_digit_forHistory==True:
-                            print('Here')
                             abc=history.assign_letter(count)
                             history.add_description(code=abc, description=desc)
                             ah=open('history.txt','a')
@@ -387,7 +407,8 @@ if sys.version[0:len(required_version)] == required_version:
                             count+=1
                             save.all()
                         if desc==None:
-                            print('Please give a description to write history.')
+                            if hide==False:
+                                print('Please give a description to write history.')
                     if add_desc==False:
                         ah=open('history.txt','a')
                         ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user))
@@ -402,7 +423,7 @@ if sys.version[0:len(required_version)] == required_version:
                         a=globals()[set]
                         a=a[i]
                         return a
-        def run(save_optimizations=True):
+        def run(save_optimizations=True, hide=False):
             global data_bases, opto_data, opto_row, row, opto_lists, lists, debug, user_permission, user_logged
             history.create_history(None, 'Optimize')
             try:
@@ -415,12 +436,15 @@ if sys.version[0:len(required_version)] == required_version:
                 opto_lists=optimize.count(var='lists')
                 lists=optimize.list_org(var='lists')
                 if debug == True:
-                    print('Save file optimized.')
+                    if hide==False:
+                        print('Save file optimized.')
             except:
                 if debug == True:
-                    print('An error occured.')
+                    if hide==False:
+                        print('An error occured.')
             if save_optimizations==True:
-                print('All data saved.')
+                if hide==False:
+                    print('All data saved.')
                 save.all()
         def count(var):
             #Count items in lists and get a rough count.
@@ -452,7 +476,7 @@ if sys.version[0:len(required_version)] == required_version:
                         current+=1
                 count+=1
             return org
-    def check_data():
+    def check_data(hide=False):
         #Also remove data sets that are not apart of a database.
         print('\n')
         global import_type
@@ -485,9 +509,10 @@ if sys.version[0:len(required_version)] == required_version:
             except:
                 check[1]=False
                 break
-        print('True = Working | False = Broken')
-        print('Database Check:',check[0])
-        print('Rows Check:',check[1])
+        if hide==False:
+            print('True = Working | False = Broken')
+            print('Database Check:',check[0])
+            print('Rows Check:',check[1])
     def list_count(data_base):
         for i in range(len(data_bases)):
             if (data_bases[i])[0]==data_base:
