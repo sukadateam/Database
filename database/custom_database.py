@@ -516,7 +516,9 @@ if sys.version[0:len(required_version)] == required_version:
             print('True = Working | False = Broken')
             print('Database Check:',check[0])
             print('Rows Check:',check[1])
-    def list_count(data_base):
+    def list_count(data_base=None, database=None):
+        if data_base == None:
+            data_base=database
         for i in range(len(data_bases)):
             if (data_bases[i])[0]==data_base:
                 return len((data_bases[i])[4])
@@ -1042,14 +1044,18 @@ if sys.version[0:len(required_version)] == required_version:
             return user_logged, user_permission
     class data_base:
         class edit:
-            def search_rows(data_base=None, id=None):
+            def search_rows(data_base=None, id=None, database=None):
+                if data_base == None:
+                    data_base=database
                 if isinstance(data_base, str) == True and isinstance(id, str) == True:
                     for i in range(len(row)):
                         if (row[i])[0] == data_base:
                             if ((row[i])[1])[1]==id:
                                 return 1
                     return 0
-            def check_owner(data_base=None, user_perm=None):
+            def check_owner(data_base=None, user_perm=None, database=None):
+                if data_base == None:
+                    data_base=database
                 #Returns 1 is owner matches the database.
                 if isinstance(data_base, str) == True and isinstance(user_perm, str) == True:
                     for i in range(len(data_bases)):
@@ -1068,7 +1074,9 @@ if sys.version[0:len(required_version)] == required_version:
                     data_base.edit.add_row(data_base=data, new_row=aa)
                 except:
                     pass
-            def add_item(data_base=None, item_to_add=None, create_if_notExist=True):
+            def add_item(data_base=None, item_to_add=None, create_if_notExist=True, database=None):
+                if data_base == None:
+                    data_base=database
                 history.create_history(item_to_add, 'Add item')
                 #Used for the list types.
                 global data_bases, lists
@@ -1102,7 +1110,9 @@ if sys.version[0:len(required_version)] == required_version:
                                         break
                 if num1==True or num2==True and pass_it==False:
                     print(errors.cannot_call_func('data_base.edit.add_item()'))
-            def remove_item(data_base=None, item_to_remove=None):
+            def remove_item(data_base=None, item_to_remove=None, database=None):
+                if data_base == None:
+                    data_base=database
                 history.create_history(item_to_remove, 'Remove item')
                 #Used for the list types.
                 num1=check_input(data_base)
@@ -1124,7 +1134,9 @@ if sys.version[0:len(required_version)] == required_version:
                                         break
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.remove_item()'))
-            def add_row(data_base=None, new_row=None, split=True):
+            def add_row(data_base=None, new_row=None, split=True, database=None):
+                if data_base == None:
+                    data_base=database
                 if isinstance(new_row, str)==True:
                     history.create_history(new_row, 'Add row')
                 #You can add as many objects to a row as you please, but it may not fit in your assinged constraints. No problems will occur though.
@@ -1142,7 +1154,9 @@ if sys.version[0:len(required_version)] == required_version:
                         print(errors.not_list())
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.add_row()'))
-            def remove_row(data_base=None):
+            def remove_row(data_base=None, database=None):
+                if data_base == None:
+                    data_base=database
                 num1=check_input(data_base)
                 if num1 == False:
                     data_base=data_base.lower()
@@ -1191,7 +1205,9 @@ if sys.version[0:len(required_version)] == required_version:
                 if num1 == True:
                     print(errors.cannot_call_func('data_base.edit.remove_row()'))
                 #Must be column_row
-            def add_column(data_base=None, column_name=None):
+            def add_column(data_base=None, column_name=None, database=None):
+                if data_base == None:
+                    data_base=database
                 history.create_history(column_name, 'Add column')
                 letter_spot=optimize.determ(letter=data_base[0], set='opto_data')
                 num1=check_input(data_base)
@@ -1217,7 +1233,9 @@ if sys.version[0:len(required_version)] == required_version:
                                     (data_bases[i+letter_spot])[4].append(column_name.lower())
                     if num1 == True or num2 == True:
                         print(errors.cannot_call_func('data_base.edit.add_column()'))
-            def remove_column(data_base=None, column=None, remove_row=False):
+            def remove_column(data_base=None, column=None, remove_row=False, database=None):
+                if data_base == None:
+                    data_base=database
                 try:
                     history.create_history(column, 'Remove Column')
                     num1=check_input(data_base)
@@ -1275,7 +1293,9 @@ if sys.version[0:len(required_version)] == required_version:
                 #Must be column_row
             #Used for my auto_motive app.
             class app:
-                def remove_row(data_base=None, name=None):
+                def remove_row(data_base=None, name=None, database=None):
+                    if data_base == None:
+                        data_base=database
                     if isinstance(name, str) == True and isinstance(data_base, str) == True:
                         global row
                         for i in range(len(row)):
@@ -1285,7 +1305,9 @@ if sys.version[0:len(required_version)] == required_version:
                                     break
                     else:
                         print(errors.not_str())
-                def remove_item(data_base=None, barcode=None):
+                def remove_item(data_base=None, barcode=None, database=None):
+                    if data_base == None:
+                        data_base=database
                     if isinstance(data_base, str) == True and isinstance(barcode, str) == True:
                         print('Got here')
                         global lists
@@ -1296,7 +1318,9 @@ if sys.version[0:len(required_version)] == required_version:
                                         ((lists[i])[1]).pop(x)
                     else:
                         print(errors.not_str())
-                def show_tools(data_base=None):
+                def show_tools(data_base=None, database=None):
+                    if data_base == None:
+                        data_base=database
                     if isinstance(data_base, str) == True:
                         for i in range(len(row)):
                             print('Item:',((row[i])[1])[0],' | Serial:',((row[i])[1])[1])
@@ -1315,26 +1339,30 @@ if sys.version[0:len(required_version)] == required_version:
                 global lists, row
                 lists=[]
                 row=[]
-            def one(database=None, recall=False):
+            def one(data_base=None, recall=False, database=None):
+                if data_base == None:
+                    data_base=database
                 #Empty all data compiled for one database.
                 if recall==False:
-                    num1=check_input(database)
+                    num1=check_input(data_base)
                     if num1 == False:
                         a=0
                         global row, lists
                         for i in range(len(row)):
-                            if (row[i-a])[0]==database:
+                            if (row[i-a])[0]==data_base:
                                 row.pop(i-a)
                                 a+=1
                         a=0
                         for i in range(len(lists)):
-                            if (lists[i-a])[0]==database:
+                            if (lists[i-a])[0]==data_base:
                                 lists.pop(i-a)
                                 a+=1
                     if num1 == True:
                         print(errors.cannot_call_func('data_base.empty.one()'))
         class show:
-            def show_column(data_base=None):
+            def show_column(data_base=None, database=None):
+                if data_base == None:
+                    data_base=database
                 num=check_input(data_base)
                 if num == False:
                     for i in range(len(data_bases)):
@@ -1343,7 +1371,9 @@ if sys.version[0:len(required_version)] == required_version:
                                 print((data_bases[i])[4])
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.show_column()'))
-            def show_row(data_base=None):
+            def show_row(data_base=None, database=None):
+                if data_base == None:
+                    data_base=database
                 num=check_input(data_base)
                 #Must be column_row type
                 global row
@@ -1354,7 +1384,9 @@ if sys.version[0:len(required_version)] == required_version:
                 print('Complete')
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.show_row()'))
-            def show_lists(data_base=None):
+            def show_lists(data_base=None, database=None):
+                if data_base == None:
+                    data_base=database
                 num=check_input(data_base)
                 global lists
                 if num == False:
@@ -1363,15 +1395,17 @@ if sys.version[0:len(required_version)] == required_version:
                             print(lists[x])
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.show_lists'))
-            def all_in_database(database=None):
-                num=check_input(database)
+            def all_in_database(data_base=None, database=None):
+                if data_base == None:
+                    data_base=database
+                num=check_input(data_base)
                 global data_bases, row, debug, sets, rows, type
                 sets=[]
                 rows=[]
                 type=None
                 if num == False:
                     for i in range(len(data_bases)):
-                        if (data_bases[i])[0] == database:
+                        if (data_bases[i])[0] == data_base:
                             if (data_bases[i])[3] == 'list':
                                 if debug==True:
                                     print('(System) List found')
@@ -1383,23 +1417,18 @@ if sys.version[0:len(required_version)] == required_version:
                                 type='column_row'
                                 break
                     if type == "column_row":
-                        if multi_process==True:
-                            a= p(target=data_base.show.show_row(data_base=database))
-                            a.start()
-                            a.join()
-                            freeze_support()
                         if multi_process==False:
                             for x in range(len((data_bases[i])[4])):
                                 sets.append(((data_bases[i])[4])[x])
                             for n in range(len(row)):
-                                if (row[n])[0] == database:
+                                if (row[n])[0] == data_base:
                                     rows.append((row[n])[1])
                             print(sets)
                             for i in range(len(rows)):
                                 print(rows[i])
                     if type == "list":
                         for i in range(len(lists)):
-                            if (lists[i])[0]==database:
+                            if (lists[i])[0]==data_base:
                                 print((lists[i])[1])
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.all()'))
@@ -1408,7 +1437,9 @@ if sys.version[0:len(required_version)] == required_version:
                 print('Known databases:')
                 for i in range(len(data_bases)):
                     print('  ',(data_bases[i])[0])
-            def info(data_base=None):
+            def info(data_base=None, database=None):
+                if data_base == None:
+                    data_base=database
                 num=check_input(data_base)
                 global data_bases, type
                 if num == False:
@@ -1444,7 +1475,9 @@ if sys.version[0:len(required_version)] == required_version:
                 data_bases=[]
                 lists=[]
                 row=[]
-            def one_set(data_base=None):
+            def one_set(data_base=None, database=None):
+                if data_base == None:
+                    data_base=database
                 history.create_history(None, 'Remove One Set')
                 num=check_input(data_base)
                 global data_bases, row, lists
@@ -1478,7 +1511,9 @@ if sys.version[0:len(required_version)] == required_version:
                 except:
                     pass
         class create:
-            def database(data_base=None, status=True, type=None, owner='all', columns=None, hide=False):
+            def database(data_base=None, database=None, status=True, type=None, owner='all', columns=None, hide=False):
+                if data_base == None:
+                    data_base=database
                 history.create_history(data_base, 'Create Database')
                 found1=False
                 found2=False
