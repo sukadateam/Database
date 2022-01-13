@@ -2,6 +2,7 @@
 #Create a python test file to test all functions.
 #Add new items to profanity.txt
 #history_desc needs to be encrypted/decrypted.
+#Restory function needs to be updated to work with the latest backup method. It doesn't anymore.
 import sys, os
 import zipfile
 n = list(sys.argv)
@@ -805,7 +806,7 @@ if sys.version[0:len(required_version)] == required_version:
                 return 0
         def data_format(data_base=None):
             #Returns database type.
-            num=check(data_base)
+            num=check_data(data_base)
             #Call to return data_base type.
             if num == False:
                 global data_bases
@@ -829,7 +830,7 @@ if sys.version[0:len(required_version)] == required_version:
                 if data_base == None:
                     print(errors.cannot_call_func('check.data_base_exists()'))
     class users:
-        def disable(user=None):
+        def disable(user=None, hide=False):
             num=check_input(user)
             #Disables a user
             if num == False:
@@ -841,10 +842,12 @@ if sys.version[0:len(required_version)] == required_version:
                         active_users[i]=False
                         found=True
                 if found==False:
-                    print(errors.user_not_found())
+                    if hide==False:
+                        print(errors.user_not_found())
             if num == True:
-                print(errors.cannot_call_func('users.disable()'))
-        def enable(user=None):
+                if hide==False:
+                    print(errors.cannot_call_func('users.disable()'))
+        def enable(user=None, hide=False):
             num=check_input(user)
             #Enables a user
             if num == False:
@@ -856,10 +859,12 @@ if sys.version[0:len(required_version)] == required_version:
                         active_users[i]=True
                         found=True
                 if found==False:
-                    print(errors.user_not_found())
+                    if hide==False:
+                        print(errors.user_not_found())
             if num == True:
-                print(errors.cannot_call_func('users.disable()'))
-        def create(new_user=None, new_password=None, new_permission=None):
+                if hide==False:
+                    print(errors.cannot_call_func('users.disable()'))
+        def create(new_user=None, new_password=None, new_permission=None, hide=False):
             global known_users, passwords, permissions
             num1=check_input(new_user)
             num2=check_input(new_password)
@@ -869,11 +874,14 @@ if sys.version[0:len(required_version)] == required_version:
             except:
                 pass
             if new_permission not in allowed_users:
-                print(errors.incorrect_perm())
+                if hide==False:
+                    print(errors.incorrect_perm())
             if profanityFilter.filter(new_user)==1:
-                print(errors.profanityDetected(new_user, user=user_logged))
+                if hide==False:
+                    print(errors.profanityDetected(new_user, user=user_logged))
             if profanityFilter.filter(new_password.lower())==1:
-                print(errors.profanityDetected(new_password, user=user_logged))
+                if hide==False:
+                    print(errors.profanityDetected(new_password, user=user_logged))
             if num1 == False and num2 == False and new_permission in allowed_users and profanityFilter.filter(new_user)==0 and profanityFilter.filter(new_password.lower())==0:
                 if password_restrictions.check_password(new_password) == 1 or strict_password==False:
                     skip=False
@@ -891,19 +899,23 @@ if sys.version[0:len(required_version)] == required_version:
                                     permissions.append(new_permission)
                                     active_users.append(True)
                         if isinstance(new_user, str) == False:
-                            print('new_user must be str')
+                            if hide==False:
+                                print('new_user must be str')
                         if isinstance(new_permission, str) == False:
-                            print('new_permission must be str')
+                            if hide==False:
+                                print('new_permission must be str')
                         if isinstance(new_permission, str) == False and new_permission != None:
-                            print('new_password must be str or None') 
+                            if hide==False:
+                                print('new_password must be str or None') 
                 else:
-                    print(errors.doesNotObeyRestrictions())
-                    print('Password Min Lnegth:',min_length)
-                    print('Password Max Length:',max_length)
-                    print('Passwoed can only contain:',allowedPassword_chars)
+                    if hide==False:
+                        print(errors.doesNotObeyRestrictions())
+                        print('Password Min Lnegth:',min_length)
+                        print('Password Max Length:',max_length)
+                        print('Passwoed can only contain:',allowedPassword_chars)
             if num1 == True or num2 == True:
                 print(errors.cannot_call_func('users.create()'))
-        def remove(user=None):
+        def remove(user=None, hide=False):
             num=check_input(user)
             if num == False:
                 user=user.lower()
@@ -919,15 +931,17 @@ if sys.version[0:len(required_version)] == required_version:
                         found=True
                         break
                 if found==False:
-                    print(errors.user_not_found())
+                    if hide==False:
+                        print(errors.user_not_found())
             if num == True:
-                print(errors.cannot_call_func('users.remove()'))
+                if hide==False:
+                    print(errors.cannot_call_func('users.remove()'))
         def show_all():
             global known_users
             for i in range(len(known_users)):
                 print('User: '+known_users[i])
                 print('Permission: '+permissions[i])
-        def change_permissions(user=None, new_permission=None):
+        def change_permissions(user=None, new_permission=None, hide=False):
             num1=check_input(user)
             num2=check_input(new_permission)
             if num1 == False and num2 == False:
@@ -936,12 +950,14 @@ if sys.version[0:len(required_version)] == required_version:
                         history.create_history(user, 'Change permission')
                         permissions[i]=new_permission
             if num1 == True or num2 == True:
-                print(errors.cannot_call_func('users.change_permissions()'))
-        def change_name(user=None, new_name=None):
+                if hide==False:
+                    print(errors.cannot_call_func('users.change_permissions()'))
+        def change_name(user=None, new_name=None, hide=False):
             num1=check_input(user)
             num2=check_input(new_name)
             if profanityFilter.filter(new_name)==1:
-                print(errors.profanityDetected(var=new_name, user=user_logged))
+                if hide==False:
+                    print(errors.profanityDetected(var=new_name, user=user_logged))
             if num1 == False and num2 == False and profanityFilter.filter(new_name)==0:
                 found=False
                 for i in range(len(known_users)):
@@ -950,14 +966,17 @@ if sys.version[0:len(required_version)] == required_version:
                         known_users[i]=new_name
                         found=True
                 if found==False:
-                    print(errors.user_not_found())
+                    if hide==False:
+                        print(errors.user_not_found())
             if num1 == True or num2 == True:
-                print(errors.cannot_call_func('users.change_name()'))
-        def change_password(user=None, new_password=None):
+                if hide==False:
+                    print(errors.cannot_call_func('users.change_name()'))
+        def change_password(user=None, new_password=None, hide=False):
             global passwords
             num=check_input(user)
             if profanityFilter.filter(new_password)==1:
-                print(errors.profanityDetected(var=new_password, user=user_logged))
+                if hide==False:
+                    print(errors.profanityDetected(var=new_password, user=user_logged))
             if num == False and profanityFilter.filter(new_password)==0:
                 found=False
                 for i in range(len(known_users)):
@@ -966,9 +985,11 @@ if sys.version[0:len(required_version)] == required_version:
                         passwords[i]=new_password
                         found=True
                 if found==False:
-                    print(errors.user_not_found())
+                    if hide==False:
+                        print(errors.user_not_found())
             if num == True:
-                print(errors.cannot_call_func('users.change_password()'))
+                if hide==False:
+                    print(errors.cannot_call_func('users.change_password()'))
         def return_users():
             global known_users
             return known_users
@@ -1000,8 +1021,11 @@ if sys.version[0:len(required_version)] == required_version:
                     print(errors.not_str())
                 if user not in known_users:
                     print(errors.user_not_found())
-                if user_logged==False:
-                    return False
+                try:
+                    if user_logged==False:
+                        return False
+                except:
+                    pass
             if user == None:
                 print(errors.cannot_call_func('users.login_request()'))
         def logout():
@@ -1452,7 +1476,7 @@ if sys.version[0:len(required_version)] == required_version:
                 except:
                     pass
         class create:
-            def database(data_base=None, status=True, type=None, owner='all', columns=None):
+            def database(data_base=None, status=True, type=None, owner='all', columns=None, hide=False):
                 history.create_history(data_base, 'Create Database')
                 found1=False
                 found2=False
@@ -1461,11 +1485,13 @@ if sys.version[0:len(required_version)] == required_version:
                 #Check to see if database already exists.
                 for i in range(len(data_bases)):
                     if (data_bases[i])[0]==data_base:
-                        print('That database already exists.')
+                        if hide==False:
+                            print('That database already exists.')
                         found1=True
                         break
                 if type not in allowed_types:
-                    print('An incorrect data type has been entered.')
+                    if hide==False:
+                        print('An incorrect data type has been entered.')
                     found2=False
                 if type in allowed_types:
                     found2=True
@@ -1474,11 +1500,13 @@ if sys.version[0:len(required_version)] == required_version:
                         found3=True
                     if data_base[i] not in alphabet:
                         found3=False
-                        print('Database name can only consist of lowercase letters.')
+                        if hide==False:
+                            print('Database name can only consist of lowercase letters.')
                         break
                 #Check database for profanity.
                 if profanityFilter.filter(data_base)==1:
-                    print(errors.profanityDetected(var=data_base, user=user_logged))
+                    if hide==False:
+                        print(errors.profanityDetected(var=data_base, user=user_logged))
                 else:
                 #If database doesn't exist continue on creating it.
                     if found3 == True and found2 == True and found1 == False:
