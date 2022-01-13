@@ -282,7 +282,7 @@ if sys.version[0:len(required_version)] == required_version:
                 with open("shorter_profanity.txt") as file_in:
                     for line in file_in:
                         list1.append(line.replace('\n',''))
-        def filter(var, manual=False, hide=False, test=False):
+        def filter(var, manual=False, hide=False, test=False, record=True):
             #Give this function a string to check.
             #If a match is found 1 is returned. If none, 0 is returned.
             global auto_filter_profanity
@@ -293,6 +293,8 @@ if sys.version[0:len(required_version)] == required_version:
                 if isinstance(var, str) == True:
                     for i in range(len(list1)):
                         if str(var) == list1[i]:
+                            if record == True:
+                                errors.profanityDetected(var=var, user=user_logged)
                             return 1
                     return 0
                 else:
@@ -1373,13 +1375,13 @@ if sys.version[0:len(required_version)] == required_version:
                             if (data_bases[i])[3] == 'list':
                                 if debug==True:
                                     print('(System) List found')
-                                    type='list'
-                                    break
+                                type='list'
+                                break
                             if (data_bases[i])[3] == 'column_row':
                                 if debug==True:
                                     print('Data base found!')
-                                    type='column_row'
-                                    break
+                                type='column_row'
+                                break
                     if type == "column_row":
                         if multi_process==True:
                             a= p(target=data_base.show.show_row(data_base=database))
