@@ -3,6 +3,7 @@
 #Add new items to profanity.txt
 #history_desc needs to be encrypted/decrypted.
 #Restory function needs to be updated to work with the latest backup method. It doesn't anymore.
+#Argument -r needs to remove .pyc in main directory.
 import sys, os
 import zipfile
 n = list(sys.argv)
@@ -40,6 +41,7 @@ print('If problems occur, try to check if a new version exists.\n\n')
 if sys.version[0:len(required_version)] != required_version:
     print('Required python version:', required_version)
     print('Current python version:', sys.version[0:len(required_version)])
+    sys.exit()
 if sys.version[0:len(required_version)] == required_version:
     from datetime import date
     today=date.today()
@@ -76,8 +78,11 @@ if sys.version[0:len(required_version)] == required_version:
     import pyAesCrypt
     class backup:
         def clear_all():
-            shutil.rmtree('backups')
-            os.makedirs('backups')
+            try:
+                shutil.rmtree('backups')
+                os.makedirs('backups')
+            except:
+                pass
         def remove(backup_name=None):
             #Check if function is called without using backup_name
             if backup_name != None:
