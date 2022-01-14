@@ -105,7 +105,7 @@ if sys.version[0:len(required_version)] == required_version:
             #Create random name if asked to
             if random_name==True:
                 backup_name=''
-                for i in range(8):
+                for i in range(16):
                     backup_name+=random.choice('1234567890qwertyuiopasdfghjklzxcvbnm')
             #Check idf function is called without using backup_name
             if backup_name != None:
@@ -509,11 +509,7 @@ if sys.version[0:len(required_version)] == required_version:
         sys.exit()
     class restore:
         def all():
-            from files_to_backup import backup_files
-            global path
-            mod_path=path.replace('database','Backups')
-            for i in range(len(backup_files)):
-                shutil.copy(mod_path+'\\'+backup_files[i], path+'\\'+backup_files[i])
+            print('This function has not been implemented yet.\nA restore plan is in the works. Restore will not work until a complete backup plan is created. For now a temporary backup method has been added. You can run the app from a backup if needed.')
     class info:
         def operating_system():
             global system
@@ -1690,30 +1686,13 @@ if sys.version[0:len(required_version)] == required_version:
             print('GitHub: github.com/sukadateam')
             ex=True
         if str(n[1])=="-r":
-            try:
-                os.remove('data_save,py')
-            except:
-                print('data_save.py not found')
-            try:
-                os.remove('version.py')
-            except:
-                print('version.py not found')
-            try:
-                os.remove('directory.py')
-            except:
-                print('directory,py not found')
-            try:
-                os.remove('history.txt')
-            except:
-                print('history.txt not found')
-            try:
-                os.remove('hash_other.aes')
-            except:
-                pass
-            try:
-                os.remove('hash.aes')
-            except:
-                pass
+            list2=['data_save.py','version.py', 'directory.py','history.txt','hash_other.aes','hash.aes','hash_other.txt','hash.txt','settings.pyc','app.pyc','data.pyc']
+            for i in range(len(list2)):
+                try:
+                    os.remove(list2[i])
+                except:
+                    print(list2[i],'not found')
+            backup.clear_all()
             history.clear()
             print('Now remove __pycache__ manually')
             print('Exiting...')
@@ -1724,7 +1703,7 @@ if sys.version[0:len(required_version)] == required_version:
     #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
-
+    
 
     #Do not remove this!!!!!!
     if __name__ == '__main__':
