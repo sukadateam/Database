@@ -329,14 +329,20 @@ def ask():
     pass_w=password.get()
     if users.login_request(user=user.lower(), password=pass_w) == True and profanityFilter.filter(str(name))==0 and profanityFilter.filter(str(pass_w))==0:
         print('Login Success!')
-        backup.clear_all()
+        try:
+            backup.clear_all()
+        except:
+            pass
         backup.create(random_name=True, password=pass_w, hide=True)
         u, p = users.return_login_cred()
         if p == "admin" or p=="teacher":
             if startup==True:
                 ask_encrypt_password()
             else:
-                backup.clear_all()
+                try:
+                    backup.clear_all()
+                except:
+                    pass
                 backup.create(random_name=True, password=other3)
                 send()
         else:
