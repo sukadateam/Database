@@ -92,13 +92,13 @@ class options:
         e1.config(height=button_height, width=button_width)
         e1.pack()
         other = Entry(tk)
-        other.config(background='White')
+        other.config(background=entry_background_color, fg=entry_text_color)
         other.pack()
         e2 = Label(tk, text='Your Name', bg=button_color, foreground=text_color)
         e2.config(height=button_height, width=button_width)
         e2.pack()
         other1 = Entry(tk)
-        other1.config(background='White')
+        other1.config(background=entry_background_color, fg=entry_text_color)
         other1.pack()
         e3 = Button(tk, text='Submit', command=options.signout_item_next, bg=button_color, foreground=text_color)
         e3.pack()
@@ -120,7 +120,7 @@ class options:
         e1.config(height=button_height, width=button_width)
         e1.pack()
         other = Entry(tk)
-        other.config(background='White')
+        other.config(background=entry_background_color, fg=entry_text_color)
         other.pack()
         e2 = Button(tk, text='Submit', command=options.signin_item_next, bg=button_color, foreground=text_color)
         e2.config(height=button_height, width=button_width)
@@ -141,7 +141,7 @@ class options:
         e1 = Label(tk, text='Item name')
         e1.pack()
         other = Entry(tk)
-        other.config(background='White')
+        other.config(background=entry_background_color, fg=entry_text_color)
         other.pack()
         e2 = Button(tk, text='Submit', command=options.remove_tool_next)
         e2.pack()
@@ -161,12 +161,12 @@ class options:
         e1 = Label(tk, text='Item name')
         e1.pack()
         other = Entry(tk)
-        other.config(background='White')
+        other.config(background=entry_background_color, fg=entry_text_color)
         other.pack()
         e2 = Label(tk, text='Binary')
         e2.pack()
         other1 = Entry(tk)
-        other1.config(background='White')
+        other1.config(background=entry_background_color, fg=entry_text_color)
         other1.pack()
         e3 = Button(tk, text='Submit', command=options.add_tool_next)
         e3.pack()
@@ -187,7 +187,7 @@ class options:
         e1 = Label(tk, text='New password')
         e1.pack()
         other = Entry(tk)
-        other.config(background='White')
+        other.config(background=entry_background_color, fg=entry_text_color)
         other.pack()
         e3 = Button(tk, text='Submit',command=options.create_password_next)
         e3.pack()
@@ -209,17 +209,17 @@ class options:
         e1 = Label(tk, text='New user')
         e1.pack()
         other = Entry(tk)
-        other.config(background='White')
+        other.config(background=entry_background_color, fg=entry_text_color)
         other.pack()
         e2 = Label(tk, text='Password')
         e2.pack()
         other1 = Entry(tk)
-        other1.config(background='White')
+        other1.config(background=entry_background_color, fg=entry_text_color)
         other1.pack()
         e3 = Label(tk, text='Permission')
         e3.pack()
         other2 = Entry(tk)
-        other2.config(background='White')
+        other2.config(background=entry_background_color, fg=entry_text_color)
         other2.pack()
         e4 = Button(tk, text='Submit', command=options.create_user_next)
         e4.pack()
@@ -241,7 +241,7 @@ class options:
         e1.pack()
         global other
         other = Entry(tk)
-        other.config(background='White')
+        other.config(background=entry_background_color, fg=entry_text_color)
         other.pack()
         e2 = Button(tk, text='Submit', command=options.remove_user_next)
         e2.pack()
@@ -270,6 +270,10 @@ def clear():
 
 #Sends logged in users to correct area depending on permissions.
 def send():
+    try:
+        os.remove('hash.txt')
+    except:
+        pass
     name, perm= users.return_login_cred()
     if perm == "admin":
         admin_screen()
@@ -332,31 +336,39 @@ def ask():
             if startup==True:
                 ask_encrypt_password()
             else:
+                backup.clear_all()
+                backup.create(random_name=True, password=other3)
                 send()
         else:
             send()
     else:
         clear()
         print('Incorrect Password Attempt')
-        history.create_history(user=user, usage='Login Failed', add_desc=True, desc='Incorrect Password')
+        history.create_history(user=user, usage='Login Failed', add_desc=True, desc='Incorrect Password', manual_record=True)
         login(wrong=True)
 
 #Ask for the encyption password to allow for auto backups.
 def ask_encrypt_password(wrong=False): 
-    global other3
-    other3=None
-    clear()
-    e1=Label(tk, text='Enter Encrypt/Decrypt Password', width=23)
-    e1.pack()
-    other3=Entry(tk)
-    other3.config(background='White')
-    other3.pack()
-    e3=Button(tk, text='Submit', command=ask_encrypt_password_next)
-    e3.pack()
-    if wrong==True:
-        e4=Label(tk, text='Incorrect Password', width=20)
-        e4.pack()
-    Tk.update_idletasks(tk)
+    if os.path.exists('hash.aes')==1:
+        print('Hash file found')
+        global other3
+        other3=None
+        clear()
+        e1=Label(tk, text='Enter Encrypt/Decrypt Password', width=23)
+        e1.pack()
+        other3=Entry(tk)
+        other3.config(background=entry_background_color, fg=entry_text_color)
+        other3.pack()
+        e3=Button(tk, text='Submit', command=ask_encrypt_password_next)
+        e3.pack()
+        if wrong==True:
+            e4=Label(tk, text='Incorrect Password', width=20)
+            e4.pack()
+        Tk.update_idletasks(tk)
+    else:
+        print('Could not find hash. Asking user to create one.')
+        clear()
+        create_encryption_password()
 def ask_encrypt_password_next():
     global other3, startup
     other3=other3.get()
@@ -365,6 +377,7 @@ def ask_encrypt_password_next():
         startup=False
         send()
     else:
+        history.create_history('Unknown User', 'Incorrect Encryption Password', manual_record=True)
         ask_encrypt_password(wrong=True)
 
 #Display a screen that allows the user to login.
@@ -374,12 +387,12 @@ def login(wrong=False):
     e2 = Label(tk, text='Username: ')
     e2.pack()
     name = Entry(tk, highlightbackground='Black')
-    name.config(background='White')
+    name.config(background=entry_background_color, fg=entry_text_color)
     name.pack()
     e4 = Label(tk, text='Password: ')
     e4.pack()
     password = Entry(tk, show='*')
-    password.config(background='White', highlightbackground='Black')
+    password.config(background=entry_background_color, fg=entry_text_color, highlightbackground='Black')
     password.pack()
     e1 = Button(tk, text='Login', command=ask, highlightthickness=0, bd=0, borderwidth=0)
     e1.pack()
@@ -398,7 +411,7 @@ def exit_app():
     e1 = Label(tk, text='Password')
     e1.pack()
     other = Entry(tk, show='*')
-    other.config(background='White')
+    other.config(background=entry_background_color, fg=entry_text_color)
     other.pack()
     e3 = Button(tk, text='Submit',command=exit_app_next)
     e3.pack()
@@ -428,7 +441,7 @@ def open_app():
     e1 = Label(tk, text='Password')
     e1.pack()
     other = Entry(tk, show='*')
-    other.config(background='White')
+    other.config(background=entry_background_color, fg=entry_text_color)
     other.pack()
     e3 = Button(tk, text='Submit', command=open_app_next)
     e3.pack()
@@ -441,6 +454,31 @@ def open_app_next():
     else:
         clear()
         exit()
+
+#If encryption password(s) don't exist, ask them to make one.
+def create_encryption_password():
+    global other
+    e1=Label(tk, text='Enter new Encryption Password', width=22)
+    e1.pack()
+    other=Entry(tk)
+    other.config(background=entry_background_color, fg=entry_text_color)
+    other.pack()
+    Tk.update_idletasks(tk)
+    e2=Button(tk, text='Submit', command=create_encryption_password_next)
+    e2.pack()
+def create_encryption_password_next():
+    global other
+    try:
+        get.new_hash(normal=True, passw=str(other.get())) #Makes a new hash
+        send()
+    except:
+        print("Something happen in create_encryption_password")
+        clear()
+        try:
+            os.remove('hash.txt')
+        except:
+            pass
+        create_encryption_password()
 tk.config(bg=bg_color)
 #Check if the save file is encrypted. If so, ask user for the decrypt password.
 if os.path.exists('history.aes')==True or os.path.exists('data_save.aes'):
