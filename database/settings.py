@@ -5,9 +5,9 @@ do_not_remove=False
 #Do not disable failsafe unless needed! Trust me. Don't disable it.
 fail_safe=True
 #Required python version to run program.
-required_version='3.10.1'
+required_version='3.10.0'
 #Application version. Just for show.
-program_version='0.3.0'
+program_version='0.3.1'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only.
@@ -56,8 +56,8 @@ show_incorrect_settings=True
 disable_save=False
 #min and max password lengths, and allowed characters
 min_length=5
-max_length=8
-allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'
+max_length=16
+allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890*()#'
 #Passwords have to meet the requirments set above.
 strict_password=True
 
@@ -65,7 +65,10 @@ strict_password=True
 #No settings are pending. Send a request on GitHub for ideas.
 #If a setting is missing, not present, or not there, skip it.
 skip_missing_settings=False
-
+#When you start the database a backup will be made.
+backupOn_StartUp=False
+#Allowed permissions to create, remove, edit backups.
+allowed_backupPermissions=['admin','teacher']
 
 #Remove if you aren't using my custom application.
 #Settings for application.
@@ -76,5 +79,5 @@ text_color='#494b4d'
 button_height=2
 button_width=15
 text_font=30
-
-
+entry_background_color='White'
+entry_text_color='Black'
