@@ -7,51 +7,14 @@ import sys, os
 import zipfile
 n = list(sys.argv)
 ex=False
-try:
-    #print ('Argument:',n[1])
-    if str(n[1])=="-v":
-        from settings import program_version
-        print('Current Version: '+program_version)
-        ex=True
-    if str(n[1])=="-info":
-        print('Created By Brandon Robinson.')
-        print('GitHub: github.com/sukadateam')
-        ex=True
-    if str(n[1])=="-r":
-        try:
-            os.remove('data_save,py')
-        except:
-            print('data_save.py not found')
-        try:
-            os.remove('version.py')
-        except:
-            print('version.py not found')
-        try:
-            os.remove('directory.py')
-        except:
-            print('directory,py not found')
-        try:
-            os.remove('history.txt')
-        except:
-            print('history.txt not found')
-        try:
-            os.remove('hash_other.aes')
-        except:
-            pass
-        try:
-            os.remove('hash.aes')
-        except:
-            pass
-        print('Now remove __pycache__ manually')
-        print('Exiting...')
-        ex=True
-except:
-    pass
 if ex==True:
     sys.exit()
 from zipfile import ZipFile
-from multiprocessing import Process as p
-from multiprocessing.spawn import freeze_support
+try:
+    from multiprocessing import Process as p
+    from multiprocessing.spawn import freeze_support
+except:
+    pass
 for i in range(100):
     print('')
 try:
@@ -366,6 +329,10 @@ if sys.version[0:len(required_version)] == required_version:
             return a
         def clear():
             #Clears history file
+            try:
+                os.chdir(path)
+            except:
+                pass
             history.delete()
             history.create()
             os.remove('history_desc.py')
@@ -374,7 +341,10 @@ if sys.version[0:len(required_version)] == required_version:
             file.close()
         def delete():
             #Removes history file
-            os.remove('history.txt')
+            try:
+                os.remove('history.txt')
+            except:
+                pass
         def create():
             #Creates history file
             global d1
@@ -1705,6 +1675,46 @@ if sys.version[0:len(required_version)] == required_version:
     check_settingsImproved()
     profanityFilter.setup()
     print('System Started Correctly!')
+    try:
+        if str(n[1])=="-v":
+            from settings import program_version
+            print('Current Version: '+program_version)
+            ex=True
+        if str(n[1])=="-info":
+            print('Created By Brandon Robinson.')
+            print('GitHub: github.com/sukadateam')
+            ex=True
+        if str(n[1])=="-r":
+            try:
+                os.remove('data_save,py')
+            except:
+                print('data_save.py not found')
+            try:
+                os.remove('version.py')
+            except:
+                print('version.py not found')
+            try:
+                os.remove('directory.py')
+            except:
+                print('directory,py not found')
+            try:
+                os.remove('history.txt')
+            except:
+                print('history.txt not found')
+            try:
+                os.remove('hash_other.aes')
+            except:
+                pass
+            try:
+                os.remove('hash.aes')
+            except:
+                pass
+            history.clear()
+            print('Now remove __pycache__ manually')
+            print('Exiting...')
+            ex=True
+    except:
+        pass
     #You must set a Normal level password
     #You can set a global password if need be. Basically a backup.
     #Test bench
