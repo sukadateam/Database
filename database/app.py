@@ -72,7 +72,6 @@ class buttons:
 class options:
     def backup():
         global other3
-        backup.clear_all()
         backup.create(random_name=True, password=other3)
     def clear_history():
         history.clear()
@@ -463,19 +462,19 @@ def open_app_next():
 
 #If encryption password(s) don't exist, ask them to make one.
 def create_encryption_password():
-    global other
+    global other3
     e1=Label(tk, text='Enter new Encryption Password', width=22)
     e1.pack()
-    other=Entry(tk)
-    other.config(background=entry_background_color, fg=entry_text_color)
-    other.pack()
+    other3=Entry(tk)
+    other3.config(background=entry_background_color, fg=entry_text_color)
+    other3.pack()
     Tk.update_idletasks(tk)
     e2=Button(tk, text='Submit', command=create_encryption_password_next)
     e2.pack()
 def create_encryption_password_next():
-    global other
+    global other3
     try:
-        get.new_hash(normal=True, passw=str(other.get())) #Makes a new hash
+        get.new_hash(normal=True, passw=str(other3.get())) #Makes a new hash
         send()
     except:
         print("Something happen in create_encryption_password")
