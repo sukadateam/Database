@@ -1,13 +1,9 @@
-#Do not make any vars equal numbers. True or False are fine and "" are fine.
+#User Settings --(FOR USERS)--
 
-#If True system will not remove files after encrypt and decrypt. Will remove files if set to False.
-do_not_remove=False
-#Do not disable failsafe unless needed! Trust me. Don't disable it.
-fail_safe=True
 #Required python version to run program.
 required_version='3.10.0'
 #Application version. Just for show.
-program_version='0.3.2'
+program_version='0.3.4'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only.
@@ -16,22 +12,72 @@ drive_name='Computer'
 system='macos'
 #Filters bad words that people should not be using. Not currently active.
 profanity_filter=True
-#Disable profanity filter for admin.
-disable_filter_admin=False
 #A backup password in case the other is forgotten.
 global_password=True
-#Don't load save file. True: Skip save file -- False: Load defualt file not save file.
-dont_load_save=False
-#Automatically optimize on start up. USE AT YOUR OWN RISK. Currently in development phase.
-optimize_on_startup=False
-#Enable automated history_file for functions
-auto_history_record=True
 #App version control --(Disable if needed)--
 app_version_control=False
 #Only allow set operating system. Change system variable to your choice.
 set_operating_system=False
 #Allowed windows versions. You can choose 7, 8, 10, 11. Only works if system setting is set to windows.
 allow_windows_version='10'
+#min and max password lengths, and allowed characters
+min_length=5
+max_length=16
+allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890*()#'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Developer Settings --(NOT USER SETTINGS!)-- Developer Settings
+
+#Enable automated history_file for functions
+auto_history_record=True
+#Don't load save file. True: Skip save file -- False: Load defualt file not save file.
+dont_load_save=False
+#Automatically optimize on start up. USE AT YOUR OWN RISK. Currently in development phase.
+optimize_on_startup=False
 #If a record prior what's asked is a duplicate, system will then ignore the task given.
 skip_history_copy=True
 #Enable automated history_file for functions. 
@@ -54,12 +100,14 @@ allowed_digists_forHistory=8
 show_incorrect_settings=True
 #Will deny the program from saving. No matter what. Will cause problems for long term.
 disable_save=False
-#min and max password lengths, and allowed characters
-min_length=5
-max_length=16
-allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890*()#'
 #Passwords have to meet the requirments set above.
 strict_password=True
+#If True system will not remove files after encrypt and decrypt. Will remove files if set to False.
+do_not_remove=False
+#Do not disable failsafe unless needed! Trust me. Don't disable it.
+fail_safe=True
+#Disable profanity filter for admin.
+disable_filter_admin=False
 
 #Settings coming soon. Do not change unless your a dare devil.
 #No settings are pending. Send a request on GitHub for ideas.
@@ -73,6 +121,8 @@ allowed_backupPermissions=['admin','teacher']
 setup_backup_response=True
 #After ? startups. Remove backups from ? long ago.
 retain_backup_time=10 #Startups
+#Backup starting number
+backup_startNumber=1
 
 #Remove if you aren't using my custom application.
 #Settings for application.
