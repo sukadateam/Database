@@ -1,5 +1,5 @@
 # Database
-Discord Server: Null{Private}
+Discord Server: Message Me If You Wish To Help. Thank You!
 <br>A custom database handler. Still in development.
 
 To setup. Install all items in requirements.txt using pip and run custom_database.py. That's it!
