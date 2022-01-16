@@ -1,0 +1,9 @@
+This Project was created by Brandon Robinson.
+
+This is my alternative to mysql.
+
+This is a fully python database handler. For new feature Ideas please let me know.
+
+Python version 3.10.1 is required for this build.
+
+This is a passion project. I wish to work with others in the future with my code.
