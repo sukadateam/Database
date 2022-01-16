@@ -6,15 +6,23 @@ profanityFilter.setup()
 while True:
     for i in range(10):
         print('')
-    choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\n(8)Optimize save file\n(9)Check profanity\n(10)Login\nYour choice: ')
+    if users.return_login_cred() == False:
+        choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\n(8)Optimize save file\n(9)Check profanity\n(10)Login\nYour choice: ')
+    else:
+        choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\n(8)Optimize save file\n(9)Check profanity\n(10)Logout\nYour choice: ')
     if choice == "9":
         print(list1)
         if profanityFilter.filter(var=input('Your input: ').lower()) == 1:
             print('Match Found')
         else:
             print('Match Not Found')
-    if choice=="10":
-        users.login_request(user=input('Username: '), password=input('Password: '))
+    if users.return_login_cred() != False:
+        if choice=="10":
+            users.logout()
+            choice=''
+    if users.return_login_cred() == False:
+        if choice=="10":
+            users.login_request(user=input('Username: '), password=input('Password: '))
     if choice == "1":
         get.new_hash() #Makes a new hash
         get.encrypt_hash(other=True, passw=input('Backup Password: '))
