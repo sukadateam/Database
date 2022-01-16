@@ -1095,8 +1095,14 @@ if sys.version[0:len(required_version)] == required_version:
             user_permission=None
             user_logged=None
         def return_login_cred():
-            global user_logged, user_permission
-            return user_logged, user_permission
+            try:
+                global user_logged, user_permission
+                if user_logged==None:
+                    return False
+                else:
+                    return user_logged, user_permission
+            except:
+                return False
     class data_base:
         class edit:
             def search_rows(data_base=None, id=None, database=None):
@@ -1795,7 +1801,6 @@ if sys.version[0:len(required_version)] == required_version:
     #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
-
 
     #Do not remove this!!!!!!
     if __name__ == '__main__':
