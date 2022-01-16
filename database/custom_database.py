@@ -5,6 +5,7 @@
 #Restory function needs to be updated to work with the latest backup method. It doesn't anymore.
 #Argument -r needs to remove .pyc in main directory.
 #Organize settings.py
+#Have custom_database on startup check for txt hash files, if found, remove it!
 import sys, os
 import zipfile
 n = list(sys.argv)
@@ -93,7 +94,10 @@ if sys.version[0:len(required_version)] == required_version:
             shutil.rmtree('backups')
             os.mkdir('backups')
             backup_newer.reset_count()
-        def create(password=None, hide=False):
+        def create(backup_name=None, random_name=False, password=None, hide=False):
+            #Allow backwards compadibilty.
+            backup_name=None
+            random_name=None
             global backup_count
             #Create new backup.
             if hide==False:
@@ -714,7 +718,6 @@ if sys.version[0:len(required_version)] == required_version:
                     decrypt.data(d_password)
                     decrypt.history(d_password)
                 except ValueError:
-                    print('Wrong password.')
                     return 1
                 try:
                     global drive_letter
