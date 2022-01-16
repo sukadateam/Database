@@ -72,6 +72,7 @@ class buttons:
 class options:
     def backup():
         global other3
+        print(other3)
         backup.create(random_name=True, password=other3)
     def clear_history():
         history.clear()
@@ -304,9 +305,6 @@ def teacher_screen():
 
 #If permission is admin
 def admin_screen():
-    global other3
-    #backup.clear_all()
-    #backup.create(random_name=True, password=other3)
     clear()
     print('Admin Screen.')
     buttons.change_password()
@@ -326,23 +324,26 @@ def ask():
     global name, password, startup
     user=name.get()
     pass_w=password.get()
-    if users.login_request(user=user.lower(), password=pass_w) == True and profanityFilter.filter(str(name))==0 and profanityFilter.filter(str(pass_w))==0:
-        print('Login Success!')
-        try:
-            backup.clear_all()
-        except:
-            pass
-        backup.create(random_name=True, password=pass_w, hide=True)
-        u, p = users.return_login_cred()
-        if p == "admin" or p=="teacher":
-            if startup==True:
-                ask_encrypt_password()
+    if users.login_request(user=user.lower(), password=pass_w) == True:
+        if profanityFilter.filter(str(name))==0 and profanityFilter.filter(str(pass_w))==0:
+            print('Login Success!')
+            try:
+                backup.clear_all()
+            except:
+                pass
+            backup.create(random_name=True, password=pass_w, hide=True)
+            u, p = users.return_login_cred()
+            if p == "admin" or p=="teacher":
+                if startup==True:
+                    ask_encrypt_password()
+                else:
+                    try:
+                        backup.clear_all()
+                    except:
+                        pass
+                    backup.create(random_name=True, password=other3)
+                    send()
             else:
-                try:
-                    backup.clear_all()
-                except:
-                    pass
-                backup.create(random_name=True, password=other3)
                 send()
         else:
             send()
@@ -357,7 +358,6 @@ def ask_encrypt_password(wrong=False):
     if os.path.exists('hash.aes')==1:
         print('Hash file found')
         global other3
-        other3=None
         clear()
         e1=Label(tk, text='Enter Encrypt/Decrypt Password', width=23)
         e1.pack()
@@ -468,16 +468,16 @@ def create_encryption_password():
     other3=Entry(tk)
     other3.config(background=entry_background_color, fg=entry_text_color)
     other3.pack()
-    Tk.update_idletasks(tk)
     e2=Button(tk, text='Submit', command=create_encryption_password_next)
     e2.pack()
+    Tk.update_idletasks(tk)
 def create_encryption_password_next():
     global other3
     try:
         get.new_hash(normal=True, passw=str(other3.get())) #Makes a new hash
         send()
     except:
-        print("Something happen in create_encryption_password")
+        print("Something happened in create_encryption_password")
         clear()
         try:
             os.remove('hash.txt')
