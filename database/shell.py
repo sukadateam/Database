@@ -39,14 +39,14 @@ while True:
         choice=input('\n\n\n(1)Users\n(2)Add to row\n(3)Show databases\n(4)Delete database\n(5)Remove row\n(6)Show items in database\n(7)Add Column\n(8)Remove Column\n(9)Overload\nYour choice: ')
         if choice == "9":
             import random
-            for i in range(int(input('Input a number: '))):
+            for i in range(int(input('Choose a Number(100-10000);No comas: '))):
                 a=''
                 b=''
                 for i in range(8):
                     a+=random.choice('12q9fhecycgy43gf6ucw4b6fxnc')
                 for i in range(8):
                     b+=random.choice('12q9fhecycgy43gf6ucw4b6fxnc')
-                data_base.edit.add_row(data_base='tools', new_row=[a, b], split=False)
+                data_base.edit.add_row(data_base=input('Enter database to overload: '), new_row=[a, b], split=False)
             save.all()
         if choice == "1":
             other=input('\n\n\n(1)Create user\n(2)Remove user\nYour choice: ')
