@@ -7,7 +7,7 @@ fail_safe=True
 #Required python version to run program.
 required_version='3.10.0'
 #Application version. Just for show.
-program_version='0.3.1'
+program_version='0.3.2'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only.
@@ -69,6 +69,10 @@ skip_missing_settings=False
 backupOn_StartUp=False
 #Allowed permissions to create, remove, edit backups.
 allowed_backupPermissions=['admin','teacher']
+#Setup backup response. Do not disable if using backup.
+setup_backup_response=True
+#After ? startups. Remove backups from ? long ago.
+retain_backup_time=10 #Startups
 
 #Remove if you aren't using my custom application.
 #Settings for application.
