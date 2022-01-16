@@ -7,6 +7,7 @@
 #Organize settings.py
 #Have custom_database on startup check for txt hash files, if found, remove it!
 import sys, os
+from os import walk
 import zipfile
 n = list(sys.argv)
 ex=False
@@ -82,18 +83,18 @@ if sys.version[0:len(required_version)] == required_version:
         print('Import type: Save file')
     #On linux this import line may say could not import, but it will if the package is installed.
     import pyAesCrypt
-    class backup_newer:
+    class backup:
         def reset_count():
             try: os.remove('count.py')
             except: pass
             file=open('count.py','w')
-            file.write('backup_count=1')
+            file.write('backup_count=0')
             file.close()
         def clear_all():
             #Clear all files
             shutil.rmtree('backups')
             os.mkdir('backups')
-            backup_newer.reset_count()
+            backup.reset_count()
         def create(backup_name=None, random_name=False, password=None, hide=False):
             #Allow backwards compadibilty.
             backup_name=None
@@ -104,11 +105,6 @@ if sys.version[0:len(required_version)] == required_version:
                 print('Current #:', backup_count)
             #Get a name
             backup_name=str(backup_count)
-            #Update count.py file.
-            os.remove('count.py')
-            file=open('count.py','w')
-            file.write('backup_count='+str(backup_count+1))
-            file.close()
             #Create the backup.
             save.all()
             if encrypt.all(password) != 1:
@@ -129,7 +125,13 @@ if sys.version[0:len(required_version)] == required_version:
                 try: os.chdir(path)
                 except: pass
                 decrypt.all(password)
-    class backup:
+            #Update count.py file.
+            backup_count+=1
+            os.remove('count.py')
+            file=open('count.py','w')
+            file.write('backup_count='+str(backup_count))
+            file.close()
+    class backup_older:
         def clear_all():
             try:
                 shutil.rmtree('backups')
@@ -561,10 +563,37 @@ if sys.version[0:len(required_version)] == required_version:
         print('Application Closed')
         sys.exit()
     class restore:
-        def all(beta=False, backup_name=None):
+        def parts():
+            #Only restore parts from a backup.
+            pass
+        def remove_old_backups():
+            #Removes backups older than set retain_backup_time=
+            pass
+        def all(beta=False, backup_name=None, hide=False):
             if beta == True:
                 if backup_name != None:
-                    pass
+                    #Search for all files in the backups folder and put the names in a list
+                    f = []
+                    for (dirpath, dirnames, filenames) in walk('backups'):
+                        f.extend(filenames)
+                        break
+                    #Remove .zip from all files names in list
+                    for i in range(len(f)):
+                        f[i]=f[i].replace('.zip','')
+                    #Find the highest number in list
+                    highest=0
+                    for i in range(len(f)):
+                        if int(f[i])>highest:
+                            highest=int(f[i])
+                    #Display on screen what the latest backup is.
+                    if hide==False:
+                        if highest != 0:
+                            print('Latest Backup:',str(highest)+'.zip')
+                        if highest==0:
+                            print('No backups detected.')
+                    #Restore all files except custom_database.
+                    #Not yet done :(
+
             if beta==False:
                 print('This function has not been implemented yet.\nA restore plan is in the works. Restore will not work until a complete backup plan is created. For now a temporary backup method has been added. You can run the app from a backup if needed.')
     class info:
@@ -805,7 +834,6 @@ if sys.version[0:len(required_version)] == required_version:
                 except:
                     pass
             except ValueError:
-                print('Wrong Password.')
                 return 1
     class save:
         def all():
@@ -1732,7 +1760,7 @@ if sys.version[0:len(required_version)] == required_version:
     if setup_backup_response==True:
         if os.path.exists('count.py')==False:
             file=open('count.py','w')
-            file.write('backup_count=1')
+            file.write('backup_count=0')
             file.close()
             backup_count=1
     if os.path.exists('backups')==False:
@@ -1750,7 +1778,7 @@ if sys.version[0:len(required_version)] == required_version:
             print('GitHub: github.com/sukadateam')
             ex=True
         if str(n[1])=="-r":
-            list2=['data_save.py','version.py', 'directory.py','history.txt','hash_other.aes','hash.aes','hash_other.txt','hash.txt','settings.pyc','app.pyc','data.pyc']
+            list2=['count.py','data_save.py','version.py', 'directory.py','history.txt','hash_other.aes','hash.aes','hash_other.txt','hash.txt','settings.pyc','app.pyc','data.pyc']
             for i in range(len(list2)):
                 try:
                     os.remove(list2[i])
@@ -1767,7 +1795,7 @@ if sys.version[0:len(required_version)] == required_version:
     #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
-    backup_newer.clear_all()
+
 
     #Do not remove this!!!!!!
     if __name__ == '__main__':
