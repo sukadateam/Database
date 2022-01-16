@@ -7,7 +7,7 @@
 #Organize settings.py
 #Have custom_database on startup check for txt hash files, if found, remove it!
 import sys, os
-from os import walk
+from os import remove, walk
 import zipfile
 n = list(sys.argv)
 ex=False
@@ -88,7 +88,7 @@ if sys.version[0:len(required_version)] == required_version:
             try: os.remove('count.py')
             except: pass
             file=open('count.py','w')
-            file.write('backup_count=0')
+            file.write('backup_count='+str(backup_startNumber))
             file.close()
         def clear_all():
             #Clear all files
@@ -107,7 +107,9 @@ if sys.version[0:len(required_version)] == required_version:
             backup_name=str(backup_count)
             #Create the backup.
             save.all()
+            #Encrypt Files
             if encrypt.all(password) != 1:
+                #Backup Certian Files
                 list2=['custom_database.py','history_desc.py','vars_to_save','data_save.aes','history.aes', 'settings.py','paths.png','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
                 try: os.chdir('backups')
                 except: pass
@@ -162,7 +164,7 @@ if sys.version[0:len(required_version)] == required_version:
                 backup_name=''
                 for i in range(16):
                     backup_name+=random.choice('1234567890qwertyuiopasdfghjklzxcvbnm')
-            #Check idf function is called without using backup_name
+            #Check if function is called without using backup_name
             if backup_name != None:
                 os.chdir('backups')
                 if os.path.exists(backup_name+'.zip') == True:
@@ -181,7 +183,9 @@ if sys.version[0:len(required_version)] == required_version:
                             #If no profanity is found then create the backup.
                             os.chdir(path)
                             save.all()
+                            #Encrypt certian files.
                             if encrypt.all(password) != 1:
+                                #Files to backup
                                 list2=['custom_database.py','history_desc.py','vars_to_save','data_save.aes','history.aes', 'settings.py','paths.png','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
                                 try: os.chdir('backups')
                                 except: pass
@@ -563,37 +567,71 @@ if sys.version[0:len(required_version)] == required_version:
         print('Application Closed')
         sys.exit()
     class restore:
-        def parts():
-            #Only restore parts from a backup.
-            pass
         def remove_old_backups():
             #Removes backups older than set retain_backup_time=
             pass
-        def all(beta=False, backup_name=None, hide=False):
+        def all(beta=False, backup_name=None, password=None, hide=False, restoreFile=['app.py','history_desc.aes','settings.py','data_save.aes','history.aes'], removeFile=['app.py','history_desc.py', 'settings.py','data_save.py','history.txt']):
+            #Restore everything from a backup.
             if beta == True:
-                if backup_name != None:
-                    #Search for all files in the backups folder and put the names in a list
-                    f = []
-                    for (dirpath, dirnames, filenames) in walk('backups'):
-                        f.extend(filenames)
-                        break
-                    #Remove .zip from all files names in list
-                    for i in range(len(f)):
-                        f[i]=f[i].replace('.zip','')
-                    #Find the highest number in list
-                    highest=0
-                    for i in range(len(f)):
-                        if int(f[i])>highest:
-                            highest=int(f[i])
-                    #Display on screen what the latest backup is.
+                if password==None:
                     if hide==False:
+                        print('A password is neeeded to restore from a backup.')
+                if password != None:
+                    if check.encyption_password(password)==0:
+                        if hide==False:
+                            print('Incorrect Password')
+                    if check.encyption_password(password)==1:
+                        #Search for all files in the backups folder and put the names in a list
+                        f = []
+                        for (dirpath, dirnames, filenames) in walk('backups'):
+                            f.extend(filenames)
+                            break
+                        #Remove .zip from all files names in list
+                        for i in range(len(f)):
+                            try:
+                                f[i]=f[i].replace('.zip','')
+                            except:
+                                f.pop(i)
+                        #Find the highest number in list
+                        highest=0
+                        for i in range(len(f)):
+                            try:
+                                if int(f[i])>highest:
+                                    highest=int(f[i])
+                            except:
+                                pass
+                        #Display on screen what the latest backup is.
                         if highest != 0:
-                            print('Latest Backup:',str(highest)+'.zip')
+                            if hide==False:
+                                print('Latest Backup:',str(highest)+'.zip')
+                            #Extract all files to restore folder after creating the folder
+                            if os.path.exists('restore')==False:
+                                os.mkdir('restore')
+                            with zipfile.ZipFile('backups/'+str(highest)+'.zip', 'r') as zip_ref:
+                                zip_ref.extractall('restore')
+                            #Replace all item in removeFile var to root
+                            for i in range(len(removeFile)):
+                                #Remove files in root
+                                try:
+                                    os.remove(removeFile[i])
+                                except:
+                                    if hide==False:
+                                        print('File '+removeFile[i]+' in backup could not be found')
+                            #Add files to root from restore folder
+                            for i in range(len(restoreFile)):
+                                try:
+                                    os.chdir('restore')
+                                except:
+                                    pass
+                                try:
+                                    shutil.copy(restoreFile[i],path)
+                                except:
+                                    if hide==False:
+                                        print('Could not restore file:',restoreFile[i])
+                            os.chdir(path)
+                            decrypt.all(password)
                         if highest==0:
                             print('No backups detected.')
-                    #Restore all files except custom_database.
-                    #Not yet done :(
-
             if beta==False:
                 print('This function has not been implemented yet.\nA restore plan is in the works. Restore will not work until a complete backup plan is created. For now a temporary backup method has been added. You can run the app from a backup if needed.')
     class info:
@@ -737,6 +775,9 @@ if sys.version[0:len(required_version)] == required_version:
         def opt(password):
             pyAesCrypt.decryptFile('opt.aes','opt.py',password)
             os.remove('opt.aes')
+        def history_desc(password):
+            pyAesCrypt.decryptFile('history_desc.py','history_desc.aes',password)
+            os.remove('history_desc.aes')
         def all(password):
             #decrypt.custom_database(password, True) Do not encrypt main file. This file is needed to decrypt!
             try:
@@ -746,6 +787,7 @@ if sys.version[0:len(required_version)] == required_version:
                     d_password=decrypt.hash(password)
                     decrypt.data(d_password)
                     decrypt.history(d_password)
+                    decrypt.history_desc(d_password)
                 except ValueError:
                     return 1
                 try:
@@ -810,12 +852,18 @@ if sys.version[0:len(required_version)] == required_version:
             pyAesCrypt.encryptFile('opt.py','opt.aes',password)
             if do_not_remove==True:
                 os.remove('opt.py')
+        def history_desc():
+            global do_not_remove
+            pyAesCrypt.encryptFile('history_desc.py','history_desc.aes',password)
+            if do_not_remove==True:
+                os.remove('history_desc.py')
         def all(password):
             try:
                 d_password=decrypt.hash(password)
                 #encrypt.custom_database(password, True) Do not encrypt main file. This file is needed to decrypt!
                 encrypt.data(d_password)
                 encrypt.history(d_password)
+                encrypt.history_desc(d_password)
                 #encrypt.cache(d_password)
                 #encrypt.opt(d_password)
                 global drive_letter
@@ -1766,9 +1814,9 @@ if sys.version[0:len(required_version)] == required_version:
     if setup_backup_response==True:
         if os.path.exists('count.py')==False:
             file=open('count.py','w')
-            file.write('backup_count=0')
+            file.write('backup_count='+str(backup_startNumber))
             file.close()
-            backup_count=1
+            backup_count=backup_startNumber
     if os.path.exists('backups')==False:
         os.mkdir('backups')
     check_settingsImproved()
@@ -1797,10 +1845,15 @@ if sys.version[0:len(required_version)] == required_version:
             ex=True
     except:
         pass
+    try:
+        os.remove('hash.txt')
+    except:
+        pass
     #You must set a Normal level password
     #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
+    
 
     #Do not remove this!!!!!!
     if __name__ == '__main__':
