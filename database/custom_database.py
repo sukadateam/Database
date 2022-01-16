@@ -4,6 +4,7 @@
 #history_desc needs to be encrypted/decrypted.
 #Restory function needs to be updated to work with the latest backup method. It doesn't anymore.
 #Argument -r needs to remove .pyc in main directory.
+#Organize settings.py
 import sys, os
 import zipfile
 n = list(sys.argv)
@@ -11,6 +12,10 @@ ex=False
 if ex==True:
     sys.exit()
 from zipfile import ZipFile
+try:
+    from count import backup_count
+except:
+    pass
 try:
     from multiprocessing import Process as p
     from multiprocessing.spawn import freeze_support
@@ -76,6 +81,50 @@ if sys.version[0:len(required_version)] == required_version:
         print('Import type: Save file')
     #On linux this import line may say could not import, but it will if the package is installed.
     import pyAesCrypt
+    class backup_newer:
+        def reset_count():
+            try: os.remove('count.py')
+            except: pass
+            file=open('count.py','w')
+            file.write('backup_count=1')
+            file.close()
+        def clear_all():
+            #Clear all files
+            shutil.rmtree('backups')
+            os.mkdir('backups')
+            backup_newer.reset_count()
+        def create(password=None, hide=False):
+            global backup_count
+            #Create new backup.
+            if hide==False:
+                print('Current #:', backup_count)
+            #Get a name
+            backup_name=str(backup_count)
+            #Update count.py file.
+            os.remove('count.py')
+            file=open('count.py','w')
+            file.write('backup_count='+str(backup_count+1))
+            file.close()
+            #Create the backup.
+            save.all()
+            if encrypt.all(password) != 1:
+                list2=['custom_database.py','history_desc.py','vars_to_save','data_save.aes','history.aes', 'settings.py','paths.png','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
+                try: os.chdir('backups')
+                except: pass
+                zipObject= ZipFile(backup_name+'.zip', 'w')
+                try: os.chdir(path)
+                except: pass
+                for i in range(len(list2)):
+                    try:
+                        zipObject.write(list2[i])
+                    except:
+                        pass
+                try: os.chdir('backups')
+                except: pass
+                zipObject.close()
+                try: os.chdir(path)
+                except: pass
+                decrypt.all(password)
     class backup:
         def clear_all():
             try:
@@ -508,8 +557,12 @@ if sys.version[0:len(required_version)] == required_version:
         print('Application Closed')
         sys.exit()
     class restore:
-        def all():
-            print('This function has not been implemented yet.\nA restore plan is in the works. Restore will not work until a complete backup plan is created. For now a temporary backup method has been added. You can run the app from a backup if needed.')
+        def all(beta=False, backup_name=None):
+            if beta == True:
+                if backup_name != None:
+                    pass
+            if beta==False:
+                print('This function has not been implemented yet.\nA restore plan is in the works. Restore will not work until a complete backup plan is created. For now a temporary backup method has been added. You can run the app from a backup if needed.')
     class info:
         def operating_system():
             global system
@@ -1673,6 +1726,14 @@ if sys.version[0:len(required_version)] == required_version:
                 print('Incorrect OS')
                 history.create_history(usage='Operating System Exception', user='windows')
                 exit() 
+    if setup_backup_response==True:
+        if os.path.exists('count.py')==False:
+            file=open('count.py','w')
+            file.write('backup_count=1')
+            file.close()
+            backup_count=1
+    if os.path.exists('backups')==False:
+        os.mkdir('backups')
     check_settingsImproved()
     profanityFilter.setup()
     print('System Started Correctly!')
@@ -1703,7 +1764,7 @@ if sys.version[0:len(required_version)] == required_version:
     #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
-    
+    backup_newer.clear_all()
 
     #Do not remove this!!!!!!
     if __name__ == '__main__':
