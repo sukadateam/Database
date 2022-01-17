@@ -2,10 +2,9 @@
 #Create a python test file to test all functions.
 #Add new items to profanity.txt
 #history_desc needs to be encrypted/decrypted.
-#Restory function needs to be updated to work with the latest backup method. It doesn't anymore.
-#Argument -r needs to remove .pyc in main directory.
-#Organize settings.py
+#Restore function needs to be updated to work with the latest backup method. It doesn't anymore.
 #Have custom_database on startup check for txt hash files, if found, remove it!
+#Shell being called inside of terminal causes the program to show incorrectly.
 import sys, os
 from os import remove, walk
 import zipfile
@@ -83,6 +82,26 @@ if sys.version[0:len(required_version)] == required_version:
         print('Import type: Save file')
     #On linux this import line may say could not import, but it will if the package is installed.
     import pyAesCrypt
+    class math:
+        def pi(accuracy=1000000):
+            # Initialize denominator
+            k = 1
+            # Initialize sum
+            s = 0
+            for i in range(accuracy):
+                # even index elements are positive
+                if i % 2 == 0:
+                    s += 4/k
+                else:
+                    # odd index elements are negative
+                    s -= 4/k
+                # denominator is odd
+                k += 2
+            return s
+        def distance(speed=None, time=None):
+            return speed/time
+        def force(mass=None, acceleration=None):
+            return mass*acceleration
     class backup:
         def reset_count():
             try: os.remove('count.py')
@@ -399,7 +418,10 @@ if sys.version[0:len(required_version)] == required_version:
                 pass
             history.delete()
             history.create()
-            os.remove('history_desc.py')
+            try:
+                os.remove('history_desc.py')
+            except:
+                pass
             file=open('history_desc.py', 'w')
             file.write('history_id=[]\nhistory_description=[]\ncount=1')
             file.close()
@@ -630,6 +652,7 @@ if sys.version[0:len(required_version)] == required_version:
                                         print('Could not restore file:',restoreFile[i])
                             os.chdir(path)
                             decrypt.all(password)
+                            shutil.rmtree('restore')
                         if highest==0:
                             print('No backups detected.')
             if beta==False:
@@ -852,7 +875,7 @@ if sys.version[0:len(required_version)] == required_version:
             pyAesCrypt.encryptFile('opt.py','opt.aes',password)
             if do_not_remove==True:
                 os.remove('opt.py')
-        def history_desc():
+        def history_desc(password):
             global do_not_remove
             pyAesCrypt.encryptFile('history_desc.py','history_desc.aes',password)
             if do_not_remove==True:
@@ -1720,7 +1743,10 @@ if sys.version[0:len(required_version)] == required_version:
             history.create_history('admin', 'BackupNameExists', manual_record=auto_filter_profanity)
             print('(Error) A backup with the same name already exists.')
         def profanityDetected(var, user):
-            history.create_history(user, 'profanityDetected', manual_record=auto_error_record, add_desc=True, desc=user+' tried to use a curse word knwon as: '+var)
+            try:
+                history.create_history(user, 'profanityDetected', manual_record=auto_error_record, add_desc=True, desc=user+' tried to use a curse word knwon as: '+var)
+            except:
+                print(errors.cannot_call_func('<Null>'))
             print('Not Alllowed: ',var)
         def doesNotObeyRestrictions():
             history.create_history('doesNotObeyRestrictions', 'Error', manual_record=auto_error_record)
@@ -1849,6 +1875,8 @@ if sys.version[0:len(required_version)] == required_version:
         os.remove('hash.txt')
     except:
         pass
+    if os.path.exists('history_desc.py')==False:
+        history.clear()
     #You must set a Normal level password
     #You can set a global password if need be. Basically a backup.
     #Test bench
