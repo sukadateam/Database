@@ -4,11 +4,14 @@
 #Restore function needs to be updated to work with the latest backup method. It doesn't anymore.
 #Shell being called inside of terminal causes the program to show incorrectly.
 #restore.remove_old_backups() needs to be finished.
+#Allow new hash to be stored in memory. memory_hash
 import sys, os
+from os import stat
 from os import remove, walk
 import zipfile
 n = list(sys.argv)
 ex=False
+memory_hash=''
 if ex==True:
     sys.exit()
 from zipfile import ZipFile
@@ -108,6 +111,7 @@ if sys.version[0:len(required_version)] == required_version:
             else:
                 print(errors.not_str())
         def database(data_base=None, database=None, hide=False):
+            #Only works for column_row
             #Prints a asked database to the screen in a nice format.
             if data_base==None:
                 database=None
@@ -176,6 +180,10 @@ if sys.version[0:len(required_version)] == required_version:
             os.mkdir('backups')
             backup.reset_count()
         def create(backup_name=None, random_name=False, password=None, hide=False):
+            try:
+                password=password.get()
+            except:
+                pass
             #Allow backwards compadibilty.
             backup_name=None
             random_name=None
@@ -207,6 +215,8 @@ if sys.version[0:len(required_version)] == required_version:
                 try: os.chdir(path)
                 except: pass
                 decrypt.all(password)
+            else:
+                print('Something is here')
             #Update count.py file.
             backup_count+=1
             os.remove('count.py')
@@ -774,8 +784,8 @@ if sys.version[0:len(required_version)] == required_version:
                 global global_password
                 if global_password==True:
                     get.get_other_hash(password)
-        def new_hash(passw=None, normal=False):
-            get.random_hash(single=normal)
+        def new_hash(passw=None, normal=False, memory_float=False):
+            get.random_hash(single=normal, memory_float=memory_float)
             get.encrypt_hash(passw)
             password=None
         def encrypt_hash(passw=None, other=False):
@@ -801,13 +811,16 @@ if sys.version[0:len(required_version)] == required_version:
                         os.remove('hash_other.txt')
         def password():
             return input('Password: ')
-        def random_hash(length=100, normal=True, single=False):
+        def random_hash(length=100, normal=True, single=False, memory_float=False):
             if isinstance(length, int) == False:
                 print(errors.not_int())
             if isinstance(length, int) == True:
                 ah=''
                 for i in range(length): 
                     ah+=random.choice('ajfygweuoichwgbuieucr73rwecb638781417983b 623v9923 r t72344y 23uc3u2b4n9832 4b2c794y 237bc2423nc482b3c427 rfgshdfuw38263872guihfef86w4t878whryfeg48tg34hf7w')
+                if memory_float==True:
+                    global memory_hash
+                    memory_hash=ah
                 if normal==True: 
                     global drive_letter
                     if system=="windows": file=open(drive_letter+':/hash.txt','w')
@@ -832,12 +845,15 @@ if sys.version[0:len(required_version)] == required_version:
                     pyAesCrypt.decryptFile('hash.aes','hash.txt',password)
                     return open('hash.txt','r').read()
             except:
-                if system=="windows":
-                    pyAesCrypt.decryptFile(drive_letter+':/hash_other.aes',drive_letter+':/hash_other.txt',password)
-                    return open(drive_letter+':/hash_other.txt','r').read()
-                else:
-                    pyAesCrypt.decryptFile('hash_other.aes','hash_other.txt',password)
-                    return open('hash_other.txt','r').read()
+                try:
+                    if system=="windows":
+                        pyAesCrypt.decryptFile(drive_letter+':/hash_other.aes',drive_letter+':/hash_other.txt',password)
+                        return open(drive_letter+':/hash_other.txt','r').read()
+                    else:
+                        pyAesCrypt.decryptFile('hash_other.aes','hash_other.txt',password)
+                        return open('hash_other.txt','r').read()
+                except:
+                    return memory_hash
         def history(password):
             try:
                 pyAesCrypt.decryptFile('history.aes','history.txt',password)
