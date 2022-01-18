@@ -81,6 +81,68 @@ if sys.version[0:len(required_version)] == required_version:
         print('Import type: Save file')
     #On linux this import line may say could not import, but it will if the package is installed.
     import pyAesCrypt
+    #A class for my application.
+    class save_in_txtFile:
+        def tools():
+            file=open('tools.txt','w')
+            for i in range(len(row)):
+                file.write('Item: '+str(display.space(str(((row[i])[1])[0]), hide=True, max_length=20))+'  Serial: '+str(display.space(str(((row[i])[1])[1]), hide=True, max_length=20))+'\n')
+            file.close()
+    class display:
+        def space(var, max_length=10, hide=False):
+            #Works with display.database to create a nice table to display.
+            if isinstance(var, str)==True:
+                length=len(var)
+                if hide==False: print('Input length:',length)
+                if length<max_length:
+                    #Add spaces to fit
+                    if hide==False: print('Total spaces to add:', max_length-length)
+                    for i in range(max_length-length):
+                        var+=' '
+                    if hide==False: print('Final Length:',len(var))
+                if length>max_length:
+                    #Shorten to fit
+                    var=var[0:max_length]
+                    if hide==False: print('Final Length:',len(var))
+                return var
+            else:
+                print(errors.not_str())
+        def database(data_base=None, database=None, hide=False):
+            #Prints a asked database to the screen in a nice format.
+            if data_base==None:
+                database=None
+            if data_base != None:
+                #Check to see if database exists
+                column_count=0
+                for i in range(len(data_bases)):
+                    if (data_bases[i])[0]==data_base:
+                        column_count=len((data_bases[i])[4])
+                        break
+                if hide==False:
+                    print('Column_count='+str(column_count))
+                #Print the column names.
+                list3=''
+                for i in range(len(data_bases)):
+                    if (data_bases[i])[0]==data_base:
+                        for x in range(column_count):
+                            list3+=display.space(((data_bases[i])[4])[x], hide=True)
+                        break
+                print(list3)
+                #Look for items in row var that corresponds with the database and display them.
+                for i in range(len(row)):
+                    if (row[i])[0]==data_base:
+                        list3=''
+                        for x in range(column_count):
+                            list3+=(display.space(((row[i])[1])[x], hide=True))
+                        print(list3)
+        def settings():
+            #Shows all settings on the screen.
+            settings1=['backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions','backupOn_StartUp','skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+            for i in range(len(settings1)):
+                try:
+                    print(settings1[i]+'='+str(globals()[settings1[i]]))
+                except:
+                    print(settings1[i]+'='+'N/A')
     class math:
         def pi(accuracy=1000000):
             # Initialize denominator
@@ -253,23 +315,6 @@ if sys.version[0:len(required_version)] == required_version:
                 print("1 or More settings are incorrect.")
             exit()
         check_settings(hide=hide)
-    class inventory:
-        def determ():
-            if multi_process==True:
-                a= p(target=inventory.calc())
-                a.start()
-                a.join()
-                freeze_support()
-            if multi_process==False:
-                inventory.calc()
-        def calc():
-            #Gives a informed idea if items, how many are in the system, how many are currently being used, and how many are not being used.
-            rows1=[]
-            for i in range(len(row)):
-                pass
-        def display():
-            #Displays the calculations.
-            pass
     def check_settings(hide=False):
         #Checks settings.py to make sure all settings are correct and will not cause a proplem.
         #If one or more items come back as a problem they will be listed,
@@ -349,6 +394,7 @@ if sys.version[0:len(required_version)] == required_version:
             if auto_filter_profanity==True or manual==True:
                 global list1
                 if isinstance(var, str) == True:
+                    var=var.lower()
                     for i in range(len(list1)):
                         if str(var) == list1[i]:
                             if record == True:
@@ -1888,7 +1934,10 @@ if sys.version[0:len(required_version)] == required_version:
                     print(list2[i],'not found')
             backup.clear_all()
             history.clear()
-            print('Now remove __pycache__ manually')
+            try:
+                shutil.rmtree('__pycache__')
+            except:
+                pass
             print('Exiting...')
             ex=True
     except:
