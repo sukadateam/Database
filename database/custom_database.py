@@ -1,10 +1,9 @@
 #Things to do next:
 #Create a python test file to test all functions.
 #Add new items to profanity.txt
-#history_desc needs to be encrypted/decrypted.
 #Restore function needs to be updated to work with the latest backup method. It doesn't anymore.
-#Have custom_database on startup check for txt hash files, if found, remove it!
 #Shell being called inside of terminal causes the program to show incorrectly.
+#restore.remove_old_backups() needs to be finished.
 import sys, os
 from os import remove, walk
 import zipfile
@@ -152,6 +151,11 @@ if sys.version[0:len(required_version)] == required_version:
             file=open('count.py','w')
             file.write('backup_count='+str(backup_count))
             file.close()
+            #Remove shown hashes
+            try: os.remove('hash_other.txt')
+            except: pass
+            try: os.remove('hash.txt')
+            except: pass
     class backup_older:
         def clear_all():
             try:
@@ -230,10 +234,15 @@ if sys.version[0:len(required_version)] == required_version:
                 if backup_name == None:
                     if hide==False:
                         print(errors.cannot_call_func())
+            #Remove shown hashes
+            try: os.remove('hash_other.txt')
+            except: pass
+            try: os.remove('hash.txt')
+            except: pass
     def check_settingsImproved(hide=False):
         found=False
-        settings1=['allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
-        types=[str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
+        settings1=['backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions','backupOn_StartUp','skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+        types=[int, int, bool, list, bool, bool,str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
         for i in range(len(settings1)):
             if isinstance(globals()[settings1[i]], types[i]) == False:
                 found=True
@@ -265,6 +274,9 @@ if sys.version[0:len(required_version)] == required_version:
         #Checks settings.py to make sure all settings are correct and will not cause a proplem.
         #If one or more items come back as a problem they will be listed,
         error_found1=False
+        #Check to see if max is bigger/smaller than min
+        if max_length<min_length+1:
+            error_found1=True
         if show_incorrect_settings==True:
             if hide==False:
                 print('\nUnknown answers:')
@@ -1679,7 +1691,8 @@ if sys.version[0:len(required_version)] == required_version:
                 else:
                 #If database doesn't exist continue on creating it.
                     if found3 == True and found2 == True and found1 == False:
-                        print('Database created!')
+                        if hide==False:
+                            print('Database created!')
                         num1=check_input(data_base)
                         num2=check_input(type)
                         if num1 == False and num2 == False:
@@ -1715,21 +1728,30 @@ if sys.version[0:len(required_version)] == required_version:
                         print('Incorrect Item:',password[i])
                         return 0
             return pass_1
-
         def set_min_length(value=None):
+            global min_length
             history.create_history(str(value), 'Set min length')
             num=check_input(value)
+            #Check if value is a number
             if num==False and isinstance(value, int) == True:
-                min_length=value
+                #Assign new value
+                 min_length=value
             if isinstance(value, int) == False:
                 print(errors.not_int(item='value'))
             if num == True:
                 print(errors.cannot_call_func('password_restrictions.set_min_length()'))
         def set_max_length(value=None):
+            global min_length, max_length
             history.create_history(str(value), 'Set max length')
             num=check_input(value)
+            #Check if value is a number
             if num == False and isinstance(value, int) == True:
-                max_length=value
+                #Check to see if value is bigger than min_length
+                if value>min_length:
+                    #Assign new value
+                    max_length=value
+                else:
+                    print('')
             if num == True:
                 print(errors.cannot_call_func('password_restrictions.set_max_length()'))
     class errors:
