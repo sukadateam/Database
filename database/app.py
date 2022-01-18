@@ -84,7 +84,7 @@ class options:
         e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
         e2.config(height=button_height, width=button_width)
         e2.pack()
-        data_base.edit.app.show_tools(data_base='tools')
+        save_in_txtFile.tools()
     def signout_item():
         global other, other1
         clear()
@@ -270,6 +270,7 @@ def clear():
 
 #Sends logged in users to correct area depending on permissions.
 def send():
+    save.all()
     try:
         os.remove('hash.txt')
     except:
@@ -327,20 +328,12 @@ def ask():
     if users.login_request(user=user.lower(), password=pass_w) == True:
         if profanityFilter.filter(str(name))==0 and profanityFilter.filter(str(pass_w))==0:
             print('Login Success!')
-            try:
-                backup.clear_all()
-            except:
-                pass
             backup.create(random_name=True, password=pass_w, hide=True)
             u, p = users.return_login_cred()
             if p == "admin" or p=="teacher":
                 if startup==True:
                     ask_encrypt_password()
                 else:
-                    try:
-                        backup.clear_all()
-                    except:
-                        pass
                     backup.create(random_name=True, password=other3)
                     send()
             else:
