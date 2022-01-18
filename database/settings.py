@@ -1,9 +1,9 @@
 #User Settings --(FOR USERS)--
 
 #Required python version to run program.
-required_version='3.10.0'
+required_version='3.10.1'
 #Application version. Just for show.
-program_version='0.3.4'
+program_version='0.3.5'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only.
@@ -15,7 +15,7 @@ profanity_filter=True
 #A backup password in case the other is forgotten.
 global_password=True
 #App version control --(Disable if needed)--
-app_version_control=False
+app_version_control=True
 #Only allow set operating system. Change system variable to your choice.
 set_operating_system=False
 #Allowed windows versions. You can choose 7, 8, 10, 11. Only works if system setting is set to windows.
@@ -116,12 +116,13 @@ skip_missing_settings=False
 #When you start the database a backup will be made.
 backupOn_StartUp=False
 #Allowed permissions to create, remove, edit backups.
+#User must be signed in to create a backup.
 allowed_backupPermissions=['admin','teacher']
 #Setup backup response. Do not disable if using backup.
 setup_backup_response=True
 #After ? startups. Remove backups from ? long ago.
 retain_backup_time=10 #Startups
-#Backup starting number
+#Nothin :)
 backup_startNumber=1
 
 #Remove if you aren't using my custom application.
