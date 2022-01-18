@@ -10,6 +10,8 @@ while True:
         choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\n(8)Optimize save file\n(9)Check profanity\n(10)Login\nYour choice: ')
     else:
         choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\n(8)Optimize save file\n(9)Check profanity\n(10)Logout\nYour choice: ')
+    if choice == "exit":
+        break
     if choice == "9":
         print(list1)
         if profanityFilter.filter(var=input('Your input: ').lower()) == 1:
@@ -44,7 +46,7 @@ while True:
             optimize.run(save_optimizations=False)
         choice = ''
     if choice == "7":
-        choice=input('\n\n\n(1)Users\n(2)Add to row\n(3)Show databases\n(4)Delete database\n(5)Remove row\n(6)Show items in database\n(7)Add Column\n(8)Remove Column\n(9)Overload\nYour choice: ')
+        choice=input('\n\n\n(1)Users\n(2)Add row\n(3)Show databases\n(4)Delete database\n(5)Remove row\n(6)Show items in database\n(7)Add Column\n(8)Remove Column\n(9)Overload\nYour choice: ')
         if choice == "9":
             import random
             for i in range(int(input('Choose a Number(100-10000);No comas: '))):
