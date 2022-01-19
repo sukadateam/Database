@@ -108,6 +108,8 @@ do_not_remove=False
 fail_safe=True
 #Disable profanity filter for admin.
 disable_filter_admin=False
+#After ? startups. Remove backups from ? long ago.
+retain_backup_time=25 #Startups
 
 #Settings coming soon. Do not change unless your a dare devil.
 #No settings are pending. Send a request on GitHub for ideas.
@@ -120,8 +122,6 @@ backupOn_StartUp=False
 allowed_backupPermissions=['admin','teacher']
 #Setup backup response. Do not disable if using backup.
 setup_backup_response=True
-#After ? startups. Remove backups from ? long ago.
-retain_backup_time=10 #Startups
 #Nothin :)
 backup_startNumber=1
 
