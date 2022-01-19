@@ -82,30 +82,45 @@ if sys.version[0:len(required_version)] == required_version:
     import pyAesCrypt
     #A class for my application.
     class save_in_txtFile:
+        def users():
+            #Save all users in a text file. Do not write passwords.
+            pass
         def tools():
+            #Save all tools in a text file.
             file=open('tools.txt','w')
             for i in range(len(row)):
-                file.write('Item: '+str(display.space(str(((row[i])[1])[0]), hide=True, max_length=20))+'  Serial: '+str(display.space(str(((row[i])[1])[1]), hide=True, max_length=20))+'\n')
+                if (row[i])[0]=="tools":
+                    part, part1=display.space(str(((row[i])[1])[1]), hide=True, max_length=20, return_ShortenNotice=True)
+                    part2, part3=display.space(str(((row[i])[1])[0]), hide=True, max_length=20, return_ShortenNotice=True)
+                    if part3==True:
+                        part1=True
+                    file.write('Item: '+part2+'  Serial: '+str(part)+'Shorted: '+str(part1)+'\n')
             file.close()
     class display:
-        def space(var, max_length=10, hide=False):
+        def space(var, max_length=10, hide=False, return_ShortenNotice=False):
             #Works with display.database to create a nice table to display.
             if isinstance(var, str)==True:
                 length=len(var)
                 if hide==False: print('Input length:',length)
+                notice=False
                 if length<max_length:
                     #Add spaces to fit
                     if hide==False: print('Total spaces to add:', max_length-length)
                     for i in range(max_length-length):
                         var+=' '
                     if hide==False: print('Final Length:',len(var))
+                    if return_ShortenNotice==True:
+                        return var, notice
                 if length>max_length:
                     #Shorten to fit
                     var=var[0:max_length]
                     if hide==False: print('Final Length:',len(var))
+                    notice=True
+                    if return_ShortenNotice==True:
+                        return var, notice
                 return var
             else:
-                print(errors.not_str())
+                if hide==False: print(errors.not_str())
         def database(data_base=None, database=None, hide=False):
             #Only works for column_row
             #Prints a asked database to the screen in a nice format.
@@ -676,13 +691,17 @@ if sys.version[0:len(required_version)] == required_version:
                 except:
                     pass
             #Remove old backups.
-            os.chdir('backups')
-            for i in range(len(f)):
-                if int(f[i])<highest-retain_backup_time+1:
-                    try:
-                        os.remove(f[i]+'.zip')
-                    except:
-                        pass
+            try:
+                os.chdir('backups')
+                for i in range(len(f)):
+                    if int(f[i])<highest-retain_backup_time+1:
+                        try:
+                            os.remove(f[i]+'.zip')
+                        except:
+                            pass
+                os.chdir(path)
+            except:
+                return False
         def all(beta=False, backup_name=None, password=None, hide=False, restoreFile=['app.py','history_desc.aes','settings.py','data_save.aes','history.aes'], removeFile=['app.py','history_desc.py', 'settings.py','data_save.py','history.txt']):
             #Restore everything from a backup.
             if beta == True:
