@@ -1,10 +1,6 @@
 #Things to do next:
-#Create a python test file to test all functions.
-#Add new items to profanity.txt
-#Restore function needs to be updated to work with the latest backup method. It doesn't anymore.
 #Shell being called inside of terminal causes the program to show incorrectly.
 #restore.remove_old_backups() needs to be finished.
-#Allow new hash to be stored in memory. memory_hash
 import sys, os
 from os import stat
 from os import remove, walk
@@ -659,7 +655,34 @@ if sys.version[0:len(required_version)] == required_version:
     class restore:
         def remove_old_backups():
             #Removes backups older than set retain_backup_time=
-            pass
+            #Uses a numbering scheme to calculate age.
+            #Search for all files in the backups folder and put the names in a list
+            f = []
+            for (dirpath, dirnames, filenames) in walk('backups'):
+                f.extend(filenames)
+                break
+            #Remove .zip from all files names in list
+            for i in range(len(f)):
+                try:
+                    f[i]=f[i].replace('.zip','')
+                except:
+                    f.pop(i)
+            #Find the highest number in list
+            highest=0
+            for i in range(len(f)):
+                try:
+                    if int(f[i])>highest:
+                        highest=int(f[i])
+                except:
+                    pass
+            #Remove old backups.
+            os.chdir('backups')
+            for i in range(len(f)):
+                if int(f[i])<highest-retain_backup_time+1:
+                    try:
+                        os.remove(f[i]+'.zip')
+                    except:
+                        pass
         def all(beta=False, backup_name=None, password=None, hide=False, restoreFile=['app.py','history_desc.aes','settings.py','data_save.aes','history.aes'], removeFile=['app.py','history_desc.py', 'settings.py','data_save.py','history.txt']):
             #Restore everything from a backup.
             if beta == True:
@@ -1942,7 +1965,7 @@ if sys.version[0:len(required_version)] == required_version:
             print('GitHub: github.com/sukadateam')
             ex=True
         if str(n[1])=="-r":
-            list2=['count.py','data_save.py','version.py', 'directory.py','history.txt','hash_other.aes','hash.aes','hash_other.txt','hash.txt','settings.pyc','app.pyc','data.pyc']
+            list2=['tools.txt','count.py','data_save.py','version.py', 'directory.py','history.txt','hash_other.aes','hash.aes','hash_other.txt','hash.txt','settings.pyc','app.pyc','data.pyc']
             for i in range(len(list2)):
                 try:
                     os.remove(list2[i])
@@ -1968,7 +1991,7 @@ if sys.version[0:len(required_version)] == required_version:
     #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
-    
+    restore.remove_old_backups()
 
     #Do not remove this!!!!!!
     if __name__ == '__main__':
