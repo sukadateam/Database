@@ -1,7 +1,6 @@
 from email.utils import parseaddr
 from tkinter import *
 from custom_database import *
-from PIL import Image, ImageTk
 import count
 import time
 tk= Tk()
@@ -35,6 +34,10 @@ class buttons:
         e4 = Button(tk, text='Logout', command=options.logout, bg=button_color, foreground=text_color, font=text_font)
         e4.config(height=button_height, width=button_width)
         e4.place(x=((int(x))/2)-330, y=y)
+    def add_student(y=800):
+        e14 = Button(tk, text='Add Student', command=options.add_student, bg=button_color, foreground=text_color, font=text_font)
+        e14.config(height=button_height, width=button_width)
+        e14.place(x=((int(x))/2)-330, y=y)
     def save(anchor=None, side=None):
         e5 = Button(tk, text='Save', command=options.save, bg=button_color, foreground=text_color, font=text_font)
         e5.config(height=button_height, width=button_width)
@@ -72,6 +75,33 @@ class buttons:
         e13.config(height=button_width, width=button_width)
         e13.pack(side=LEFT)
 class options:
+    def add_student(student_found=False):
+        clear()
+        global other
+        e3=Label(tk, text='New Students Name', bg=button_color, foreground=text_color)
+        e3.pack()
+        other=Entry(tk)
+        other.config(background=entry_background_color, fg=entry_text_color)
+        other.pack()
+        e1=Button(tk, text='Submit', command=options.add_student_next)
+        e1.config(height=button_height, width=button_width)
+        e1.pack()
+        if student_found==True:
+            e2=Label(tk, text='Student Exists.', bg=button_color, foreground=text_color)
+            e2.pack()
+        Tk.update_idletasks(tk)
+    def add_student_next():
+        global other
+        if isinstance(other.get(), str) == True:
+            if other.get() not in students:
+                students.append(other.get())
+                print('Student Added.')
+                send()
+            else:
+                print('Student Exists.')
+                options.add_student(student_found=True)
+        else:
+            print('Unknown Error.')
     def backup():
         global other3
         print(other3)
@@ -87,7 +117,7 @@ class options:
         e2.config(height=button_height, width=button_width)
         e2.pack()
         save_in_txtFile.tools()
-    def signout_item():
+    def signout_item(no_name=False, no_barcode=False):
         global other, other1
         clear()
         e1 = Label(tk, text='Barcode', bg=button_color, foreground=text_color)
@@ -106,14 +136,26 @@ class options:
         e3.pack()
         e5 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
         e5.pack()
+        if no_name==True:
+            e6=Label(tk, text='Unknown Student', bg=button_color, foreground=text_color)
+            e6.pack()
+        if no_barcode==True:
+            e7=Label(tk, text='Unknown Barcode', bg=button_color, foreground=text_color)
+            e7.pack()
         Tk.update_idletasks(tk)
     def signout_item_next():
         global other, other1
         list1=[other.get(), other1.get()]
-        data_base.edit.add_item(data_base='logs', item_to_add=list1)
-        clear()
-        save.all()
-        send()
+        if list1[1] in students and check.barcode(list1[0])==False:
+            data_base.edit.add_item(data_base='logs', item_to_add=list1)
+            clear()
+            save.all()
+            send()
+        else:
+            name_no=False
+            if list1[1] not in students:
+                name_no=True
+            options.signout_item(no_name=name_no, no_barcode=check.barcode(list1[0]))
     def signin_item():
         global other
         clear()
@@ -309,6 +351,7 @@ def teacher_screen():
     buttons.create_user()
     buttons.remove_user()
     buttons.logout(y=500)
+    buttons.add_student(y=600)
 
 #If permission is admin
 def admin_screen():
