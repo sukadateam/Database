@@ -77,7 +77,7 @@ if sys.version[0:len(required_version)] == required_version:
         print('Import type: Default')
     if import_type=="data_save":
         print('Import type: Save file')
-    #On linux this import line may say could not import, but it will if the package is installed.
+    #On some devices this import line may say could not import, but it will if the package is installed on a compatible python version.
     import pyAesCrypt
     #A class for my application.
     class save_in_txtFile:
@@ -1057,6 +1057,15 @@ if sys.version[0:len(required_version)] == required_version:
             for i in range(100):
                 print('')
     class check:
+        def barcode(barcode):
+            for i in range(len(row)):
+                if (row[i])[0]=="tools":
+                    try:
+                        if ((row[i])[1])[1]==barcode:
+                            return False
+                    except:
+                        pass
+            return True
         def encyption_password(password):
             if decrypt.hash(password=password)==False:
                 return 1
