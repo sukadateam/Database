@@ -1,6 +1,5 @@
 #Things to do next:
-#Shell being called inside of terminal causes the program to show incorrectly.
-#restore.remove_old_backups() needs to be finished.
+#Nothin'!!!
 import sys, os
 from os import stat
 from os import remove, walk
@@ -82,19 +81,29 @@ if sys.version[0:len(required_version)] == required_version:
     import pyAesCrypt
     #A class for my application.
     class save_in_txtFile:
-        def users():
-            #Save all users in a text file. Do not write passwords.
+        def logs():
+            #Save all logs of students that currently have items signed out.
             pass
+        def users():
+            if len(known_users)>0:
+                #Save all users in a text file. Do not write passwords.
+                file=open('users.txt','w')
+                for i in range(len(known_users)):
+                    file.write(known_users[i]+': '+permissions[i]+'\n')
+                file.close()
+            else:
+                print('There are no users.')
         def tools():
             #Save all tools in a text file.
             file=open('tools.txt','w')
             for i in range(len(row)):
                 if (row[i])[0]=="tools":
-                    part, part1=display.space(str(((row[i])[1])[1]), hide=True, max_length=20, return_ShortenNotice=True)
-                    part2, part3=display.space(str(((row[i])[1])[0]), hide=True, max_length=20, return_ShortenNotice=True)
+                    part, part1=display.space(str(((row[i])[1])[1]), hide=True, max_length=25, return_ShortenNotice=True)
+                    part2, part3=display.space(str(((row[i])[1])[0]), hide=True, max_length=25, return_ShortenNotice=True)
                     if part3==True:
                         part1=True
                     file.write('Item: '+part2+'  Serial: '+str(part)+'Shorted: '+str(part1)+'\n')
+            file.write('\n\n#'+str(25)+' character max length.')
             file.close()
     class display:
         def space(var, max_length=10, hide=False, return_ShortenNotice=False):
@@ -429,7 +438,8 @@ if sys.version[0:len(required_version)] == required_version:
                         print('(Error) Unknown Class. This will not be recorded. Input must be a string.')
             if auto_filter_profanity==False:
                 if debug==True:
-                    print('Profanity filter is off.')
+                    if hide==False:
+                        print('Profanity filter is off.')
                 return 0
     def encrypt_check():
         #Check to see if save file is encrypted.
@@ -895,7 +905,10 @@ if sys.version[0:len(required_version)] == required_version:
                         pyAesCrypt.decryptFile('hash_other.aes','hash_other.txt',password)
                         return open('hash_other.txt','r').read()
                 except:
-                    return memory_hash
+                    if memory_hash != '':
+                        return memory_hash
+                    else:
+                        return False
         def history(password):
             try:
                 pyAesCrypt.decryptFile('history.aes','history.txt',password)
@@ -1045,10 +1058,9 @@ if sys.version[0:len(required_version)] == required_version:
                 print('')
     class check:
         def encyption_password(password):
-            try:
-                d_password=decrypt.hash(password=password)
+            if decrypt.hash(password=password)==False:
                 return 1
-            except:
+            else:
                 return 0
         def data_format(data_base=None):
             #Returns database type.
@@ -1322,42 +1334,56 @@ if sys.version[0:len(required_version)] == required_version:
                     data_base.edit.add_row(data_base=data, new_row=aa)
                 except:
                     pass
-            def add_item(data_base=None, item_to_add=None, create_if_notExist=True, database=None):
+            def add_item(data_base=None, item_to_add=None, create_if_notExist=True, database=None, hide=False):
                 if data_base == None:
                     data_base=database
-                history.create_history(item_to_add, 'Add item')
+                try:
+                    history.create_history(item_to_add, 'Add item')
+                except:
+                    pass
                 #Used for the list types.
                 global data_bases, lists
                 num1=check_input(data_base)
                 num2=check_input(item_to_add)
                 pass_it=False
                 try:
-                    if profanityFilter.filter(item_to_add)==1:
-                        print(errors.profanityDetected(var=item_to_add, user=user_logged))
+                    if profanityFilter.filter(item_to_add[0])==1:
+                        print(errors.profanityDetected(var=item_to_add[0], user=user_logged))
                         pass_it=True
+                        try:
+                            if profanityFilter.filter(item_to_add[1])==1:
+                                print(errors.profanityDetected(var=item_to_add[1], user=user_logged))
+                                pass_it=True
+                        except:
+                            pass
                 except:
                     pass
-                letter_spot=optimize.determ(letter=data_base[0])
-                if num1 == False and num2 == False:
-                    if create_if_notExist == True:
-                        failed=True
-                        for i in range(len(lists)):
-                            if (lists[i])[0] == data_base:
-                                failed=False
-                                break
+                if check.data_base_exists(data_base='logs')==True:
+                    letter_spot=optimize.determ(letter=data_base[0])
+                    if num1 == False and num2 == False:
+                        if create_if_notExist == True:
                             failed=True
-                        if failed==True:
-                            lists.append([data_base,[]])
-                    data_base=data_base.lower()
-                    for i in range(len(data_bases)):
-                        if (data_bases[i+letter_spot])[0] == data_base:
-                            if (data_bases[i+letter_spot])[3]=="list":
-                                for x in range(len(lists)):
-                                    if (lists[x])[0]==data_base:
-                                        (lists[x])[1].append(item_to_add)
-                                        break
-                if num1==True or num2==True and pass_it==False:
-                    print(errors.cannot_call_func('data_base.edit.add_item()'))
+                            for i in range(len(lists)):
+                                if (lists[i])[0] == data_base:
+                                    failed=False
+                                    break
+                                failed=True
+                            if failed==True:
+                                lists.append([data_base,[]])
+                        data_base=data_base.lower()
+                        for i in range(len(data_bases)):
+                            if (data_bases[i+letter_spot])[0] == data_base:
+                                if (data_bases[i+letter_spot])[3]=="list":
+                                    for x in range(len(lists)):
+                                        if (lists[x])[0]==data_base:
+                                            (lists[x])[1].append(item_to_add)
+                                            break
+                    if num1==True or num2==True and pass_it==False:
+                        if hide==False:
+                            print(errors.cannot_call_func('data_base.edit.add_item()'))
+                else:
+                    if hide==False:
+                        print(errors.database_does_not_exist())
             def remove_item(data_base=None, item_to_remove=None, database=None):
                 if data_base == None:
                     data_base=database
@@ -1557,7 +1583,6 @@ if sys.version[0:len(required_version)] == required_version:
                     if data_base == None:
                         data_base=database
                     if isinstance(data_base, str) == True and isinstance(barcode, str) == True:
-                        print('Got here')
                         global lists
                         for i in range(len(lists)):
                             if (lists[i])[0]==data_base:
@@ -1984,7 +2009,7 @@ if sys.version[0:len(required_version)] == required_version:
             print('GitHub: github.com/sukadateam')
             ex=True
         if str(n[1])=="-r":
-            list2=['tools.txt','count.py','data_save.py','version.py', 'directory.py','history.txt','hash_other.aes','hash.aes','hash_other.txt','hash.txt','settings.pyc','app.pyc','data.pyc']
+            list2=['users.txt','tools.txt','count.py','data_save.py','version.py', 'directory.py','history.txt','hash_other.aes','hash.aes','hash_other.txt','hash.txt','settings.pyc','app.pyc','data.pyc']
             for i in range(len(list2)):
                 try:
                     os.remove(list2[i])
@@ -2010,7 +2035,7 @@ if sys.version[0:len(required_version)] == required_version:
     #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
-    restore.remove_old_backups()
+    
 
     #Do not remove this!!!!!!
     if __name__ == '__main__':
