@@ -1,6 +1,8 @@
+from email.utils import parseaddr
 from tkinter import *
 from custom_database import *
 from PIL import Image, ImageTk
+import count
 import time
 tk= Tk()
 tk.title('Carpet Application')
@@ -78,8 +80,8 @@ class options:
         history.clear()
     def show_tools():
         clear()
-        e1 = Label(tk, text='Check terminal for info.', bg=button_color, foreground=text_color)
-        e1.config(height=button_height, width=button_width+5)
+        e1 = Label(tk, text='Check File For Info', bg=button_color, foreground=text_color)
+        e1.config(height=button_height, width=button_width+6)
         e1.pack()
         e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
         e2.config(height=button_height, width=button_width)
@@ -270,6 +272,10 @@ def clear():
 
 #Sends logged in users to correct area depending on permissions.
 def send():
+    try: os.remove('data_save.aes')
+    except: pass
+    try: os.remove('history.aes')
+    except: pass
     save.all()
     try:
         os.remove('hash.txt')
@@ -328,13 +334,19 @@ def ask():
     if users.login_request(user=user.lower(), password=pass_w) == True:
         if profanityFilter.filter(str(name))==0 and profanityFilter.filter(str(pass_w))==0:
             print('Login Success!')
-            backup.create(random_name=True, password=pass_w, hide=True)
+            try:
+                backup.create(random_name=True, password=pass_w, hide=True)
+            except:
+                pass
             u, p = users.return_login_cred()
             if p == "admin" or p=="teacher":
                 if startup==True:
                     ask_encrypt_password()
                 else:
-                    backup.create(random_name=True, password=other3)
+                    try:
+                        backup.create(random_name=True, password=other3)
+                    except:
+                        pass
                     send()
             else:
                 send()
@@ -371,7 +383,7 @@ def ask_encrypt_password_next():
     global other3, startup
     other3=other3.get()
     clear()
-    if check.encyption_password(other3)==1:
+    if check.encyption_password(other3) == 0:
         startup=False
         send()
     else:
@@ -427,13 +439,6 @@ def exit_app_next():
 
 #Decrypt app
 def open_app():
-    if show_background==True:
-        img =  ImageTk.PhotoImage(file='paths.png')
-        label1 = Label(
-            tk,
-            image=img
-        )
-        label1.place(x=0,y=540)
     global other
     clear()
     e1 = Label(tk, text='Password')
@@ -465,9 +470,10 @@ def create_encryption_password():
     e2.pack()
     Tk.update_idletasks(tk)
 def create_encryption_password_next():
-    global other3
+    global other3, startup
     try:
-        get.new_hash(normal=True, passw=str(other3.get())) #Makes a new hash
+        get.new_hash(normal=True, passw=str(other3.get()), memory_float=True) #Makes a new hash
+        startup=False
         send()
     except:
         print("Something happened in create_encryption_password")
