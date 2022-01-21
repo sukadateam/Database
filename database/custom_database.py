@@ -78,7 +78,10 @@ if sys.version[0:len(required_version)] == required_version:
     if import_type=="data_save":
         print('Import type: Save file')
     #On some devices this import line may say could not import, but it will if the package is installed on a compatible python version.
-    import pyAesCrypt
+    try:
+        import pyAesCrypt
+    except:
+        print("Couldn't import pyAesCrypt")
     #A class for my application.
     class save_in_txtFile:
         def logs():
@@ -1057,14 +1060,31 @@ if sys.version[0:len(required_version)] == required_version:
             for i in range(100):
                 print('')
     class check:
+        def signed_out_item(barcode):
+            #Check to see if item has been signed out already.
+            for i in range(len(lists)):
+                #Find the database logs
+                if (lists[i])[0]=='logs':
+                    for x in range(len((lists[i])[1])):
+                        if debug==True:
+                            print((((lists[i])[1])[x])[0])
+                        if (((lists[i])[1])[x])[0]==barcode:
+                            #If found
+                            return True
+            #If not found
+            return False
         def barcode(barcode):
+            #Check to see if barcode exists.
             for i in range(len(row)):
+                #Find the database tools
                 if (row[i])[0]=="tools":
                     try:
                         if ((row[i])[1])[1]==barcode:
+                            #If found
                             return False
                     except:
                         pass
+            #If not found
             return True
         def encyption_password(password):
             if decrypt.hash(password=password)==False:
@@ -2018,7 +2038,7 @@ if sys.version[0:len(required_version)] == required_version:
             print('GitHub: github.com/sukadateam')
             ex=True
         if str(n[1])=="-r":
-            list2=['users.txt','tools.txt','count.py','data_save.py','version.py', 'directory.py','history.txt','hash_other.aes','hash.aes','hash_other.txt','hash.txt','settings.pyc','app.pyc','data.pyc']
+            list2=['version.pyc','directory.pyc','history_desc.pyc','users.txt','tools.txt','count.py','data_save.py','version.py', 'directory.py','history.txt','hash_other.aes','hash.aes','hash_other.txt','hash.txt','settings.pyc','app.pyc','data.pyc']
             for i in range(len(list2)):
                 try:
                     os.remove(list2[i])
@@ -2044,7 +2064,7 @@ if sys.version[0:len(required_version)] == required_version:
     #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
-    
+
 
     #Do not remove this!!!!!!
     if __name__ == '__main__':
