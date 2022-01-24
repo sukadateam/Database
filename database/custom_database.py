@@ -1176,6 +1176,7 @@ if sys.version[0:len(required_version)] == required_version:
                         if known_users[i]==new_user:
                             skip=True
                             print(errors.user_exists())
+                            return False
                     if skip == False:
                         if isinstance(new_user, str) == True:
                             if isinstance(new_password, str) == True:
@@ -1317,11 +1318,15 @@ if sys.version[0:len(required_version)] == required_version:
                 print(errors.cannot_call_func('users.login_request()'))
         def logout():
             global user_logged, user_permission, profanity_filter, disable_filter_admin
-            if user_permission=="admin":
-                if disable_filter_admin==True:
-                    profanity_filter=True
-            user_permission=None
-            user_logged=None
+            try:
+                if user_permission=="admin":
+                    if disable_filter_admin==True:
+                        profanity_filter=True
+                user_permission=None
+                user_logged=None
+            except:
+                if debug==True:
+                    print("No user signed in.")
         def return_login_cred():
             try:
                 global user_logged, user_permission
@@ -2029,6 +2034,17 @@ if sys.version[0:len(required_version)] == required_version:
     profanityFilter.setup()
     print('System Started Correctly!')
     try:
+        if str(n[1])=="-release":
+            backup_name=input('Version name: ')
+            list2=['app.py', 'count.py', 'custom_database.py','data.py','get_directory.py','files_to_backup.py','history_desc.py','patch_notes.txt','profanity.txt','requirements.txt','settings.py','shell.py','vars_to_save.py','version_config.py']
+            #Backup Certian Files
+            zipObject= ZipFile(backup_name+'.zip', 'w')
+            for i in range(len(list2)):
+                try:
+                    zipObject.write(list2[i])
+                except:
+                    print('Could\'t find:',list2[i])
+            zipObject.close()
         if str(n[1])=="-v":
             from settings import program_version
             print('Current Version: '+program_version)
@@ -2060,6 +2076,16 @@ if sys.version[0:len(required_version)] == required_version:
         pass
     if os.path.exists('history_desc.py')==False:
         history.clear()
+    if os.path.exists('data_save.py')==True:
+        try:
+            os.remove('data_save.aes')
+        except:
+            pass
+    if os.path.exists('history.txt')==True:
+        try:
+            os.remove('history.aes')
+        except:
+            pass
     #You must set a Normal level password
     #You can set a global password if need be. Basically a backup.
     #Test bench
