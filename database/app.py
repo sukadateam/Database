@@ -1,5 +1,7 @@
 from email.utils import parseaddr
+from operator import truediv
 from tkinter import *
+from xml.etree.ElementTree import TreeBuilder
 from custom_database import *
 import count
 import time
@@ -86,6 +88,9 @@ class options:
         e1=Button(tk, text='Submit', command=options.add_student_next)
         e1.config(height=button_height, width=button_width)
         e1.pack()
+        e5 = Button(tk, text='Back', command=send)
+        e5.config(height=button_height, width=button_width)
+        e5.pack()
         if student_found==True:
             e2=Label(tk, text='Student Exists.', bg=button_color, foreground=text_color)
             e2.pack()
@@ -117,7 +122,7 @@ class options:
         e2.config(height=button_height, width=button_width)
         e2.pack()
         save_in_txtFile.tools()
-    def signout_item(no_name=False, no_barcode=False):
+    def signout_item(no_name=False, no_barcode=False, already_signed=False):
         global other, other1
         clear()
         e1 = Label(tk, text='Barcode', bg=button_color, foreground=text_color)
@@ -134,7 +139,7 @@ class options:
         other1.pack()
         e3 = Button(tk, text='Submit', command=options.signout_item_next, bg=button_color, foreground=text_color)
         e3.pack()
-        e5 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+        e5 = Button(tk, text='Back', command=send_student, bg=button_color, foreground=text_color)
         e5.pack()
         if no_name==True:
             e6=Label(tk, text='Unknown Student', bg=button_color, foreground=text_color)
@@ -142,11 +147,14 @@ class options:
         if no_barcode==True:
             e7=Label(tk, text='Unknown Barcode', bg=button_color, foreground=text_color)
             e7.pack()
+        if already_signed==True:
+            e8=Label(tk, text='Item already signed out', bg=button_color, foreground=text_color)
+            e8.pack()
         Tk.update_idletasks(tk)
     def signout_item_next():
         global other, other1
         list1=[other.get(), other1.get()]
-        if list1[1] in students and check.barcode(list1[0])==False:
+        if list1[1] in students and check.barcode(list1[0])==False and check.signed_out_item(list1[0])==False:
             data_base.edit.add_item(data_base='logs', item_to_add=list1)
             clear()
             save.all()
@@ -155,7 +163,7 @@ class options:
             name_no=False
             if list1[1] not in students:
                 name_no=True
-            options.signout_item(no_name=name_no, no_barcode=check.barcode(list1[0]))
+            options.signout_item(no_name=name_no, no_barcode=check.barcode(list1[0]), already_signed=check.signed_out_item(list1[0]))
     def signin_item():
         global other
         clear()
@@ -169,7 +177,7 @@ class options:
         e2 = Button(tk, text='Submit', command=options.signin_item_next, bg=button_color, foreground=text_color)
         e2.config(height=button_height, width=button_width)
         e2.pack()
-        e5 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+        e5 = Button(tk, text='Back', command=send_student, bg=button_color, foreground=text_color)
         e5.config(height=button_height, width=button_width)
         e5.pack()
         Tk.update_idletasks(tk)
@@ -199,7 +207,7 @@ class options:
             data_base.edit.app.remove_row(data_base='tools', name=name)
         clear()
         send()
-    def add_tool():
+    def add_tool(id_exists=False):
         clear()
         global other, other1
         e1 = Label(tk, text='Item name')
@@ -207,7 +215,7 @@ class options:
         other = Entry(tk)
         other.config(background=entry_background_color, fg=entry_text_color)
         other.pack()
-        e2 = Label(tk, text='Binary')
+        e2 = Label(tk, text='Barcode')
         e2.pack()
         other1 = Entry(tk)
         other1.config(background=entry_background_color, fg=entry_text_color)
@@ -216,15 +224,21 @@ class options:
         e3.pack()
         e5 = Button(tk, text='Back', command=send)
         e5.pack()
+        if id_exists==True:
+            e6=Label(tk, text='Barcode Exists', bg=button_color, foreground=text_color)
+            e6.pack()
         Tk.update_idletasks(tk)
     def add_tool_next():
         global other, other1
         name = other.get()
         id = other1.get()
-        if profanityFilter.filter(name)==0 and profanityFilter.filter(id)==0:
-            data_base.edit.add_row(data_base='tools', new_row=[str(name),str(id)], split=False)
-        clear()
-        send()
+        if check.barcode(id)==True:
+            if profanityFilter.filter(name)==0 and profanityFilter.filter(id)==0:
+                data_base.edit.add_row(data_base='tools', new_row=[str(name),str(id)], split=False)
+            clear()
+            send()
+        else:
+            options.add_tool(id_exists=True)
     def create_password():
         global other
         clear()
@@ -247,7 +261,7 @@ class options:
         users.logout()
         clear()
         login()
-    def create_user():
+    def create_user(user_exists=False):
         clear()
         global other, other1, other2
         e1 = Label(tk, text='New user')
@@ -269,6 +283,9 @@ class options:
         e4.pack()
         e5 = Button(tk, text='Back', command=send)
         e5.pack()
+        if user_exists==True:
+            e6=Label(tk, text='User exists', bg=button_color, foreground=text_color)
+            e6.pack()
         Tk.update_idletasks(tk)
     def create_user_next():
         global other, other1, other2
@@ -276,9 +293,11 @@ class options:
         password=other1.get()
         permission=other2.get()
         if profanityFilter.filter(name)==0 and profanityFilter.filter(password)==0 and profanityFilter.filter(permission)==0:
-            users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())
-        other, other1, other2 = None, None, None
-        send()
+            if users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())==False:
+                options.create_user(user_exists=True)
+            else:
+                other, other1, other2 = None, None, None
+                send()
     def remove_user():
         clear()
         e1 = Label(tk, text='User')
@@ -306,14 +325,15 @@ class options:
         optimize.run(save_optimizations=True)
         clear()
         login()
-
+def send_student():
+    send(force='student')
 #Call to clear the screen.
 def clear():
     for widget in tk.winfo_children():
         widget.destroy()
 
 #Sends logged in users to correct area depending on permissions.
-def send():
+def send(force=None):
     try: os.remove('data_save.aes')
     except: pass
     try: os.remove('history.aes')
@@ -323,7 +343,12 @@ def send():
         os.remove('hash.txt')
     except:
         pass
-    name, perm= users.return_login_cred()
+    try:
+        name, perm= users.return_login_cred()
+    except:
+        pass
+    if force!=None:
+       perm=force
     if perm == "admin":
         admin_screen()
     if perm == "teacher":
@@ -370,36 +395,42 @@ def admin_screen():
     buttons.backup()
 
 #Ask the database if the entered credentials are correct.
-def ask():
+def ask(command=send):
     global name, password, startup
-    user=name.get()
-    pass_w=password.get()
-    if users.login_request(user=user.lower(), password=pass_w) == True:
-        if profanityFilter.filter(str(name))==0 and profanityFilter.filter(str(pass_w))==0:
-            print('Login Success!')
-            try:
-                backup.create(random_name=True, password=pass_w, hide=True)
-            except:
-                pass
-            u, p = users.return_login_cred()
-            if p == "admin" or p=="teacher":
-                if startup==True:
-                    ask_encrypt_password()
+    try:
+        user=name.get()
+        pass_w=password.get()
+        s=True
+    except:
+        s=True
+        login()
+    if s==True:
+        if users.login_request(user=user.lower(), password=pass_w) == True:
+            if profanityFilter.filter(str(name))==0 and profanityFilter.filter(str(pass_w))==0:
+                print('Login Success!')
+                try:
+                    backup.create(random_name=True, password=pass_w, hide=True)
+                except:
+                    pass
+                u, p = users.return_login_cred()
+                if p == "admin" or p=="teacher":
+                    if startup==True:
+                        ask_encrypt_password()
+                    else:
+                        try:
+                            backup.create(random_name=True, password=other3)
+                        except:
+                            pass
+                        command()
                 else:
-                    try:
-                        backup.create(random_name=True, password=other3)
-                    except:
-                        pass
-                    send()
+                    command()
             else:
-                send()
+                command()
         else:
-            send()
-    else:
-        clear()
-        print('Incorrect Password Attempt')
-        history.create_history(user=user, usage='Login Failed', add_desc=True, desc='Incorrect Password', manual_record=True)
-        login(wrong=True)
+            clear()
+            print('Incorrect Password Attempt')
+            history.create_history(user=user, usage='Login Failed', add_desc=True, desc='Incorrect Password', manual_record=True)
+            login(wrong=True)
 
 #Ask for the encyption password to allow for auto backups.
 def ask_encrypt_password(wrong=False): 
@@ -414,6 +445,8 @@ def ask_encrypt_password(wrong=False):
         other3.pack()
         e3=Button(tk, text='Submit', command=ask_encrypt_password_next)
         e3.pack()
+        e5=Button(tk, text='Back', command=options.logout)
+        e5.pack()
         if wrong==True:
             e4=Label(tk, text='Incorrect Password', width=20)
             e4.pack()
@@ -434,7 +467,7 @@ def ask_encrypt_password_next():
         ask_encrypt_password(wrong=True)
 
 #Display a screen that allows the user to login.
-def login(wrong=False):
+def login(wrong=False, e1_button='Login', command=ask, show_student_button=True, show_exit_button=True):
     clear()
     global name, password
     e2 = Label(tk, text='Username: ')
@@ -447,16 +480,25 @@ def login(wrong=False):
     password = Entry(tk, show='*')
     password.config(background=entry_background_color, fg=entry_text_color, highlightbackground='Black')
     password.pack()
-    e1 = Button(tk, text='Login', command=ask, highlightthickness=0, bd=0, borderwidth=0)
+    e1 = Button(tk, text=e1_button, command=command, bg=button_color, foreground=text_color, font=text_font)
+    e1.config(height=button_height, width=button_width)
     e1.pack()
-    e5 = Button(tk, text='Exit', command=exit_app, width=20, highlightthickness=0, bd=0, borderwidth=0)
-    e5.config(width=7)
-    e5.pack()
+    if show_exit_button==True:
+        e5 = Button(tk, text='Exit', command=exit_app, width=20, bg=button_color, foreground=text_color, font=text_font)
+        e5.config(height=button_height, width=button_width)
+        e5.config(width=7)
+        e5.pack()
+    if show_student_button==True:
+        e7=Button(tk, text='Student', command=force_student, width=20, bg=button_color, foreground=text_color, font=text_font)
+        e7.config(height=button_height, width=button_width)
+        e7.pack()
     if wrong==True:
         e6=Label(tk, text='Incorrect Password', width=20)
         e6.pack()
     Tk.update_idletasks(tk)
 
+def force_student():
+    send(force='student')
 #Exit application
 def exit_app():
     global other
