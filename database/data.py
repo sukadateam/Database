@@ -1,4 +1,4 @@
-data_bases=[['tools', True, 'all', 'column_row', ['name','id']], ['logs', True, 'all', 'list']]
+data_bases=[]
 #Name, Active status, owner, type, columns(if type == column_row)
 row=[]
 #Side to side
@@ -8,10 +8,10 @@ lists=[]
 #Data_base, items in list
 
 #Authentication
-known_users=['admin','brandon','abdullahi','tripp','teacher', 'student']
-passwords=['admin','Hello','snake','solid','teacher','student']
+known_users=[]
+passwords=[]
 #Passwords can be none. Restrictions can also be set.
-permissions=['admin','admin','admin','admin','teacher', 'student']
+permissions=[]
 active_users=[True, True, True, True, True, True]
 
 #Current user logged in
@@ -25,7 +25,7 @@ denied_inputs=['',' ',None]
 denied_names=[]
 min_length=5 #Min password length
 max_length=8 #Max password length
-debug=False
+debug=True
 students=['brandon', 'jeff']
 opto_data=[]
 opto_row=[]
