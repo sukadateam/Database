@@ -1601,18 +1601,22 @@ if sys.version[0:len(required_version)] == required_version:
                 #Must be column_row
             #Used for my auto_motive app.
             class app:
-                def remove_row(data_base=None, name=None, database=None):
+                def remove_row(data_base=None, name=None, database=None, hide=False):
                     if data_base == None:
                         data_base=database
+                    found=False
                     if isinstance(name, str) == True and isinstance(data_base, str) == True:
                         global row
                         for i in range(len(row)):
                             if (row[i])[0] == data_base:
-                                if ((row[i])[1])[0] == name:
+                                if ((row[i])[1])[1] == name:
                                     row.pop(i)
+                                    found=True
                                     break
                     else:
-                        print(errors.not_str())
+                        if hide==False:
+                            print(errors.not_str())
+                    return found
                 def remove_item(data_base=None, barcode=None, database=None):
                     if data_base == None:
                         data_base=database
@@ -2035,7 +2039,23 @@ if sys.version[0:len(required_version)] == required_version:
     print('System Started Correctly!')
     try:
         if str(n[1])=="-release":
-            backup_name=input('Version name: ')
+            c=''
+            beta=''
+            while True:
+                print("(1)Beta\n(2)Full\n")
+                c=input('Is this a Beta or Full release: ')
+                if c == "1" or c=="2":
+                    break
+            if c=="1":
+                c="Beta"
+                beta=input('What beta version is this: Ex: 1, 2, 3: ')
+            if c=="2":
+                c='Full'
+            version_in=input('Enter the Version: Ex: 0.2.7: ')
+            if beta != '':
+                backup_name=version_in+' '+c+' '+beta
+            else:
+                backup_name=version_in+' '+c
             list2=['app.py', 'count.py', 'custom_database.py','data.py','get_directory.py','files_to_backup.py','history_desc.py','patch_notes.txt','profanity.txt','requirements.txt','settings.py','shell.py','vars_to_save.py','version_config.py']
             #Backup Certian Files
             zipObject= ZipFile(backup_name+'.zip', 'w')
