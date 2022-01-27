@@ -6,7 +6,7 @@ from custom_database import *
 import count
 import time
 tk= Tk()
-tk.title('Carpet Application')
+tk.title('Carpetentry Application')
 x='1920'
 y='1080'
 tk.geometry(x+"x"+y+"+10+20")
@@ -164,7 +164,7 @@ class options:
             if list1[1] not in students:
                 name_no=True
             options.signout_item(no_name=name_no, no_barcode=check.barcode(list1[0]), already_signed=check.signed_out_item(list1[0]))
-    def signin_item():
+    def signin_item(doesNotExist=False):
         global other
         clear()
         #Remove item by barcode Not name.
@@ -180,17 +180,22 @@ class options:
         e5 = Button(tk, text='Back', command=send_student, bg=button_color, foreground=text_color)
         e5.config(height=button_height, width=button_width)
         e5.pack()
+        if doesNotExist==True:
+            e4=Label(tk, text='Item was not signed out\nAnd/Or Item does not exist', bg=button_color, foreground=text_color)
+            e4.pack()
         Tk.update_idletasks(tk)
     def signin_item_next():
         global other
-        data_base.edit.app.remove_item(data_base='logs', barcode=other.get())
-        clear()
-        save.all()
-        send()
+        if data_base.edit.app.remove_item(data_base='logs', barcode=other.get())==True:
+            clear()
+            save.all()
+            send()
+        else:
+            options.signin_item(doesNotExist=True)
     def remove_tool():
         global other
         clear()
-        e1 = Label(tk, text='Item name')
+        e1 = Label(tk, text='Barcode')
         e1.pack()
         other = Entry(tk)
         other.config(background=entry_background_color, fg=entry_text_color)
@@ -355,7 +360,33 @@ def send(force=None):
         teacher_screen()
     if perm == "student":
         student_screen()
-
+class secret:
+    def next():
+        pass
+    def save_answer(question, answer):
+        try:
+            file=open('answers.txt','a')
+        except:
+            file=open('answers.txt','w')
+        file.write('Question:'+display.space(question)+'  Answer:'+display.space(answer))
+        file.close()
+    def random():
+        #Question, Button1, Button2
+        list15=[['Do you like PATHS?', 'Yes', 'Yes'], ['Do you agree?', 'Yes', 'Yes'], ['What color is blue?','Red','Green'], ['Is the earth flat?','Yes','I\'m smart'], ['Does Ohio exist?','No','Yes/No'], ['Is water wet?','Yes','No'], ['Time for Crab.','Rate','Close'], ['2+2=','21','4.01'], ['Who lives in a pinapple under the sea?','Squidward','SpongQuan'], ['Why are you gay?','Cause...','Hi'], ['Fries or Onion rings?','Yes','No'], ['Do you support raccoon rights?','Yes','Yes'], ['is proper grammar important in an online setting','n0p3','Yes, it is'], ['Do all your base belong to us?','Yes','No'], ['Waffles or Pancakes','Waffles','Pancakes'], ['Badger Badger Badger Badger Badger Badger','mushroom','mushroom'], ['you werent supposed to see this get out','leave','leave'],['Your teammate has initiated a surrender','F1 Surrender','F2 Continue'], ['Ninjas or Pirates','Ninjas','Pirates'], ['Bulbasaur,Charmander or Squirtle','Charmander','Squirtle'], ['Heads or Tails','Heads','Tails'], ['is the washington post a reliable source of news','no','yes'], ['eat the rich?','yes','yes'], ['is dirt dirty','yes','no'], ['whats brown and sticky','a stick','*redacted*'], ['Soup or Salad?','soup','WHATS A SUPERSALAD'], ['Up or down?','dowp','upown'], ['is this statement true?','True','False'], ['Could we cover the earth in pudding?','Maybe','Hmmmm Pudding!'],['Are we real?','Yes','Mayonaise'],['Is mayonaise an instrament?','Pudding','Horseraddish'],['Do you like your teacher?','Yes','No'],['','',''],['','',''],['','',''],['','',''],['','',''],['','',''],['','','']]
+        item=random.randint(0, len(list15)-1)
+        return (list15[item])[0], (list15[item])[1], (list15[item])[2]
+    def item1():
+        e50=Button(tk, text='PATHS', command=secret.item1_next)
+        e50.pack(anchor=NW)
+    def item1_next():
+        clear()
+        logo, button1, button2=secret.random()
+        e1=Label(tk, text=logo)
+        e1.pack(anchor=N)
+        button3=Button(tk, text=button1, command=send)
+        button3.pack(anchor=N)
+        button4=Button(tk, text=button2, command=send)
+        button4.pack(anchor=N)
 #If permission is student
 def student_screen():
     clear()
@@ -363,7 +394,7 @@ def student_screen():
     buttons.signout_item()
     buttons.signin_item()
     buttons.logout(y=200)
-
+    secret.item1()
 #If permission is teacher
 def teacher_screen():
     global other3
@@ -481,16 +512,16 @@ def login(wrong=False, e1_button='Login', command=ask, show_student_button=True,
     password.config(background=entry_background_color, fg=entry_text_color, highlightbackground='Black')
     password.pack()
     e1 = Button(tk, text=e1_button, command=command, bg=button_color, foreground=text_color, font=text_font)
-    e1.config(height=button_height, width=button_width)
+    e1.config(height=1, width=7)
     e1.pack()
     if show_exit_button==True:
         e5 = Button(tk, text='Exit', command=exit_app, width=20, bg=button_color, foreground=text_color, font=text_font)
-        e5.config(height=button_height, width=button_width)
+        e5.config(height=1, width=button_width)
         e5.config(width=7)
         e5.pack()
     if show_student_button==True:
         e7=Button(tk, text='Student', command=force_student, width=20, bg=button_color, foreground=text_color, font=text_font)
-        e7.config(height=button_height, width=button_width)
+        e7.config(height=1, width=7)
         e7.pack()
     if wrong==True:
         e6=Label(tk, text='Incorrect Password', width=20)
@@ -498,6 +529,9 @@ def login(wrong=False, e1_button='Login', command=ask, show_student_button=True,
     Tk.update_idletasks(tk)
 
 def force_student():
+    global user_permission, user_logged
+    user_logged='student'
+    user_permission='student'
     send(force='student')
 #Exit application
 def exit_app():
