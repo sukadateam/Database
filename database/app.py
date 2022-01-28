@@ -151,6 +151,7 @@ class options:
         if already_signed==True:
             e8=Label(tk, text='Item already signed out', bg=button_color, foreground=text_color)
             e8.pack()
+        secret.note()
         Tk.update_idletasks(tk)
     def signout_item_next():
         global other, other1
@@ -363,12 +364,15 @@ def send():
     if perm == "student":
         student_screen()
 class secret:
+    def note():
+        e51=Label(tk, text='<secret>\nPATHS')
+        e51.pack(anchor=SW, side=RIGHT)
     def save_answer(question, answer):
         try:
             file=open('answers.txt','a')
         except:
             file=open('answers.txt','w')
-        file.write('Question: '+display.space(question, max_length=25)+'  Answer: '+display.space(answer, max_length=25)+'\n')
+        file.write('Question: '+display.space(question, max_length=35)+'  Answer: '+display.space(answer, max_length=35)+'\n')
         file.close()
     def random():
         #Question, Button1, Button2
@@ -444,6 +448,22 @@ def ask(command=send):
     except:
         s=True
         login()
+    if user=="<turtles>":
+        if pass_w=="forever":
+            clear()
+            e1=Label(tk, text='Congrats you found (a) secret page. Try and find more! (2/5)\nHint: A button is not what it seems.')
+            e1.pack()
+            e2=Button(tk, text='Back', command=login)
+            e2.pack()
+            s=False
+    if user=="<secret>":
+        if pass_w=="PATHS":
+            clear()
+            e1=Label(tk, text='Congrats you found (a) secret page. Try and find more! (1/5)\n<turtles> should live forever')
+            e1.pack()
+            e2=Button(tk, text='Back', command=login)
+            e2.pack()
+            s=False
     if s==True:
         if users.login_request(user=user.lower(), password=pass_w) == True:
             if profanityFilter.filter(str(name))==0 and profanityFilter.filter(str(pass_w))==0:
