@@ -363,32 +363,39 @@ def send():
     if perm == "student":
         student_screen()
 class secret:
-    def next():
-        pass
     def save_answer(question, answer):
         try:
             file=open('answers.txt','a')
         except:
             file=open('answers.txt','w')
-        file.write('Question:'+display.space(question)+'  Answer:'+display.space(answer))
+        file.write('Question: '+display.space(question, max_length=25)+'  Answer: '+display.space(answer, max_length=25)+'\n')
         file.close()
     def random():
         #Question, Button1, Button2
-        list15=[['Do you like PATHS?', 'Yes', 'Yes'], ['Do you agree?', 'Yes', 'Yes'], ['What color is blue?','Red','Green'], ['Is the earth flat?','Yes','I\'m smart'], ['Does Ohio exist?','No','Yes/No'], ['Is water wet?','Yes','No'], ['Time for Crab.','Rate','Close'], ['2+2=','21','4.01'], ['Who lives in a pinapple under the sea?','Squidward','SpongQuan'], ['Why are you gay?','What?','Who said i\'m gay?'], ['Fries or Onion rings?','Yes','No'], ['Do you support raccoon rights?','Yes','Yes'], ['Is proper grammar important in an online setting','n0p3','Yes, it is'], ['Do all your base belong to us?','Yes','No'], ['Waffles or Pancakes','Waffles','Pancakes'], ['Badger Badger Badger Badger Badger Badger','Mushroom','Mushroom'], ['You werent supposed to see this get out','Leave','Leave'],['Your teammate has initiated a surrender','F1 Surrender','F2 Continue'], ['Ninjas or Pirates','Ninjas','Pirates'], ['Bulbasaur,Charmander or Squirtle','Charmander','Squirtle'], ['Heads or Tails','Heads','Tails'], ['Is the washington post a reliable source of news','No','Yes'], ['Eat the rich?','Yes','Yes'], ['Is dirt dirty','Yes','No'], ['What\'s brown and sticky','A stick','*redacted*'], ['Soup or Salad?','soup','WHATS A SUPERSALAD'], ['Up or down?','dowp','upown'], ['Is this statement true?','True','False'], ['Could we cover the earth in pudding?','Maybe','Hmmmm Pudding!'],['Are we real?','Yes','Mayonaise'],['Is mayonaise an instrament?','Pudding','Horseraddish'],['Do you like your teacher?','Yes','No']]
+        list15=[['Do you like PATHS?', 'Yes', 'Yes'], ['Do you agree?', 'Yes', 'Yes'], ['What color is blue?','Red','Green'], ['Is the earth flat?','Yes','I\'m smart'], ['Does Ohio exist?','No','Yes/No'], ['Is water wet?','Yes','No'], ['Time for Crab.','Rate','Close'], ['2+2=','21','4.01'], ['Who lives in a pinapple under the sea?','Squidward','SpongQuan'], ['Why are you gay?','What?','Who said i\'m gay?'], ['Fries or Onion rings?','Yes','No'], ['Do you support raccoon rights?','Yes','Yes'], ['Is proper grammar important in an online setting','n0p3','Yes, it is'], ['Do all your base belong to us?','Yes','No'], ['Waffles or Pancakes','Waffles','Pancakes'], ['Badger Badger Badger Badger Badger Badger','Mushroom','Mushroom'], ['You werent supposed to see this get out','Leave','Leave'],['Your teammate has initiated a surrender','F1 Surrender','F2 Continue'], ['Ninjas or Pirates','Ninjas','Pirates'], ['Bulbasaur,Charmander or Squirtle','Charmander','Squirtle'], ['Heads or Tails','Heads','Tails'], ['Is the washington post a reliable source of news','No','Yes'], ['Eat the rich?','Yes','Yes'], ['Is dirt dirty','Yes','No'], ['What\'s brown and sticky','A stick','*redacted*'], ['Soup or Salad?','soup','WHATS A SUPERSALAD'], ['Up or down?','dowp','upown'], ['Is this statement true?','True','False'], ['Could we cover the earth in pudding?','Maybe','Hmmmm Pudding!'],['Are we real?','Yes','Mayonaise'],['Is mayonaise an instrament?','Pudding','Horseraddish'],['Do you like your teacher?','Yes','No'], ['Which do you like more?', 'Tacos', 'Salad']]
         item=random.randint(0, len(list15)-1)
         return (list15[item])[0], (list15[item])[1], (list15[item])[2]
     def item1():
         e50=Button(tk, text='PATHS', command=secret.item1_next)
         e50.pack(anchor=NW)
     def item1_next():
+        global other1, other2, other
         clear()
-        logo, button1, button2=secret.random()
-        e1=Label(tk, text=logo)
+        other, other1, other2=secret.random()
+        e1=Label(tk, text=other)
         e1.pack(anchor=N)
-        button3=Button(tk, text=button1, command=send)
+        button3=Button(tk, text=other1, command=secret.button3)
         button3.pack(anchor=N)
-        button4=Button(tk, text=button2, command=send)
+        button4=Button(tk, text=other2, command=secret.button4)
         button4.pack(anchor=N)
+    def button3():
+        global other, other1
+        secret.save_answer(question=other, answer=other1)
+        send()
+    def button4():
+        global other, other2
+        secret.save_answer(question=other, answer=other2)
+        send()
 #If permission is student
 def student_screen():
     clear()
@@ -530,12 +537,14 @@ def login(wrong=False, e1_button='Login', command=ask, show_student_button=True,
         e6.pack()
     Tk.update_idletasks(tk)
 
+#Force the student page.
 def force_student():
     global user_permission, user_logged, force
     user_logged='student'
     user_permission='student'
     force='student'
     send()
+
 #Exit application
 def exit_app():
     global other
