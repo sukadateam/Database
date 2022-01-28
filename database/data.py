@@ -20,11 +20,9 @@ user_permission=None
 
 #Others
 allowed_types=['column_row', 'list']
-allowed_users=['admin', 'student', 'teacher']
+allowed_users=['admin', 'student', 'teacher', 'secret'] #Allowed Permissions
 denied_inputs=['',' ',None]
 denied_names=[]
-min_length=5 #Min password length
-max_length=8 #Max password length
 debug=True
 students=['brandon', 'jeff']
 opto_data=[]
