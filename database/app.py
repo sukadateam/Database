@@ -17,6 +17,7 @@ other=None
 other1=None
 other2=None
 other3=None #Encypt/Decrypt Password
+force=None
 #If a button is called, it is displayed on the screen.
 class buttons:
     def create_user(anchor=None, side=None):
@@ -331,14 +332,15 @@ class options:
         clear()
         login()
 def send_student():
-    send(force='student')
+    send()
 #Call to clear the screen.
 def clear():
     for widget in tk.winfo_children():
         widget.destroy()
 
 #Sends logged in users to correct area depending on permissions.
-def send(force=None):
+def send():
+    global force
     try: os.remove('data_save.aes')
     except: pass
     try: os.remove('history.aes')
@@ -372,7 +374,7 @@ class secret:
         file.close()
     def random():
         #Question, Button1, Button2
-        list15=[['Do you like PATHS?', 'Yes', 'Yes'], ['Do you agree?', 'Yes', 'Yes'], ['What color is blue?','Red','Green'], ['Is the earth flat?','Yes','I\'m smart'], ['Does Ohio exist?','No','Yes/No'], ['Is water wet?','Yes','No'], ['Time for Crab.','Rate','Close'], ['2+2=','21','4.01'], ['Who lives in a pinapple under the sea?','Squidward','SpongQuan'], ['Why are you gay?','Cause...','Hi'], ['Fries or Onion rings?','Yes','No'], ['Do you support raccoon rights?','Yes','Yes'], ['is proper grammar important in an online setting','n0p3','Yes, it is'], ['Do all your base belong to us?','Yes','No'], ['Waffles or Pancakes','Waffles','Pancakes'], ['Badger Badger Badger Badger Badger Badger','mushroom','mushroom'], ['you werent supposed to see this get out','leave','leave'],['Your teammate has initiated a surrender','F1 Surrender','F2 Continue'], ['Ninjas or Pirates','Ninjas','Pirates'], ['Bulbasaur,Charmander or Squirtle','Charmander','Squirtle'], ['Heads or Tails','Heads','Tails'], ['is the washington post a reliable source of news','no','yes'], ['eat the rich?','yes','yes'], ['is dirt dirty','yes','no'], ['whats brown and sticky','a stick','*redacted*'], ['Soup or Salad?','soup','WHATS A SUPERSALAD'], ['Up or down?','dowp','upown'], ['is this statement true?','True','False'], ['Could we cover the earth in pudding?','Maybe','Hmmmm Pudding!'],['Are we real?','Yes','Mayonaise'],['Is mayonaise an instrament?','Pudding','Horseraddish'],['Do you like your teacher?','Yes','No'],['','',''],['','',''],['','',''],['','',''],['','',''],['','',''],['','','']]
+        list15=[['Do you like PATHS?', 'Yes', 'Yes'], ['Do you agree?', 'Yes', 'Yes'], ['What color is blue?','Red','Green'], ['Is the earth flat?','Yes','I\'m smart'], ['Does Ohio exist?','No','Yes/No'], ['Is water wet?','Yes','No'], ['Time for Crab.','Rate','Close'], ['2+2=','21','4.01'], ['Who lives in a pinapple under the sea?','Squidward','SpongQuan'], ['Why are you gay?','What?','Who said i\'m gay?'], ['Fries or Onion rings?','Yes','No'], ['Do you support raccoon rights?','Yes','Yes'], ['Is proper grammar important in an online setting','n0p3','Yes, it is'], ['Do all your base belong to us?','Yes','No'], ['Waffles or Pancakes','Waffles','Pancakes'], ['Badger Badger Badger Badger Badger Badger','Mushroom','Mushroom'], ['You werent supposed to see this get out','Leave','Leave'],['Your teammate has initiated a surrender','F1 Surrender','F2 Continue'], ['Ninjas or Pirates','Ninjas','Pirates'], ['Bulbasaur,Charmander or Squirtle','Charmander','Squirtle'], ['Heads or Tails','Heads','Tails'], ['Is the washington post a reliable source of news','No','Yes'], ['Eat the rich?','Yes','Yes'], ['Is dirt dirty','Yes','No'], ['What\'s brown and sticky','A stick','*redacted*'], ['Soup or Salad?','soup','WHATS A SUPERSALAD'], ['Up or down?','dowp','upown'], ['Is this statement true?','True','False'], ['Could we cover the earth in pudding?','Maybe','Hmmmm Pudding!'],['Are we real?','Yes','Mayonaise'],['Is mayonaise an instrament?','Pudding','Horseraddish'],['Do you like your teacher?','Yes','No']]
         item=random.randint(0, len(list15)-1)
         return (list15[item])[0], (list15[item])[1], (list15[item])[2]
     def item1():
@@ -500,7 +502,7 @@ def ask_encrypt_password_next():
 #Display a screen that allows the user to login.
 def login(wrong=False, e1_button='Login', command=ask, show_student_button=True, show_exit_button=True):
     clear()
-    global name, password
+    global name, password, force
     e2 = Label(tk, text='Username: ')
     e2.pack()
     name = Entry(tk, highlightbackground='Black')
@@ -529,10 +531,11 @@ def login(wrong=False, e1_button='Login', command=ask, show_student_button=True,
     Tk.update_idletasks(tk)
 
 def force_student():
-    global user_permission, user_logged
+    global user_permission, user_logged, force
     user_logged='student'
     user_permission='student'
-    send(force='student')
+    force='student'
+    send()
 #Exit application
 def exit_app():
     global other
