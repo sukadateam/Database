@@ -7,19 +7,21 @@ while True:
     for i in range(10):
         print('')
     if users.return_login_cred() == False:
-        choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\n(8)Optimize save file\n(9)Check profanity\n(10)Decrypt setup_env.aes\n(11)Encrypt setup_env.aes\n(12)Login\nYour choice: ')
+        choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\n(8)Optimize save file\n(9)Check profanity\n(10)Decrypt file\n(11)Encrypt file\n(12)Login\nYour choice: ')
     else:
-        choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\n(8)Optimize save file\n(9)Check profanity\n(10)Decrypt setup_env.aes\n(11)Encrypt setup_env.aes\n(12)Logout\nYour choice: ')
+        choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\n(8)Optimize save file\n(9)Check profanity\n(10)Decrypt file\n(11)Encrypt file\n(12)Logout\nYour choice: ')
     if choice == "exit":
         break
     if choice=='11':
         try:
-            pyAesCrypt.encryptFile('setup_env.py', 'setup_env.aes', passw=input('Password: '))
+            file=input('What file: ')
+            pyAesCrypt.encryptFile(file+'.py', file+'.aes', passw=input('Password: '))
         except:
             print('File does not exist.')
     if choice=='10':
         try:
-            pyAesCrypt.decryptFile('setup_env.aes', 'setup_env.py', passw=input('Password: '))
+            file=input('What file: ')
+            pyAesCrypt.decryptFile(file+'.aes', file+'.py', passw=input('Password: '))
         except:
             print('Incorrect password or file does not exist.')
     if choice == "9":
