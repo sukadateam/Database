@@ -1,5 +1,6 @@
 #Things to do next:
 #Save text files in a seperate folder. Possibly named: collections
+#save_in_txtFile.remove_files()
 import sys, os
 from os import stat
 from os import remove, walk
@@ -84,12 +85,26 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         print("Couldn't import pyAesCrypt")
     #A class for my application.
     class save_in_txtFile:
+        def remove_files():
+            os.chdir('collections')
+            #Remove any and all files created by this class.
+            file=['student_logs.txt', 'users.txt', 'tools.txt']
+            for i in range(len(file)):
+                try:
+                    os.remove(file[i])
+                except:
+                    if debug==True:
+                        print('Could Not Locate:', file[i])
+            os.chdir(path)
         def students():
+            os.chdir('collections')
             file=open('student.txt','w')
             for i in range(len(students)):
                 file.write('Student: '+students[i])
             file.close()
+            os.chdir(path)
         def logs():
+            os.chdir('collections')
             #Save all logs of students that currently have items signed out.
             file=open('student_logs.txt','w')
             for i in range(len(lists)):
@@ -102,7 +117,9 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     #Save Item name, Serial, And student name.
                     #Search tools with serial to find item name.
             file.close()
+            os.chdir(path)
         def users():
+            os.chdir('collections')
             if len(known_users)>0:
                 #Save all users in a text file. Do not write passwords.
                 file=open('users.txt','w')
@@ -111,7 +128,9 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 file.close()
             else:
                 print('There are no users.')
+            os.chdir(path)
         def tools():
+            os.chdir('collections')
             #Save all tools in a text file.
             file=open('tools.txt','w')
             for i in range(len(row)):
@@ -123,6 +142,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     file.write('Item: '+part2+'  Serial: '+str(part)+'Shorted: '+str(part1)+'\n')
             file.write('\n\n#'+str(25)+' character max length.')
             file.close()
+            os.chdir(path)
     class display:
         def space(var, max_length=10, hide=False, return_ShortenNotice=False):
             #Works with display.database to create a nice table to display.
@@ -2126,11 +2146,13 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             os.remove('history.aes')
         except:
             pass
+    if os.path.exists('collections')==False:
+        os.mkdir('collections')
     #You must set a Normal level password
     #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
-    save_in_txtFile.logs()
+    
 
     #Do not remove this!!!!!!
     if __name__ == '__main__':
