@@ -86,7 +86,21 @@ class buttons:
         e16 = Button(tk, text='Show logged items', command=options.show_logged_items, bg=button_color, foreground=text_color, font=text_font)
         e16.config(height=button_height, width=button_width)
         e16.place(x=((int(x))/2)-330, y=y)
+    def show_students(y=0):
+        e17 = Button(tk, text='Show Students', command=options.show_students, bg=button_color, foreground=text_color, font=text_font)
+        e17.config(height=button_height, width=button_width)
+        e17.place(x=((int(x))/2)-330, y=y)
 class options:
+    def show_students():
+        clear()
+        e1 = Label(tk, text='Check File For Info', bg=button_color, foreground=text_color)
+        e1.config(height=button_height, width=button_width+6)
+        e1.pack()
+        e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+        e2.config(height=button_height, width=button_width)
+        e2.pack()
+        save_in_txtFile.students()
+        Tk.update_idletasks(tk)
     def show_logged_items():
         clear()
         e1 = Label(tk, text='Check File For Info', bg=button_color, foreground=text_color)
@@ -468,7 +482,7 @@ def teacher_screen():
     buttons.show_tools()
     buttons.create_user()
     buttons.remove_user()
-    buttons.logout(y=500)
+    buttons.show_students(y=500)
     buttons.add_student(y=600)
     buttons.remove_student(y=700)
     e25=Button(tk, text='Next Screen', command=teacher_screen_next, bg=button_color, foreground=text_color, font=text_font)
@@ -477,9 +491,10 @@ def teacher_screen():
 def teacher_screen_next():
     clear()
     buttons.show_logged_items(y=0)
+    buttons.logout(y=100)
     e25=Button(tk, text='Back', command=teacher_screen, bg=button_color, foreground=text_color, font=text_font)
     e25.config(height=button_height, width=button_width)
-    e25.place(x=((int(x))/2)-330, y=100)
+    e25.place(x=((int(x))/2)-330, y=200)
 #If permission is admin
 def admin_screen():
     clear()
