@@ -66,14 +66,14 @@ class buttons:
         e10 = Button(tk, text='Clear History', command=options.clear_history, bg=button_color, foreground=text_color, font=text_font)
         e10.config(height=button_width, width=button_width)
         e10.place(x=0, y=0)
-    def signout_item(anchor=None, side=None):
+    def signout_item(anchor=None, side=None, y=100):
         e11 = Button(tk, text='Signout item', command=options.signout_item, bg=button_color, foreground=text_color, font=text_font)
         e11.config(height=button_height, width=button_width)
-        e11.place(x=((int(x))/2)-330, y=100)
-    def signin_item(anchor=None, side=None):
+        e11.place(x=((int(x))/2)-330, y=y)
+    def signin_item(anchor=None, side=None, y=0):
         e12 = Button(tk, text='Signin item', command=options.signin_item, bg=button_color, foreground=text_color, font=text_font)
         e12.config(height=button_height, width=button_width)
-        e12.place(x=((int(x))/2)-330, y=0)
+        e12.place(x=((int(x))/2)-330, y=y)
     def backup():
         e13 = Button(tk, text='Backup', command=options.backup, bg=button_color, foreground=text_color, font=text_font)
         e13.config(height=button_width, width=button_width)
@@ -491,10 +491,11 @@ def teacher_screen():
 def teacher_screen_next():
     clear()
     buttons.show_logged_items(y=0)
-    buttons.logout(y=100)
+    buttons.show_students(y=100)
+    buttons.logout(y=200)
     e25=Button(tk, text='Back', command=teacher_screen, bg=button_color, foreground=text_color, font=text_font)
     e25.config(height=button_height, width=button_width)
-    e25.place(x=((int(x))/2)-330, y=200)
+    e25.place(x=((int(x))/2)-330, y=300)
 #If permission is admin
 def admin_screen():
     clear()
@@ -507,10 +508,21 @@ def admin_screen():
     buttons.remove_user()
     buttons.save()
     buttons.optimize()
-    buttons.logout()
     buttons.clear_history()
     buttons.backup()
-
+    e25=Button(tk, text='Next Screen', command=admin_page2, bg=button_color, foreground=text_color, font=text_font)
+    e25.config(height=button_height, width=button_width)
+    e25.place(x=((int(x))/2)-330, y=700)
+def admin_page2():
+    clear()
+    buttons.logout(y=0)
+    buttons.signin_item(y=100)
+    buttons.signout_item(y=200)
+    buttons.show_logged_items(y=300)
+    buttons.show_students(y=400)
+    e25=Button(tk, text='Back', command=admin_screen, bg=button_color, foreground=text_color, font=text_font)
+    e25.config(height=button_height, width=button_width)
+    e25.place(x=((int(x))/2)-330, y=500)
 #Ask the database if the entered credentials are correct.
 def ask(command=send):
     global name, password, startup
