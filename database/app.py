@@ -3,6 +3,7 @@ from operator import truediv
 from tkinter import *
 from xml.etree.ElementTree import TreeBuilder
 from custom_database import *
+import webbrowser
 import count
 import time
 tk= Tk()
@@ -77,7 +78,46 @@ class buttons:
         e13 = Button(tk, text='Backup', command=options.backup, bg=button_color, foreground=text_color, font=text_font)
         e13.config(height=button_width, width=button_width)
         e13.pack(side=LEFT)
+    def remove_student(y=900):
+        e15 = Button(tk, text='Remove Student', command=options.remove_student, bg=button_color, foreground=text_color, font=text_font)
+        e15.config(height=button_height, width=button_width)
+        e15.place(x=((int(x))/2)-330, y=y)
+    def show_logged_items(y=900):
+        e16 = Button(tk, text='Show logged items', command=options.show_logged_items, bg=button_color, foreground=text_color, font=text_font)
+        e16.config(height=button_height, width=button_width)
+        e16.place(x=((int(x))/2)-330, y=y)
 class options:
+    def show_logged_items():
+        clear()
+        e1 = Label(tk, text='Check File For Info', bg=button_color, foreground=text_color)
+        e1.config(height=button_height, width=button_width+6)
+        e1.pack()
+        e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+        e2.config(height=button_height, width=button_width)
+        e2.pack()
+        save_in_txtFile.logs()
+        Tk.update_idletasks(tk)
+    def remove_student(notFound=False):
+        clear()
+        global other
+        e1=Label(tk, text='Enter Students Name to Remove')
+        e1.pack()
+        other=Entry(tk)
+        other.pack()
+        e3=Button(tk, text='Submit', command=options.remove_student)
+        e3.pack()
+        e4=Button(tk, text='Back', command=send)
+        e4.pack()
+        if notFound==True:
+            e2=Label(tk, text='Student could not be found.')
+            e2.pack()
+        Tk.update_idletasks(tk)
+    def remove_student_next():
+        if other.get() in students:
+            students.remove(other.get())
+            send()
+        else:
+            options.remove_student(notFound=True)
     def add_student(student_found=False):
         clear()
         global other
@@ -123,6 +163,8 @@ class options:
         e2.config(height=button_height, width=button_width)
         e2.pack()
         save_in_txtFile.tools()
+        webbrowser.open('tools.txt')
+        Tk.update_idletasks(tk)
     def signout_item(no_name=False, no_barcode=False, already_signed=False):
         global other, other1
         clear()
@@ -357,12 +399,19 @@ def send():
         pass
     if force!=None:
        perm=force
+    if perm=="secret":
+        secret_screen()
     if perm == "admin":
         admin_screen()
     if perm == "teacher":
         teacher_screen()
     if perm == "student":
         student_screen()
+def secret_screen():
+    clear()
+    e1=Label(tk, text='Wow. You found the 4th secret! One more to go!')
+    e1.pack()
+    buttons.logout(y=100)
 class secret:
     def note():
         e51=Label(tk, text='<secret>\nPATHS')
@@ -376,7 +425,7 @@ class secret:
         file.close()
     def random():
         #Question, Button1, Button2
-        list15=[['Sara would like to send you a picture.','Yes Please!','I\'m Gay.'],['Marvel or DC?','Marvel','DC'],['Click the Yes button.','No','Perhaps'],['1+1=','2','3'],['Life Or Death?','Homework','Homework'],['Yes','No','Yes'],['Apple or Samsung?','Windows','BlackBerry'],['Gem rush your town hall? (COC)','Yes','No! Don\'t waste your gems!'],['Are you an american?','Yes','Murica\''],['Are you left or right?','Right','What\'s a left?'],['59+125=','184','187'],['Can I get a hiyah?!','Hiyah!','I\'m not a little kid'], ['Do you like PATHS?', 'Yes', 'Yes'], ['Do you agree?', 'Yes', 'Yes'], ['What color is blue?','Red','Green'], ['Is the earth flat?','Yes','I\'m smart'], ['Does Ohio exist?','No','Yes/No'], ['Is water wet?','Yes','No'], ['Time for Crab.','Rate','Close'], ['2+2=','21','4.01'], ['Who lives in a pinapple under the sea?','Squidward','SpongQuan'], ['Why are you gay?','What?','Who said i\'m gay?'], ['Fries or Onion rings?','Yes','No'], ['Do you support raccoon rights?','Yes','Yes'], ['Is proper grammar important in an online setting','n0p3','Yes, it is'], ['Do all your base belong to us?','Yes','No'], ['Waffles or Pancakes','Waffles','Pancakes'], ['Badger Badger Badger Badger Badger Badger','Mushroom','Mushroom'], ['You werent supposed to see this get out','Leave','Leave'],['Your teammate has initiated a surrender','F1 Surrender','F2 Continue'], ['Ninjas or Pirates','Ninjas','Pirates'], ['Bulbasaur,Charmander or Squirtle','Charmander','Squirtle'], ['Heads or Tails','Heads','Tails'], ['Is the washington post a reliable source of news','No','Yes'], ['Eat the rich?','Yes','Yes'], ['Is dirt dirty','Yes','No'], ['What\'s brown and sticky','A stick','*redacted*'], ['Soup or Salad?','soup','WHATS A SUPERSALAD'], ['Up or down?','dowp','upown'], ['Is this statement true?','True','False'], ['Could we cover the earth in pudding?','Maybe','Hmmmm Pudding!'],['Are we real?','Yes','Mayonaise'],['Is mayonaise an instrament?','Pudding','Horseraddish'],['Do you like your teacher?','Yes','No'], ['Which do you like more?', 'Tacos', 'Salad']]
+        list15=[['Dogs Or Cats?','Dogs','Cats'],['Sara would like to send you a picture.','Yes Please!','No thanks.'],['Marvel or DC?','Marvel','DC'],['Click the Yes button.','No','Perhaps'],['1+1=','2','3'],['Life Or Death?','Life','Death'],['Yes','No','Yes'],['Apple or Samsung?','Apple','Samsung'],['Gem rush your town hall? (COC)','Yes','No! Don\'t waste your gems!'],['Are you an American?','Yes','No'],['Are you a Lefty or Righty?','Righty','Lefty'],['59+125=','184','187'],['Can I get a hiyah?!','Hiyah!','I\'m not a little kid'], ['Do you like PATHS?', 'Yes', 'Yes'], ['Do you agree?', 'Yes', 'Yes'], ['What color is blue?','Red','Green'], ['Is the earth flat?','Yes','I\'m smart'], ['Does Ohio exist?','No','Yes/No'], ['Is water wet?','Yes','No'], ['Time for Crab.','Rate','Close'], ['2+2=','21','4.01'], ['Who lives in a pinapple under the sea?','Squidward','SpongQuan'], ['Why are you gay?','What?','Who said i\'m gay?'], ['Fries or Onion rings?','Yes','No'], ['Do you support raccoon rights?','Yes','Yes'], ['Is proper grammar important in an online setting','n0p3','Yes, it is'], ['Do all your base belong to us?','Yes','No'], ['Waffles or Pancakes','Waffles','Pancakes'], ['Badger Badger Badger Badger Badger Badger','Mushroom','Mushroom'], ['You werent supposed to see this get out','Leave','Leave'],['Your teammate has initiated a surrender','F1 Surrender','F2 Continue'], ['Ninjas or Pirates','Ninjas','Pirates'], ['Bulbasaur,Charmander or Squirtle','Charmander','Squirtle'], ['Heads or Tails','Heads','Tails'], ['Is the washington post a reliable source of news','No','Yes'], ['Eat the rich?','Yes','Yes'], ['Is dirt dirty','Yes','No'], ['What\'s brown and sticky','A stick','*redacted*'], ['Soup or Salad?','soup','WHATS A SUPERSALAD'], ['Up or down?','dowp','upown'], ['Is this statement true?','True','False'], ['Could we cover the earth in pudding?','Maybe','Hmmmm Pudding!'],['Are we real?','Yes','Mayonaise'],['Is mayonaise an instrament?','Pudding','Horseraddish'],['Do you like your teacher?','Yes','No'], ['Which do you like more?', 'Tacos', 'Salad']]
         item=random.randint(0, len(list15)-1)
         return (list15[item])[0], (list15[item])[1], (list15[item])[2]
     def item1():
@@ -421,7 +470,16 @@ def teacher_screen():
     buttons.remove_user()
     buttons.logout(y=500)
     buttons.add_student(y=600)
-
+    buttons.remove_student(y=700)
+    e25=Button(tk, text='Next Screen', command=teacher_screen_next, bg=button_color, foreground=text_color, font=text_font)
+    e25.config(height=button_height, width=button_width)
+    e25.place(x=((int(x))/2)-330, y=800)
+def teacher_screen_next():
+    clear()
+    buttons.show_logged_items(y=0)
+    e25=Button(tk, text='Back', command=teacher_screen, bg=button_color, foreground=text_color, font=text_font)
+    e25.config(height=button_height, width=button_width)
+    e25.place(x=((int(x))/2)-330, y=100)
 #If permission is admin
 def admin_screen():
     clear()
@@ -530,6 +588,7 @@ def ask_encrypt_password_next():
 def login(wrong=False, e1_button='Login', command=ask, show_student_button=True, show_exit_button=True):
     clear()
     global name, password, force
+    force=None
     e2 = Label(tk, text='Username: ')
     e2.pack()
     name = Entry(tk, highlightbackground='Black')
