@@ -1,9 +1,9 @@
-This Project was created by Brandon Robinson.
+This Project was Created By Brandon Robinson.
 
-This is my alternative to mysql.
+A school project turned into a full fledged application.
 
-This is a fully python database handler. For new feature Ideas please let me know.
+Recommended Python Version 3.10.1, 3.10.2 or 3.11.0(Beta).
 
-Python version 3.10.1 is required for this build.
+This program uses python and only python.
 
-This is a passion project. I wish to work with others in the future with my code.
+Tkinter is used for the visuals.
