@@ -1,5 +1,6 @@
 #Things to do next:
-#Nothin'!!!
+#save_in_txtFile.logs()
+#save_in_txtFile.student()
 import sys, os
 from os import stat
 from os import remove, walk
@@ -41,11 +42,11 @@ except:
     print('Could not find the required file: history_desc.py You may experience problems.')
 print('This Project is hosted on github. github.com/sukadateam')
 print('If problems occur, try to check if a new version exists.\n\n')
-if sys.version[0:len(required_version)] != required_version:
+if sys.version[0:len(required_version)] != required_version and "-skipPythonCheck" not in n:
     print('Required python version:', required_version)
     print('Current python version:', sys.version[0:len(required_version)])
     sys.exit()
-if sys.version[0:len(required_version)] == required_version:
+if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck" in n:
     from datetime import date
     today=date.today()
     d1 = today.strftime("%m/%d/%Y")
@@ -84,9 +85,21 @@ if sys.version[0:len(required_version)] == required_version:
         print("Couldn't import pyAesCrypt")
     #A class for my application.
     class save_in_txtFile:
+        def students():
+            pass
         def logs():
             #Save all logs of students that currently have items signed out.
-            pass
+            file=open('student_logs.txt','w')
+            for i in range(len(lists)):
+                if (lists[i])[0]=="logs":
+                    serial=(((lists[i])[1])[0])[0]
+                    student=(((lists[i])[1])[0])[1]
+                    tool_name=get.tool_name(serial)
+                    file.write('Item: '+display.space(tool_name, max_length=25, hide=True)+' Serial: '+display.space(serial, max_length=25, hide=True)+' Student: '+display.space(student, max_length=25, hide=True))
+                file.write('\n\n#'+str(25)+' character max length.')
+                    #Save Item name, Serial, And student name.
+                    #Search tools with serial to find item name.
+            file.close()
         def users():
             if len(known_users)>0:
                 #Save all users in a text file. Do not write passwords.
@@ -790,6 +803,11 @@ if sys.version[0:len(required_version)] == required_version:
             global program_version
             return program_version
     class get:
+        def tool_name(serial):
+            for i in range(len(row)):
+                if (row[i])[0]=="tools":
+                    if ((row[i])[1])[1]==serial:
+                        return ((row[i])[1])[0]
         def try_password(password):
             if system=='windows':
                 global drive_letter
@@ -1987,7 +2005,7 @@ if sys.version[0:len(required_version)] == required_version:
     if optimize_on_startup==True:
         optimize.run()
         #Optmize on startup if setting is set to True.
-    if app_version_control==True:
+    if app_version_control==True and "-skipVersionCheck" not in n:
         #Checks what version the app was setup at.
         from version import setup_version
         if program_version != setup_version:
@@ -2038,7 +2056,7 @@ if sys.version[0:len(required_version)] == required_version:
     profanityFilter.setup()
     print('System Started Correctly!')
     try:
-        if str(n[1])=="-release":
+        if "-release" in n:
             c=''
             beta=''
             while True:
@@ -2065,15 +2083,15 @@ if sys.version[0:len(required_version)] == required_version:
                 except:
                     print('Could\'t find:',list2[i])
             zipObject.close()
-        if str(n[1])=="-v":
+        if "-v" in n:
             from settings import program_version
             print('Current Version: '+program_version)
             ex=True
-        if str(n[1])=="-info":
+        if "-info" in n:
             print('Created By Brandon Robinson.')
             print('GitHub: github.com/sukadateam')
             ex=True
-        if str(n[1])=="-r":
+        if "-reset" in n:
             list2=['version.pyc','directory.pyc','history_desc.pyc','users.txt','tools.txt','count.py','data_save.py','version.py', 'directory.py','history.txt','hash_other.aes','hash.aes','hash_other.txt','hash.txt','settings.pyc','app.pyc','data.pyc']
             for i in range(len(list2)):
                 try:
@@ -2110,7 +2128,7 @@ if sys.version[0:len(required_version)] == required_version:
     #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
-
+    save_in_txtFile.logs()
 
     #Do not remove this!!!!!!
     if __name__ == '__main__':
