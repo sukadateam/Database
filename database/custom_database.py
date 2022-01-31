@@ -1,6 +1,5 @@
 #Things to do next:
-#save_in_txtFile.logs()
-#save_in_txtFile.student()
+#Save text files in a seperate folder. Possibly named: collections
 import sys, os
 from os import stat
 from os import remove, walk
@@ -86,7 +85,10 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     #A class for my application.
     class save_in_txtFile:
         def students():
-            pass
+            file=open('student.txt','w')
+            for i in range(len(students)):
+                file.write('Student: '+students[i])
+            file.close()
         def logs():
             #Save all logs of students that currently have items signed out.
             file=open('student_logs.txt','w')
