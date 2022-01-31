@@ -10,3 +10,6 @@ To setup. Install all items in requirements.txt using pip and run custom_databas
 
 <br>Latest Notes:<br>1. macOS, Windows, Linux, and PyDroid all support this app.
 <br>2. Updates are being released at a rapid pace. Some builds may not be usuable. If so, use a previous version.
+
+<br>Note: Newer Versions will be encrypted for undiscolosed reasons. 
+<br>To get source code for encrypted versions, create a issue reqest with headline "Request for Source Code". And state your version requested. Ex: Version 0.3.1, Or "All" to get all versions decrypted.
