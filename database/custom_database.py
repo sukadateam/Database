@@ -1,6 +1,5 @@
 #Things to do next:
-#Save text files in a seperate folder. Possibly named: collections
-#save_in_txtFile.remove_files()
+#Nothin'''!
 import sys, os
 from os import stat
 from os import remove, walk
@@ -16,8 +15,8 @@ try:
 except:
     pass
 try:
-    from multiprocessing import Process as p
-    from multiprocessing.spawn import freeze_support
+    from multiprocessing import Process
+    
 except:
     pass
 for i in range(100):
@@ -63,9 +62,11 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     import_type='None'
     try:
         if dont_load_save==False:
+            print('Please wait. Importing save file...')
             from data_save import *
             import_type='data_save'
         if dont_load_save==True:
+            print('Please wait. Importing default file...')
             from data import *
             import_type='data'
     except:
@@ -2146,6 +2147,9 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             os.remove('history.aes')
         except:
             pass
+    if resetCollections==True:
+        if os.path.exists('collections')==True:
+            shutil.rmtree('collections')
     if os.path.exists('collections')==False:
         os.mkdir('collections')
     #You must set a Normal level password
