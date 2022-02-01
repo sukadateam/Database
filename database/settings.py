@@ -140,5 +140,5 @@ button_width=15
 text_font=30
 entry_background_color='White'
 entry_text_color='Black'
-#330 MacOS, 150 Windows
+#330 MacOS, 80 Windows
 side_tilt=330
