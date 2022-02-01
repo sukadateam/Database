@@ -1,9 +1,9 @@
 #User Settings --(FOR USERS)--
 
 #Required python version to run program.
-required_version='3.10.1'
+required_version='3.10.2'
 #Application version. Just for show.
-program_version='0.3.5'
+program_version='0.4.0'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only.
@@ -23,7 +23,7 @@ allow_windows_version='10'
 #min and max password lengths, and allowed characters
 min_length=5
 max_length=16
-allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890*()#'
+allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890*()# '
 
 
 
@@ -72,6 +72,8 @@ allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz12345
 
 #Developer Settings --(NOT USER SETTINGS!)-- Developer Settings
 
+#Skip python check.
+skip_pythonCheck=True
 #Enable automated history_file for functions
 auto_history_record=True
 #Don't load save file. True: Skip save file -- False: Load defualt file not save file.
@@ -90,7 +92,7 @@ advanced_history=True
 auto_filter_profanity=True
 #Attempt to speed up the search on inputs by using a smaller version of profanity.txt. Only works if auto_filter_profanity is set to True.
 auto_filter_profanity_speedBoost=False
-#An attempt to use more than one cpu core.
+#An attempt to use more than one cpu core. #Currently Not Functional.
 multi_process=False
 #Assign Digit number to history item for a more depth look into the item. And create a database to handle all the data for each assigned item.
 assign_digit_forHistory=True
@@ -110,6 +112,8 @@ fail_safe=True
 disable_filter_admin=False
 #After ? startups. Remove backups from ? long ago.
 retain_backup_time=25 #Startups
+#Clear collections folder on app startup.
+resetCollections=True
 
 #Settings coming soon. Do not change unless your a dare devil.
 #No settings are pending. Send a request on GitHub for ideas.
@@ -136,3 +140,5 @@ button_width=15
 text_font=30
 entry_background_color='White'
 entry_text_color='Black'
+#330 MacOS, 150 Windows
+side_tilt=330
