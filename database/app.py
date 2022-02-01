@@ -21,47 +21,55 @@ other3=None #Encypt/Decrypt Password
 force=None
 #If a button is called, it is displayed on the screen.
 class buttons:
+    def enable_debug(y=700):
+        e18 = Button(tk, text='Enable Debug', command=options.enable_debug, bg=button_color, foreground=text_color, font=text_font)
+        e18.config(height=button_height, width=button_width)
+        e18.place(x=((int(x))/2)-side_tilt, y=y)
+    def disable_debug(y=700):
+        e19 = Button(tk, text='Disable Debug', command=options.disable_debug, bg=button_color, foreground=text_color, font=text_font)
+        e19.config(height=button_height, width=button_width)
+        e19.place(x=((int(x))/2)-side_tilt, y=y)
     def create_user(anchor=None, side=None):
         e1 = Button(tk, text='Create User', command=options.create_user, bg=button_color, foreground=text_color, font=text_font)
         e1.config(height=button_height, width=button_width)
-        e1.place(x=((int(x))/2)-330, y=300)
+        e1.place(x=((int(x))/2)-side_tilt, y=300)
     def remove_user(anchor=None, side=None):
         e2 = Button(tk, text='Remove User', command=options.remove_user, bg=button_color, foreground=text_color, font=text_font)
         e2.config(height=button_height, width=button_width)
-        e2.place(x=((int(x))/2)-330, y=400)
-    def change_password(anchor=None, side=None):
+        e2.place(x=((int(x))/2)-side_tilt, y=400)
+    def change_password(anchor=None, side=None, y1=800):
         global x, y
         e3 = Button(tk, text='Change Password', command=options.create_password, bg=button_color, foreground=text_color, font=text_font)
         e3.config(height=button_height, width=button_width)
-        e3.place(x=((int(x))/2)-330, y=800)
+        e3.place(x=((int(x))/2)-side_tilt, y=y1)
     def logout(anchor=None, side=None, y=700):
         e4 = Button(tk, text='Logout', command=options.logout, bg=button_color, foreground=text_color, font=text_font)
         e4.config(height=button_height, width=button_width)
-        e4.place(x=((int(x))/2)-330, y=y)
+        e4.place(x=((int(x))/2)-side_tilt, y=y)
     def add_student(y=800):
         e14 = Button(tk, text='Add Student', command=options.add_student, bg=button_color, foreground=text_color, font=text_font)
         e14.config(height=button_height, width=button_width)
-        e14.place(x=((int(x))/2)-330, y=y)
+        e14.place(x=((int(x))/2)-side_tilt, y=y)
     def save(anchor=None, side=None):
         e5 = Button(tk, text='Save', command=options.save, bg=button_color, foreground=text_color, font=text_font)
         e5.config(height=button_height, width=button_width)
-        e5.place(x=((int(x))/2)-330, y=500)
+        e5.place(x=((int(x))/2)-side_tilt, y=500)
     def optimize(anchor=None, side=None):
         e6 = Button(tk, text='Optimize', command=options.optimize, bg=button_color, foreground=text_color, font=text_font)
         e6.config(height=button_height, width=button_width)
-        e6.place(x=((int(x))/2)-330, y=600)
+        e6.place(x=((int(x))/2)-side_tilt, y=600)
     def add_tool(anchor=None, side=None):
         e7 = Button(tk, text="Add Tool",command=options.add_tool, bg=button_color, foreground=text_color, font=text_font)
         e7.config(height=button_height, width=button_width)
-        e7.place(x=((int(x))/2)-330, y=0)
+        e7.place(x=((int(x))/2)-side_tilt, y=0)
     def remove_tool(anchor=None, side=None):
         e8 = Button(tk, text='Remove Tool', command=options.remove_tool, bg=button_color, foreground=text_color, font=text_font)
         e8.config(height=button_height, width=button_width)
-        e8.place(x=((int(x))/2)-330, y=100)
+        e8.place(x=((int(x))/2)-side_tilt, y=100)
     def show_tools(anchor=None, side=None):
         e9 = Button(tk, text='Show tools', command=options.show_tools, bg=button_color, foreground=text_color, font=text_font)
         e9.config(height=button_height, width=button_width)
-        e9.place(x=((int(x))/2)-330, y=200)
+        e9.place(x=((int(x))/2)-side_tilt, y=200)
     def clear_history(anchor=None, side=None):
         e10 = Button(tk, text='Clear History', command=options.clear_history, bg=button_color, foreground=text_color, font=text_font)
         e10.config(height=button_width, width=button_width)
@@ -69,11 +77,11 @@ class buttons:
     def signout_item(anchor=None, side=None, y=100):
         e11 = Button(tk, text='Signout item', command=options.signout_item, bg=button_color, foreground=text_color, font=text_font)
         e11.config(height=button_height, width=button_width)
-        e11.place(x=((int(x))/2)-330, y=y)
+        e11.place(x=((int(x))/2)-side_tilt, y=y)
     def signin_item(anchor=None, side=None, y=0):
         e12 = Button(tk, text='Signin item', command=options.signin_item, bg=button_color, foreground=text_color, font=text_font)
         e12.config(height=button_height, width=button_width)
-        e12.place(x=((int(x))/2)-330, y=y)
+        e12.place(x=((int(x))/2)-side_tilt, y=y)
     def backup():
         e13 = Button(tk, text='Backup', command=options.backup, bg=button_color, foreground=text_color, font=text_font)
         e13.config(height=button_width, width=button_width)
@@ -81,16 +89,24 @@ class buttons:
     def remove_student(y=900):
         e15 = Button(tk, text='Remove Student', command=options.remove_student, bg=button_color, foreground=text_color, font=text_font)
         e15.config(height=button_height, width=button_width)
-        e15.place(x=((int(x))/2)-330, y=y)
+        e15.place(x=((int(x))/2)-side_tilt, y=y)
     def show_logged_items(y=900):
         e16 = Button(tk, text='Show logged items', command=options.show_logged_items, bg=button_color, foreground=text_color, font=text_font)
         e16.config(height=button_height, width=button_width)
-        e16.place(x=((int(x))/2)-330, y=y)
+        e16.place(x=((int(x))/2)-side_tilt, y=y)
     def show_students(y=0):
         e17 = Button(tk, text='Show Students', command=options.show_students, bg=button_color, foreground=text_color, font=text_font)
         e17.config(height=button_height, width=button_width)
-        e17.place(x=((int(x))/2)-330, y=y)
+        e17.place(x=((int(x))/2)-side_tilt, y=y)
 class options:
+    def enable_debug():
+        global debug
+        debug=True
+        send()
+    def disable_debug():
+        global debug
+        debug=False
+        send()
     def show_students():
         clear()
         e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
@@ -394,7 +410,6 @@ def send_student():
 def clear():
     for widget in tk.winfo_children():
         widget.destroy()
-
 #Sends logged in users to correct area depending on permissions.
 def send():
     global force
@@ -439,7 +454,7 @@ class secret:
         file.close()
     def random():
         #Question, Button1, Button2
-        list15=[['Dogs Or Cats?','Dogs','Cats'],['Sara would like to send you a picture.','Yes Please!','No thanks.'],['Marvel or DC?','Marvel','DC'],['Click the Yes button.','No','Perhaps'],['1+1=','2','3'],['Life Or Death?','Life','Death'],['Yes','No','Yes'],['Apple or Samsung?','Apple','Samsung'],['Gem rush your town hall? (COC)','Yes','No! Don\'t waste your gems!'],['Are you an American?','Yes','No'],['Are you a Lefty or Righty?','Righty','Lefty'],['59+125=','184','187'],['Can I get a hiyah?!','Hiyah!','I\'m not a little kid'], ['Do you like PATHS?', 'Yes', 'Yes'], ['Do you agree?', 'Yes', 'Yes'], ['What color is blue?','Red','Green'], ['Is the earth flat?','Yes','I\'m smart'], ['Does Ohio exist?','No','Yes/No'], ['Is water wet?','Yes','No'], ['Time for Crab.','Rate','Close'], ['2+2=','21','4.01'], ['Who lives in a pinapple under the sea?','Squidward','SpongQuan'], ['Why are you gay?','What?','Who said i\'m gay?'], ['Fries or Onion rings?','Yes','No'], ['Do you support raccoon rights?','Yes','Yes'], ['Is proper grammar important in an online setting','n0p3','Yes, it is'], ['Do all your base belong to us?','Yes','No'], ['Waffles or Pancakes','Waffles','Pancakes'], ['Badger Badger Badger Badger Badger Badger','Mushroom','Mushroom'], ['You werent supposed to see this get out','Leave','Leave'],['Your teammate has initiated a surrender','F1 Surrender','F2 Continue'], ['Ninjas or Pirates','Ninjas','Pirates'], ['Bulbasaur,Charmander or Squirtle','Charmander','Squirtle'], ['Heads or Tails','Heads','Tails'], ['Is the washington post a reliable source of news','No','Yes'], ['Eat the rich?','Yes','Yes'], ['Is dirt dirty','Yes','No'], ['What\'s brown and sticky','A stick','*redacted*'], ['Soup or Salad?','soup','WHATS A SUPERSALAD'], ['Up or down?','dowp','upown'], ['Is this statement true?','True','False'], ['Could we cover the earth in pudding?','Maybe','Hmmmm Pudding!'],['Are we real?','Yes','Mayonaise'],['Is mayonaise an instrament?','Pudding','Horseraddish'],['Do you like your teacher?','Yes','No'], ['Which do you like more?', 'Tacos', 'Salad']]
+        list15=[['Are you human?','Yes','No'],['Do you like this app?','Yes, It\'s perfect!','No, it could be better.'],['Are taco bell bathrooms clean?','Yes','Oh hell nay!'],['Have you heard of Linus Tech Tips?','Yes','No'],['Who is the first President of the United States?','John Adams','George Washington'],['Do you like memes?','Yes','No'],['Do you like video games?','Yes','No'],['Are you a good person?','Yes','No'],['Who lives in a pineapple under the sea?','Patrick','Spongebob'],['What does Mr. Krabs like the most?','Money','Krappy Patty Formula'],['Chief Wiggims is from what show?','American Dad','Family Guy'],['Peter Griffion is from what show?','American Dad','Family Guy'],['Sally has 10 hotdogs. She ate 5 of them.\nHow many are left?','5','10'],['Dogs Or Cats?','Dogs','Cats'],['Sara would like to send you a picture.','Yes Please!','No thanks.'],['Marvel or DC?','Marvel','DC'],['Click the Yes button.','No','Yes'],['1+1=','2','3'],['Life Or Death?','Life','Death'],['Click No','No','Yes'],['Apple or Samsung?','Apple','Samsung'],['Gem rush your town hall? (COC)','Yes','No! Don\'t waste your gems!'],['Are you an American?','Yes','No'],['Are you a Lefty or Righty?','Righty','Lefty'],['59+125=','184','187'],['Can I get a hiyah?!','Hiyah!','I\'m not a little kid'], ['Do you like PATHS?', 'Yes', 'No'], ['Do you agree?', 'Yes', 'No'], ['What color is blue?','Red','Blue'], ['Is the earth flat?','Yes','No'], ['Does Ohio exist?','Yes','No'], ['Is water wet?','Yes','No'], ['Time for Crab.','Rate','Close'], ['2+2=','21','4.01'], ['Who lives in a pinapple under the sea?','Squidward','SpongQuan'], ['Why are you gay?','What?','Who said i\'m gay?'], ['Fries or Onion rings?','Yes','No'], ['Do you support raccoon rights?','Yes','Yes'], ['Is proper grammar important in an online setting','n0p3','Yes, it is'], ['Do all your base belong to us?','Yes','No'], ['Waffles or Pancakes','Waffles','Pancakes'], ['Badger Badger Badger Badger Badger Badger','Mushroom','Mushroom'], ['You werent supposed to see this get out','Leave','Leave'],['Your teammate has initiated a surrender','F1 Surrender','F2 Continue'], ['Ninjas or Pirates','Ninjas','Pirates'], ['Bulbasaur,Charmander or Squirtle','Charmander','Squirtle'], ['Heads or Tails','Heads','Tails'], ['Is the washington post a reliable source of news','No','Yes'], ['Eat the rich?','Yes','Yes'], ['Is dirt dirty','Yes','No'], ['What\'s brown and sticky','A stick','*redacted*'], ['Soup or Salad?','soup','WHATS A SUPERSALAD'], ['Up or down?','dowp','upown'], ['Is this statement true?','True','False'], ['Could we cover the earth in pudding?','Maybe','Hmmmm Pudding!'],['Are we real?','Yes','Mayonaise'],['Is mayonaise an instrament?','Pudding','Horseraddish'],['Do you like your teacher?','Yes','No'], ['Which do you like more?', 'Tacos', 'Salad']]
         item=random.randint(0, len(list15)-1)
         return (list15[item])[0], (list15[item])[1], (list15[item])[2]
     def item1():
@@ -471,7 +486,7 @@ def student_screen():
     buttons.signin_item()
     buttons.logout(y=200)
     secret.item1()
-#If permission is teacher
+#If permission is teacher. First page.
 def teacher_screen():
     global other3
     #backup.clear_all()
@@ -485,22 +500,22 @@ def teacher_screen():
     buttons.show_students(y=500)
     buttons.add_student(y=600)
     buttons.remove_student(y=700)
-    e25=Button(tk, text='Next Screen', command=teacher_screen_next, bg=button_color, foreground=text_color, font=text_font)
+    e25=Button(tk, text='Next Screen', command=teacher_page2, bg=button_color, foreground=text_color, font=text_font)
     e25.config(height=button_height, width=button_width)
-    e25.place(x=((int(x))/2)-330, y=800)
-def teacher_screen_next():
+    e25.place(x=((int(x))/2)-side_tilt, y=800)
+#Teacher second page.
+def teacher_page2():
     clear()
     buttons.show_logged_items(y=0)
     buttons.show_students(y=100)
     buttons.logout(y=200)
     e25=Button(tk, text='Back', command=teacher_screen, bg=button_color, foreground=text_color, font=text_font)
     e25.config(height=button_height, width=button_width)
-    e25.place(x=((int(x))/2)-330, y=300)
-#If permission is admin
+    e25.place(x=((int(x))/2)-side_tilt, y=300)
+#If permission is admin. First page.
 def admin_screen():
     clear()
     print('Admin Screen.')
-    buttons.change_password()
     buttons.add_tool()
     buttons.remove_tool()
     buttons.show_tools()
@@ -510,9 +525,14 @@ def admin_screen():
     buttons.optimize()
     buttons.clear_history()
     buttons.backup()
+    if debug==True:
+        buttons.disable_debug(y=700)
+    else:
+        buttons.enable_debug(y=700)
     e25=Button(tk, text='Next Screen', command=admin_page2, bg=button_color, foreground=text_color, font=text_font)
     e25.config(height=button_height, width=button_width)
-    e25.place(x=((int(x))/2)-330, y=700)
+    e25.place(x=((int(x))/2)-side_tilt, y=800)
+#Admin second page
 def admin_page2():
     clear()
     buttons.logout(y=0)
@@ -520,9 +540,10 @@ def admin_page2():
     buttons.signout_item(y=200)
     buttons.show_logged_items(y=300)
     buttons.show_students(y=400)
+    buttons.change_password(y1=500)
     e25=Button(tk, text='Back', command=admin_screen, bg=button_color, foreground=text_color, font=text_font)
     e25.config(height=button_height, width=button_width)
-    e25.place(x=((int(x))/2)-330, y=500)
+    e25.place(x=((int(x))/2)-side_tilt, y=600)
 #Ask the database if the entered credentials are correct.
 def ask(command=send):
     global name, password, startup
@@ -576,7 +597,6 @@ def ask(command=send):
             print('Incorrect Password Attempt')
             history.create_history(user=user, usage='Login Failed', add_desc=True, desc='Incorrect Password', manual_record=True)
             login(wrong=True)
-
 #Ask for the encyption password to allow for auto backups.
 def ask_encrypt_password(wrong=False): 
     if os.path.exists('hash.aes')==1:
@@ -610,7 +630,6 @@ def ask_encrypt_password_next():
     else:
         history.create_history('Unknown User', 'Incorrect Encryption Password', manual_record=True)
         ask_encrypt_password(wrong=True)
-
 #Display a screen that allows the user to login.
 def login(wrong=False, e1_button='Login', command=ask, show_student_button=True, show_exit_button=True):
     clear()
@@ -642,7 +661,6 @@ def login(wrong=False, e1_button='Login', command=ask, show_student_button=True,
         e6=Label(tk, text='Incorrect Password', width=20)
         e6.pack()
     Tk.update_idletasks(tk)
-
 #Force the student page.
 def force_student():
     global user_permission, user_logged, force
@@ -650,7 +668,6 @@ def force_student():
     user_permission='student'
     force='student'
     send()
-
 #Exit application
 def exit_app():
     global other
@@ -673,7 +690,6 @@ def exit_app_next():
         login()
     else:
         exit()
-
 #Decrypt app
 def open_app():
     global other
@@ -694,7 +710,6 @@ def open_app_next():
     else:
         clear()
         exit()
-
 #If encryption password(s) don't exist, ask them to make one.
 def create_encryption_password():
     global other3
