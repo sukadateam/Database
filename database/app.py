@@ -187,7 +187,7 @@ class options:
     def show_tools():
         clear()
         e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
-        e1.config(height=button_height, width=button_width+6)
+        e1.config(height=button_height, width=button_width+8)
         e1.pack()
         e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
         e2.config(height=button_height, width=button_width)
@@ -231,7 +231,7 @@ class options:
         if list1[1] in students and check.barcode(list1[0])==False and check.signed_out_item(list1[0])==False:
             data_base.edit.add_item(data_base='logs', item_to_add=list1)
             clear()
-            save.all()
+            save.all(hide=True)
             send()
         else:
             name_no=False
@@ -262,7 +262,7 @@ class options:
         global other
         if data_base.edit.app.remove_item(data_base='logs', barcode=other.get())==True:
             clear()
-            save.all()
+            save.all(hide=True)
             send()
         else:
             options.signin_item(doesNotExist=True)
@@ -352,7 +352,7 @@ class options:
         e2.pack()
         other1 = Entry(tk)
         other1.config(background=entry_background_color, fg=entry_text_color)
-        other1.pack()
+        other1.pack() 
         e3 = Label(tk, text='Permission')
         e3.pack()
         other2 = Entry(tk)
@@ -399,7 +399,7 @@ class options:
         clear()
         send()
     def save():
-        save.all()
+        save.all(hide=True)
     def optimize():
         optimize.run(save_optimizations=True)
         clear()
@@ -417,7 +417,7 @@ def send():
     except: pass
     try: os.remove('history.aes')
     except: pass
-    save.all()
+    save.all(hide=True)
     try:
         os.remove('hash.txt')
     except:
@@ -595,7 +595,7 @@ def ask(command=send):
         else:
             clear()
             print('Incorrect Password Attempt')
-            history.create_history(user=user, usage='Login Failed', add_desc=True, desc='Incorrect Password', manual_record=True)
+            history.create_history(user=user, usage='Login Failed', add_desc=True, desc='Incorrect Password', manual_record=True, hide=True)
             login(wrong=True)
 #Ask for the encyption password to allow for auto backups.
 def ask_encrypt_password(wrong=False): 
@@ -628,7 +628,7 @@ def ask_encrypt_password_next():
         startup=False
         send()
     else:
-        history.create_history('Unknown User', 'Incorrect Encryption Password', manual_record=True)
+        history.create_history('Unknown User', 'Incorrect Encryption Password', manual_record=True, hide=True)
         ask_encrypt_password(wrong=True)
 #Display a screen that allows the user to login.
 def login(wrong=False, e1_button='Login', command=ask, show_student_button=True, show_exit_button=True):
