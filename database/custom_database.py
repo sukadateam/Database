@@ -3,6 +3,7 @@
 import sys, os
 from os import stat
 from os import remove, walk
+from xmlrpc.client import FastMarshaller
 import zipfile
 n = list(sys.argv)
 ex=False
@@ -1080,22 +1081,25 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             except ValueError:
                 return 1
     class save:
-        def all():
+        def all(hide=False):
             if disable_save==False:
-                history.create_history(None, 'Save')
-                from vars_to_save import list
-                file=open('data_save.py','w')
-                for i in range(len(list)):
-                    file.write(list[i]+'='+str(globals()[list[i]])+'\n')
-                file.write('\n')
-                file.close()
-                if advanced_history==True:
-                    file=open('history_desc.py', 'w')
-                    file.write('history_id='+str(history_id))
-                    file.write('\nhistory_description='+str(history_description))
-                    file.write('\ncount='+str(count))
+                history.create_history(None, 'Save', hide=hide)
+                try:
+                    from vars_to_save import list
+                    file=open('data_save.py','w')
+                    for i in range(len(list)):
+                        file.write(list[i]+'='+str(globals()[list[i]])+'\n')
+                    file.write('\n')
+                    file.close()
+                    if advanced_history==True:
+                        file=open('history_desc.py', 'w')
+                        file.write('history_id='+str(history_id))
+                        file.write('\nhistory_description='+str(history_description))
+                        file.write('\ncount='+str(count))
+                except ModuleNotFoundError:
+                    print("Could not locate vars_to_save file.")
             if disable_save==True:
-                history.create_history(user='True', usage='Skip Save', manual_record=auto_error_record)
+                history.create_history(user='True', usage='Skip Save', manual_record=auto_error_record, hide=hide)
     class clear:
         def normal():
             for i in range(100):
