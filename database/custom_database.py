@@ -17,7 +17,6 @@ except:
     pass
 try:
     from multiprocessing import Process
-    
 except:
     pass
 for i in range(100):
@@ -87,8 +86,9 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         print("Couldn't import pyAesCrypt")
     #A class for my application.
     class save_in_txtFile:
-        def remove_files():
+        def remove_files(hide=False):
             os.chdir('collections')
+            history.create_history('Null', 'Remove Files In Collections Folder', hide=hide)
             #Remove any and all files created by this class.
             file=['student_logs.txt', 'users.txt', 'tools.txt']
             for i in range(len(file)):
@@ -276,7 +276,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 except: pass
                 decrypt.all(password)
             else:
-                print('Something is here')
+                pass
             #Update count.py file.
             backup_count+=1
             os.remove('count.py')
@@ -295,7 +295,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 os.makedirs('backups')
             except:
                 pass
-        def remove(backup_name=None):
+        def remove(backup_name=None, hide=False):
             #Check if function is called without using backup_name
             if backup_name != None:
                 #Check to see if backup with the name ___ exists.
@@ -307,12 +307,15 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                                 os.remove(backup_name.lower()+'.zip')
                                 os.chdir(path)
                         except:
-                            print(errors.FileDoesNotExist())
+                            if hide==False:
+                                print(errors.FileDoesNotExist())
                     else:
                         os.chdir(path)
-                        print(errors.incorrect_perm())
+                        if hide==False:
+                            print(errors.incorrect_perm())
                 except NameError:
-                    print(errors.NotSignedIn())
+                    if hide==False:
+                        print(errors.NotSignedIn())
         def create(backup_name=None, password=None, random_name=False, hide=False):
             #Create random name if asked to
             if random_name==True:
@@ -2164,9 +2167,3 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     #You can set a global password if need be. Basically a backup.
     #Test bench
     #<--Indent to here
-    
-
-    #Do not remove this!!!!!!
-    if __name__ == '__main__':
-        if multi_process==True:
-            freeze_support()
