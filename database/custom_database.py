@@ -518,7 +518,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             a3=len(user)+len(usage)+2
             last_object=(file[a-a3: a])
             current_object=(usage+': '+user)
-            if debug==True:
+            if debug==True and hide==False:
                 print('Current:', current_object)
                 print('Last:', last_object)
             if str(current_object)==str(last_object):
