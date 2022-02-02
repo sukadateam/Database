@@ -254,7 +254,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             #Get a name
             backup_name=str(backup_count)
             #Create the backup.
-            save.all()
+            save.all(hide=hide)
             #Encrypt Files
             if encrypt.all(password) != 1:
                 #Backup Certian Files
@@ -337,7 +337,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         else:
                             #If no profanity is found then create the backup.
                             os.chdir(path)
-                            save.all()
+                            save.all(hide=hide)
                             #Encrypt certian files.
                             if encrypt.all(password) != 1:
                                 #Files to backup
@@ -528,7 +528,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     if hide==False:
                         print('No match found. Writing to history file.')
                 return 0
-        def assign_letter(count):
+        def assign_letter(count, hide=False):
             #Not in use yet.
             global allowed_digists_forHistory
             count=int(count)
@@ -537,7 +537,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 a+='0'
             a+=str(count)
             count+=1
-            save.all()
+            save.all(hide=hide)
             return a
         def clear():
             #Clears history file
@@ -587,13 +587,13 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                                 if hide==False:
                                     print('assign_digit_forHistory needs to be enabled for history to add a description.')
                         if desc!=None and assign_digit_forHistory==True:
-                            abc=history.assign_letter(count)
+                            abc=history.assign_letter(count, hide=hide)
                             history.add_description(code=abc, description=desc)
                             ah=open('history.txt','a')
                             ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user)+' : ('+str(abc)+')')
                             ah.close()
                             count+=1
-                            save.all()
+                            save.all(hide=hide)
                         if desc==None:
                             if hide==False:
                                 print('Please give a description to write history.')
@@ -613,7 +613,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         return a
         def run(save_optimizations=True, hide=False):
             global data_bases, opto_data, opto_row, row, opto_lists, lists, debug, user_permission, user_logged
-            history.create_history(None, 'Optimize')
+            history.create_history(None, 'Optimize', hide=hide)
             try:
                 user_logged=None
                 user_permission=None
@@ -633,7 +633,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             if save_optimizations==True:
                 if hide==False:
                     print('All data saved.')
-                save.all()
+                save.all(hide=hide)
         def count(var):
             #Count items in lists and get a rough count.
             opto=[]
@@ -1170,7 +1170,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 found=False
                 for i in range(len(known_users)):
                     if known_users[i]==user:
-                        history.create_history(user, 'Disable user')
+                        history.create_history(user, 'Disable user', hide=hide)
                         active_users[i]=False
                         found=True
                 if found==False:
@@ -1187,7 +1187,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 found=False
                 for i in range(len(known_users)):
                     if known_users[i]==user:
-                        history.create_history(user, 'Enable user')
+                        history.create_history(user, 'Enable user', hide=hide)
                         active_users[i]=True
                         found=True
                 if found==False:
@@ -1226,7 +1226,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         if isinstance(new_user, str) == True:
                             if isinstance(new_password, str) == True:
                                 if isinstance(new_permission, str) == True or new_permission==None:
-                                    history.create_history(new_user, 'Created user')
+                                    history.create_history(new_user, 'Created user', hide=hide)
                                     known_users.append(new_user)
                                     passwords.append(new_password)
                                     permissions.append(new_permission)
@@ -1256,7 +1256,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 global known_users, passwords, permissions
                 for i in range(len(known_users)):
                     if known_users[i]==user:
-                        history.create_history(user, 'Removed user')
+                        history.create_history(user, 'Removed user', hide=hide)
                         known_users.pop(i)
                         passwords.pop(i)
                         permissions.pop(i)
@@ -1280,7 +1280,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             if num1 == False and num2 == False:
                 for i in range(len(known_users)):
                     if known_users[i]==user:
-                        history.create_history(user, 'Change permission')
+                        history.create_history(user, 'Change permission', hide=hide)
                         permissions[i]=new_permission
             if num1 == True or num2 == True:
                 if hide==False:
@@ -1295,7 +1295,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 found=False
                 for i in range(len(known_users)):
                     if known_users[i]==user:
-                        history.create_history(user+' to '+new_name, 'Change name')
+                        history.create_history(user+' to '+new_name, 'Change name', hide=hide)
                         known_users[i]=new_name
                         found=True
                 if found==False:
@@ -1314,7 +1314,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 found=False
                 for i in range(len(known_users)):
                     if known_users[i]==user:
-                        history.create_history(user, 'Change password')
+                        history.create_history(user, 'Change password', hide=hide)
                         passwords[i]=new_password
                         found=True
                 if found==False:
@@ -1326,7 +1326,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         def return_users():
             global known_users
             return known_users
-        def login_request(user=None, password=None):
+        def login_request(user=None, password=None, hide=False):
             #Will return True if credentials are correct, if not will return False
             user=str(user)
             password=str(password)
@@ -1337,7 +1337,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         for i in range(len(known_users)):
                             if known_users[i]==user:
                                 if passwords[i] != password:
-                                    print('Password is incorrect.')
+                                    if hide==False:
+                                        print('Password is incorrect.')
                                 if passwords[i]==password:
                                     if active_users[i]==True:
                                         user_logged=known_users[i]
@@ -1347,21 +1348,24 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                                                 profanity_filter=False
                                         return True
                                     if active_users[i]==False:
-                                        print('User is not active.')
-                if isinstance(user, str) == False:
-                    print(errors.not_str())
-                if isinstance(password, str) == False and password != None:
-                    print(errors.not_str())
-                if user not in known_users:
-                    print(errors.user_not_found())
+                                        if hide==False:
+                                            print('User is not active.')
+                if hide==False:
+                    if isinstance(user, str) == False:
+                        print(errors.not_str())
+                    if isinstance(password, str) == False and password != None:
+                        print(errors.not_str())
+                    if user not in known_users:
+                        print(errors.user_not_found())
                 try:
                     if user_logged==False:
                         return False
                 except:
                     pass
             if user == None:
-                print(errors.cannot_call_func('users.login_request()'))
-        def logout():
+                if hide==False:
+                    print(errors.cannot_call_func('users.login_request()'))
+        def logout(hide=False):
             global user_logged, user_permission, profanity_filter, disable_filter_admin
             try:
                 if user_permission=="admin":
@@ -1370,7 +1374,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 user_permission=None
                 user_logged=None
             except:
-                if debug==True:
+                if debug==True and hide==False:
                     print("No user signed in.")
         def return_login_cred():
             try:
@@ -1417,7 +1421,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 if data_base == None:
                     data_base=database
                 try:
-                    history.create_history(item_to_add, 'Add item')
+                    history.create_history(item_to_add, 'Add item', hide=hide)
                 except:
                     pass
                 #Used for the list types.
@@ -1466,7 +1470,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             def remove_item(data_base=None, item_to_remove=None, database=None):
                 if data_base == None:
                     data_base=database
-                history.create_history(item_to_remove, 'Remove item')
+                history.create_history(item_to_remove, 'Remove item', hide=hide)
                 #Used for the list types.
                 num1=check_input(data_base)
                 num2=check_input(item_to_remove)
@@ -1491,7 +1495,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 if data_base == None:
                     data_base=database
                 if isinstance(new_row, str)==True:
-                    history.create_history(new_row, 'Add row')
+                    history.create_history(new_row, 'Add row', hide=hide)
                 #You can add as many objects to a row as you please, but it may not fit in your assinged constraints. No problems will occur though.
                 if split==True:
                     new_row=new_row.split()
@@ -1513,7 +1517,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 num1=check_input(data_base)
                 if num1 == False:
                     data_base=data_base.lower()
-                    history.create_history(data_base, 'Remove row')
+                    history.create_history(data_base, 'Remove row', hide=hide)
                     global row
                     rows=[]
                     rows_count=0
@@ -1561,7 +1565,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             def add_column(data_base=None, column_name=None, database=None):
                 if data_base == None:
                     data_base=database
-                history.create_history(column_name, 'Add column')
+                history.create_history(column_name, 'Add column', hide=hide)
                 letter_spot=optimize.determ(letter=data_base[0], set='opto_data')
                 num1=check_input(data_base)
                 num2=check_input(column_name)
@@ -1590,7 +1594,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 if data_base == None:
                     data_base=database
                 try:
-                    history.create_history(column, 'Remove Column')
+                    history.create_history(column, 'Remove Column', hide=hide)
                     num1=check_input(data_base)
                     num2=check_input(column)
                     found=False
@@ -1691,7 +1695,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             #Clear all info in 1 or more databases.
             def all():
                 #Reset all data compiled for databases.
-                history.create_history(None, 'Reset all databases')
+                history.create_history(None, 'Reset all databases', hide=hide)
                 global lists, row
                 lists=[]
                 row=[]
@@ -1825,16 +1829,16 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.info()'))
         class remove:
-            def all():
-                history.create_history(None, 'Remove All')
+            def all(hide=False):
+                history.create_history(None, 'Remove All', hide=hide)
                 global data_bases, row, lists
                 data_bases=[]
                 lists=[]
                 row=[]
-            def one_set(data_base=None, database=None):
+            def one_set(data_base=None, database=None, hide=False):
                 if data_base == None:
                     data_base=database
-                history.create_history(None, 'Remove One Set')
+                history.create_history(None, 'Remove One Set', hide=hide)
                 num=check_input(data_base)
                 global data_bases, row, lists
                 if num == False:
@@ -1860,8 +1864,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     print(errors.database_does_not_exist())
                 if num == True:
                     print(errors.cannot_call_func('data_base.remove.one()'))
-            def reset_to_standard():
-                history.create_history(None, 'Reset to Standard')
+            def reset_to_standard(hide=False):
+                history.create_history(None, 'Reset to Standard', hide=hide)
                 try:
                     os.remove('data_save.py')
                 except:
@@ -1870,7 +1874,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             def database(data_base=None, database=None, status=True, type=None, owner='all', columns=None, hide=False):
                 if data_base == None:
                     data_base=database
-                history.create_history(data_base, 'Create Database')
+                history.create_history(data_base, 'Create Database', hide=hide)
                 found1=False
                 found2=False
                 found3=False
@@ -1942,7 +1946,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             return pass_1
         def set_min_length(value=None):
             global min_length
-            history.create_history(str(value), 'Set min length')
+            history.create_history(str(value), 'Set min length', hide=hide)
             num=check_input(value)
             #Check if value is a number
             if num==False and isinstance(value, int) == True:
@@ -1954,7 +1958,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 print(errors.cannot_call_func('password_restrictions.set_min_length()'))
         def set_max_length(value=None):
             global min_length, max_length
-            history.create_history(str(value), 'Set max length')
+            history.create_history(str(value), 'Set max length', hide=hide)
             num=check_input(value)
             #Check if value is a number
             if num == False and isinstance(value, int) == True:
@@ -1968,61 +1972,61 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 print(errors.cannot_call_func('password_restrictions.set_max_length()'))
     class errors:
         def FileDoesNotExist(var):
-            history.create_history(var, 'FileDoesNotExist', manual_record=auto_error_record)
+            history.create_history(var, 'FileDoesNotExist', manual_record=auto_error_record, hide=debug)
             print('(Error) File does not exist.')
         def NotSignedIn():
-            history.create_history('None', 'NotSignedIn', manual_record=auto_error_record)
+            history.create_history('None', 'NotSignedIn', manual_record=auto_error_record, hide=debug)
             print('(Error) No user is signed in to allow this function to work.')
         def BackupNameExists():
-            history.create_history('admin', 'BackupNameExists', manual_record=auto_filter_profanity)
+            history.create_history('admin', 'BackupNameExists', manual_record=auto_filter_profanity, hide=debug)
             print('(Error) A backup with the same name already exists.')
         def profanityDetected(var, user):
             try:
-                history.create_history(user, 'profanityDetected', manual_record=auto_error_record, add_desc=True, desc=user+' tried to use a curse word knwon as: '+var)
+                history.create_history(user, 'profanityDetected', manual_record=auto_error_record, add_desc=True, desc=user+' tried to use a curse word knwon as: '+var, hide=debug)
             except:
                 print(errors.cannot_call_func('<Null>'))
             print('Not Alllowed: ',var)
         def doesNotObeyRestrictions():
-            history.create_history('doesNotObeyRestrictions', 'Error', manual_record=auto_error_record)
+            history.create_history('doesNotObeyRestrictions', 'Error', manual_record=auto_error_record, hide=debug)
             return('(Error) Password given does not meet the requirments.')
         def database_does_not_exist():
-            history.create_history('database_does_not_exist', 'Error', manual_record=auto_error_record)
+            history.create_history('database_does_not_exist', 'Error', manual_record=auto_error_record, hide=debug)
             return '(Error) Database requested could not be found.'
         def cannot_call_func(var):
-            history.create_history('cannot_call_func', 'Error', manual_record=auto_error_record)
+            history.create_history('cannot_call_func', 'Error', manual_record=auto_error_record, hide=debug)
             return '(Error) The function '+var+' that was called is missing 1 or more required variables.'
         def not_list(item=None):
-            history.create_history('not_list', 'Error', manual_record=auto_error_record)
+            history.create_history('not_list', 'Error', manual_record=auto_error_record, hide=debug)
             if item==None:
                 return '(Error) A list was expected, but was not given.'
             if item != None:
                 return '(Error) A list was expected, but was not given. Item: '+str(item)
         def user_not_found():
-            history.create_history('user_not_found', 'Error', manual_record=auto_error_record)
+            history.create_history('user_not_found', 'Error', manual_record=auto_error_record, hide=debug)
             return '(Error) The user specified was not found.'
         def not_str(item=None):
-            history.create_history('not_str', 'Error', manual_record=auto_error_record)
+            history.create_history('not_str', 'Error', manual_record=auto_error_record, hide=debug)
             if item==None:
                 return '(Error) A string was expected, but was not given.'
             if item != None:
                 return '(Error) A string was excepted, but was not given. Item: '+str(item)
         def user_exists():
-            history.create_history('user_exists', 'Error', manual_record=auto_error_record)
+            history.create_history('user_exists', 'Error', manual_record=auto_error_record, hide=debug)
             return('(Error) This user already exists.')
         def not_bool(item=None):
-            history.create_history('not_bool', 'Error', manual_record=auto_error_record)
+            history.create_history('not_bool', 'Error', manual_record=auto_error_record, hide=debug)
             if item==None:
                 return '(Error) A bool was expected, but was not given.'
             if item != None:
                 return '(Error) A bool was expected, but was not given. Item: '+str(item)
         def not_int(item=None):
-            history.create_history('not_int', 'Error', manual_record=auto_error_record)
+            history.create_history('not_int', 'Error', manual_record=auto_error_record, hide=debug)
             if item==None:
                 return '(Error) A int was expected, but was not given.'
             if item != None:
                 return '(Error) A int was expected, but was not given. Item: '+str(item)
         def incorrect_perm():
-            history.create_history('incorrect_perm','Error', manual_record=auto_error_record)
+            history.create_history('incorrect_perm','Error', manual_record=auto_error_record, hide=debug)
             return '(Error) The permission requested is not allowed.'
     if profanity_filter==True:
         profanityFilter.setup()
@@ -2030,7 +2034,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         allow_windows_version="10"
         #Windows 11 still thinks it's windows 10. I know it's weird.
     if optimize_on_startup==True:
-        optimize.run()
+        optimize.run(hide=debug)
         #Optmize on startup if setting is set to True.
     if app_version_control==True and "-skipVersionCheck" not in n:
         #Checks what version the app was setup at.
@@ -2047,7 +2051,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             exit()
     if system != 'windows' and system != "macos" and system != "linux":
         print('Invalid setting. system=')
-        history.create_history(usage='Invalid Setting', user='system=Error()')
+        history.create_history(usage='Invalid Setting', user='system=Error()', hide=debug)
     if set_operating_system==True:
         from sys import platform
         if platform == "linux" or platform == "linux2":
@@ -2055,7 +2059,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             #Linux
             if system != "linux":
                 print('Incorrect OS')
-                history.create_history(usage='Operating System Exception', user='linux')
+                history.create_history(usage='Operating System Exception', user='linux', hide=debug)
                 exit()
         elif platform == "darwin":
             print('OS: Mac OS')
@@ -2069,7 +2073,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             # Windows...
             if system != "windows":
                 print('Incorrect OS')
-                history.create_history(usage='Operating System Exception', user='windows')
+                history.create_history(usage='Operating System Exception', user='windows', hide=debug)
                 exit() 
     if setup_backup_response==True:
         if os.path.exists('count.py')==False:
