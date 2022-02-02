@@ -130,11 +130,11 @@ class options:
     def remove_student(notFound=False):
         clear()
         global other
-        e1=Label(tk, text='Enter Students Name to Remove')
+        e1=Label(tk, text='Enter A Students Name to Remove')
         e1.pack()
         other=Entry(tk)
         other.pack()
-        e3=Button(tk, text='Submit', command=options.remove_student)
+        e3=Button(tk, text='Submit', command=options.remove_student_next)
         e3.pack()
         e4=Button(tk, text='Back', command=send)
         e4.pack()
@@ -181,7 +181,7 @@ class options:
     def backup():
         global other3
         print(other3)
-        backup.create(random_name=True, password=other3)
+        backup.create(random_name=True, password=other, hide=True)
     def clear_history():
         history.clear()
     def show_tools():
@@ -584,7 +584,7 @@ def ask(command=send):
                         ask_encrypt_password()
                     else:
                         try:
-                            backup.create(random_name=True, password=other3)
+                            backup.create(random_name=True, password=other3, hide=True)
                         except:
                             pass
                         command()
