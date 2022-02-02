@@ -110,7 +110,7 @@ class options:
     def show_students():
         clear()
         e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
-        e1.config(height=button_height, width=button_width+6)
+        e1.config(height=button_height, width=button_width+8)
         e1.pack()
         e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
         e2.config(height=button_height, width=button_width)
@@ -120,7 +120,7 @@ class options:
     def show_logged_items():
         clear()
         e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
-        e1.config(height=button_height, width=button_width+6)
+        e1.config(height=button_height, width=button_width+8)
         e1.pack()
         e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
         e2.config(height=button_height, width=button_width)
@@ -481,7 +481,6 @@ class secret:
 #If permission is student
 def student_screen():
     clear()
-    print('Student Screen')
     buttons.signout_item()
     buttons.signin_item()
     buttons.logout(y=200)
@@ -489,8 +488,6 @@ def student_screen():
 #If permission is teacher. First page.
 def teacher_screen():
     global other3
-    #backup.clear_all()
-    #backup.create(random_name=True, password=other3)
     clear()
     buttons.add_tool()
     buttons.remove_tool()
@@ -515,7 +512,6 @@ def teacher_page2():
 #If permission is admin. First page.
 def admin_screen():
     clear()
-    print('Admin Screen.')
     buttons.add_tool()
     buttons.remove_tool()
     buttons.show_tools()
@@ -605,7 +601,7 @@ def ask_encrypt_password(wrong=False):
         clear()
         e1=Label(tk, text='Enter Encrypt/Decrypt Password', width=23)
         e1.pack()
-        other3=Entry(tk)
+        other3=Entry(tk, show='*')
         other3.config(background=entry_background_color, fg=entry_text_color)
         other3.pack()
         e3=Button(tk, text='Submit', command=ask_encrypt_password_next)
