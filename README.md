@@ -24,4 +24,4 @@ To start the program:
 
 5. Enter 7, 1, 1. Now create a user. Use permission (admin).
 
-6. Exit shell and open app.py and login. After login it will ask you to create a encrypt/decrypt password. Password is visible for now, but will change very soon.
+6. Exit shell and open app.py and login. After login it will ask you to create a encrypt/decrypt password.
