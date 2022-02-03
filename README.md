@@ -9,7 +9,7 @@ To setup. Install all items in requirements.txt using pip and run custom_databas
 <br>Please note: Windows And MacOS are currently be used for application testing.
 <br><br>Nerdy Stuff:<br>For the absolute latest version download the source code. Not in releases. May cause issues. It won't always be tested before updated. Do not do this if you are looking for a stable version.
 
-<br>Latest Notes:<br>1. macOS, Windows, Linux, and PyDroid all support this app.
+<br>Latest Notes:<br>1. MacOS and Windows platforms are supported. MacOS is using a 4k display, Windows is for 1k display.
 <br>2. Updates are being released at a rapid pace. Some builds may not be usuable. If so, use a previous version.
 
 To start the program:
