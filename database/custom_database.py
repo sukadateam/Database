@@ -34,6 +34,7 @@ except:
     print('Automatic setup in progess.')
     import get_directory
     import version_config
+systemDetectedOperatingSystem=None
 list1=[]
 try:
     from history_desc import *
@@ -1389,7 +1390,11 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             except:
                 return False
     class data_base:
+        def help():
+            print('Branches:\n  data_base.edit\n  data_base.empty\n  data_base.show\n  data_base.remove\n  data_base.create')
         class edit:
+            def help():
+                print('Branches:\n  data_base.edit.search_rows()\n  data_base.edit.check_owner()\n  data_base.edit.add_row_term()\n  data_base.edit.add_item()\n  data_base.edit.remove_row()\n  data_base.edit.add_column()\n  data_base.edit.remove_column()')
             def search_rows(data_base=None, id=None, database=None):
                 if data_base == None:
                     data_base=database
@@ -1688,15 +1693,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         for i in range(len(row)):
                             print('Item:',((row[i])[1])[0],' | Serial:',((row[i])[1])[1])
         class empty:
-            def fast_one(database=None):
-                #A much faster version of one()
-                if multi_process==True:
-                    a= p(target=data_base.empty.one(database))
-                    a.start()
-                    a.join()
-                    freeze_support()
             #Clear all info in 1 or more databases.
-            def all():
+            def all(hide=False):
                 #Reset all data compiled for databases.
                 history.create_history(None, 'Reset all databases', hide=hide)
                 global lists, row
@@ -2055,29 +2053,31 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     if system != 'windows' and system != "macos" and system != "linux":
         print('Invalid setting. system=')
         history.create_history(usage='Invalid Setting', user='system=Error()', hide=debug)
-    if set_operating_system==True:
-        from sys import platform
-        if platform == "linux" or platform == "linux2":
-            print('OS: Linux Distro.')
-            #Linux
-            if system != "linux":
-                print('Incorrect OS')
-                history.create_history(usage='Operating System Exception', user='linux', hide=debug)
-                exit()
-        elif platform == "darwin":
-            print('OS: Mac OS')
-            # OS X
-            if system != "macos":
-                print('Incorrect OS')
-                history.create_history(usage='Operating System Exception', user='macos')
-                exit()
-        elif platform == "win32":
-            print('OS: Windows')
-            # Windows...
-            if system != "windows":
-                print('Incorrect OS')
-                history.create_history(usage='Operating System Exception', user='windows', hide=debug)
-                exit() 
+    from sys import platform
+    if platform == "linux" or platform == "linux2":
+        print('OS: Linux Distro.')
+        systemDetectedOperatingSystem='linux'
+        #Linux
+        if system != "linux" and set_operating_system==True:
+            print('Incorrect OS')
+            history.create_history(usage='Operating System Exception', user='linux', hide=debug)
+            exit()
+    elif platform == "darwin":
+        print('OS: Mac OS')
+        systemDetectedOperatingSystem='macos'
+        # OS X
+        if system != "macos" and set_operating_system==True:
+            print('Incorrect OS')
+            history.create_history(usage='Operating System Exception', user='macos')
+            exit()
+    elif platform == "win32":
+        print('OS: Windows')
+        systemDetectedOperatingSystem='windows'
+        # Windows...
+        if system != "windows" and set_operating_system==True:
+            print('Incorrect OS')
+            history.create_history(usage='Operating System Exception', user='windows', hide=debug)
+            exit() 
     if setup_backup_response==True:
         if os.path.exists('count.py')==False:
             file=open('count.py','w')
