@@ -732,6 +732,10 @@ def create_encryption_password_next():
             pass
         create_encryption_password()
 tk.config(bg=bg_color)
+if systemDetectedOperatingSystem=="macos":
+    side_tilt=330
+if systemDetectedOperatingSystem != "macos":
+    side_tilt=80
 #Check if the save file is encrypted. If so, ask user for the decrypt password.
 if os.path.exists('history.aes')==True or os.path.exists('data_save.aes'):
     open_app()
