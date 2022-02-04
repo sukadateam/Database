@@ -1,2175 +1,790 @@
-#Things to do next:
-#Nothin'!!!
-import sys, os
-from os import stat
-from os import remove, walk
-from xmlrpc.client import FastMarshaller
-import zipfile
-n = list(sys.argv)
-ex=False
-memory_hash=''
-if ex==True:
-    sys.exit()
-from zipfile import ZipFile
-try:
-    from count import backup_count
-except:
-    pass
-try:
-    from multiprocessing import Process
-except:
-    pass
-for i in range(100):
-    print('')
-try:
-    from pyAesCrypt import decryptFile, encryptFile
-except:
-    print('Please manually install all required items in requirements.txt.')
+from email.utils import parseaddr
+from operator import truediv
+from platform import python_version
+from tkinter import *
+from xml.etree.ElementTree import TreeBuilder
+from custom_database import *
+import webbrowser
+import count
+import time
+tk= Tk()
+tk.title('Carpetentry Application')
+x='1920'
+y='1080'
+tk.geometry(x+"x"+y+"+10+20")
+name=None
 password=None
-from settings import *
-try:
-    import directory
-    import version
-except:
-    print('Automatic setup in progess.')
-    import get_directory
-    import version_config
-systemDetectedOperatingSystem=None
-list1=[]
-try:
-    from history_desc import *
-except:
-    print('Could not find the required file: history_desc.py You may experience problems.')
-print('This Project is hosted on github. github.com/sukadateam')
-print('If problems occur, try to check if a new version exists.\n\n')
-if sys.version[0:len(required_version)] != required_version and "-skipPythonCheck" not in n:
-    print('Required python version:', required_version)
-    print('Current python version:', sys.version[0:len(required_version)])
-    sys.exit()
-if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck" in n:
-    from datetime import date
-    today=date.today()
-    d1 = today.strftime("%m/%d/%Y")
-    alphabet='abcdefghijklmnopqrstuvwxyz'
-    from settings import *
-    import random, shutil
-    try:
-        from directory import path
-        print('Set path:', path)
-        os.chdir(path)
-    except ModuleNotFoundError:
-        print('custom_database is not setup. Please setup with .bat or .sh file to enable this program.')
-        exit()
-    import_type='None'
-    try:
-        if dont_load_save==False:
-            print('Please wait. Importing save file...')
-            from data_save import *
-            import_type='data_save'
-        if dont_load_save==True:
-            print('Please wait. Importing default file...')
-            from data import *
-            import_type='data'
-    except:
-        try:
-            from data import *
-            import_type='data'
-        except:
-            pass
-    if import_type=="data":
-        print('Import type: Default')
-    if import_type=="data_save":
-        print('Import type: Save file')
-    #On some devices this import line may say could not import, but it will if the package is installed on a compatible python version.
-    try:
-        import pyAesCrypt
-    except:
-        print("Couldn't import pyAesCrypt")
-    #A class for my application.
-    class save_in_txtFile:
-        def remove_files(hide=False):
-            os.chdir('collections')
-            history.create_history('Null', 'Remove Files In Collections Folder', hide=hide)
-            #Remove any and all files created by this class.
-            file=['student_logs.txt', 'users.txt', 'tools.txt']
-            for i in range(len(file)):
-                try:
-                    os.remove(file[i])
-                except:
-                    if debug==True:
-                        print('Could Not Locate:', file[i])
-            os.chdir(path)
-        def students():
-            os.chdir('collections')
-            file=open('student.txt','w')
-            for i in range(len(students)):
-                file.write('Student: '+students[i])
-            file.close()
-            os.chdir(path)
-        def logs():
-            os.chdir('collections')
-            #Save all logs of students that currently have items signed out.
-            file=open('student_logs.txt','w')
-            for i in range(len(lists)):
-                if (lists[i])[0]=="logs":
-                    serial=(((lists[i])[1])[0])[0]
-                    student=(((lists[i])[1])[0])[1]
-                    tool_name=get.tool_name(serial)
-                    file.write('Item: '+display.space(tool_name, max_length=25, hide=True)+' Serial: '+display.space(serial, max_length=25, hide=True)+' Student: '+display.space(student, max_length=25, hide=True))
-                file.write('\n\n#'+str(25)+' character max length.')
-                    #Save Item name, Serial, And student name.
-                    #Search tools with serial to find item name.
-            file.close()
-            os.chdir(path)
-        def users():
-            os.chdir('collections')
-            if len(known_users)>0:
-                #Save all users in a text file. Do not write passwords.
-                file=open('users.txt','w')
-                for i in range(len(known_users)):
-                    file.write(known_users[i]+': '+permissions[i]+'\n')
-                file.close()
+startup=True
+other=None
+other1=None
+other2=None
+other3=None #Encrypt/Decrypt Password
+force=None
+#If a button is called, it is displayed on the screen.
+def version_note():
+    global y
+    e90=Label(tk, text='Program Version: '+program_version)
+    e90.pack(side=BOTTOM, anchor=W)
+class buttons:
+    def credit(y=200):
+        e20 = Button(tk, text='Credits', command=options.credits, bg=button_color, foreground=text_color, font=text_font)
+        e20.config(height=button_height, width=button_width)
+        e20.place(x=((int(x))/2)-side_tilt, y=y)
+    def enable_debug(y=700):
+        e18 = Button(tk, text='Enable Debug', command=options.enable_debug, bg=button_color, foreground=text_color, font=text_font)
+        e18.config(height=button_height, width=button_width)
+        e18.place(x=((int(x))/2)-side_tilt, y=y)
+    def disable_debug(y=700):
+        e19 = Button(tk, text='Disable Debug', command=options.disable_debug, bg=button_color, foreground=text_color, font=text_font)
+        e19.config(height=button_height, width=button_width)
+        e19.place(x=((int(x))/2)-side_tilt, y=y)
+    def create_user(anchor=None, side=None):
+        e1 = Button(tk, text='Create User', command=options.create_user, bg=button_color, foreground=text_color, font=text_font)
+        e1.config(height=button_height, width=button_width)
+        e1.place(x=((int(x))/2)-side_tilt, y=300)
+    def remove_user(anchor=None, side=None):
+        e2 = Button(tk, text='Remove User', command=options.remove_user, bg=button_color, foreground=text_color, font=text_font)
+        e2.config(height=button_height, width=button_width)
+        e2.place(x=((int(x))/2)-side_tilt, y=400)
+    def change_password(anchor=None, side=None, y1=800):
+        global x, y
+        e3 = Button(tk, text='Change Password', command=options.create_password, bg=button_color, foreground=text_color, font=text_font)
+        e3.config(height=button_height, width=button_width)
+        e3.place(x=((int(x))/2)-side_tilt, y=y1)
+    def logout(anchor=None, side=None, y=700):
+        e4 = Button(tk, text='Logout', command=options.logout, bg=button_color, foreground=text_color, font=text_font)
+        e4.config(height=button_height, width=button_width)
+        e4.place(x=((int(x))/2)-side_tilt, y=y)
+    def add_student(y=800):
+        e14 = Button(tk, text='Add Student', command=options.add_student, bg=button_color, foreground=text_color, font=text_font)
+        e14.config(height=button_height, width=button_width)
+        e14.place(x=((int(x))/2)-side_tilt, y=y)
+    def save(anchor=None, side=None):
+        e5 = Button(tk, text='Save', command=options.save, bg=button_color, foreground=text_color, font=text_font)
+        e5.config(height=button_height, width=button_width)
+        e5.place(x=((int(x))/2)-side_tilt, y=500)
+    def optimize(anchor=None, side=None):
+        e6 = Button(tk, text='Optimize', command=options.optimize, bg=button_color, foreground=text_color, font=text_font)
+        e6.config(height=button_height, width=button_width)
+        e6.place(x=((int(x))/2)-side_tilt, y=600)
+    def add_tool(anchor=None, side=None):
+        e7 = Button(tk, text="Add Tool",command=options.add_tool, bg=button_color, foreground=text_color, font=text_font)
+        e7.config(height=button_height, width=button_width)
+        e7.place(x=((int(x))/2)-side_tilt, y=0)
+    def remove_tool(anchor=None, side=None):
+        e8 = Button(tk, text='Remove Tool', command=options.remove_tool, bg=button_color, foreground=text_color, font=text_font)
+        e8.config(height=button_height, width=button_width)
+        e8.place(x=((int(x))/2)-side_tilt, y=100)
+    def show_tools(anchor=None, side=None):
+        e9 = Button(tk, text='Show tools', command=options.show_tools, bg=button_color, foreground=text_color, font=text_font)
+        e9.config(height=button_height, width=button_width)
+        e9.place(x=((int(x))/2)-side_tilt, y=200)
+    def clear_history(anchor=None, side=None):
+        e10 = Button(tk, text='Clear History', command=options.clear_history, bg=button_color, foreground=text_color, font=text_font)
+        e10.config(height=15, width=15)
+        e10.place(x=0, y=0)
+    def signout_item(anchor=None, side=None, y=100):
+        e11 = Button(tk, text='Signout item', command=options.signout_item, bg=button_color, foreground=text_color, font=text_font)
+        e11.config(height=button_height, width=button_width)
+        e11.place(x=((int(x))/2)-side_tilt, y=y)
+    def signin_item(anchor=None, side=None, y=0):
+        e12 = Button(tk, text='Signin item', command=options.signin_item, bg=button_color, foreground=text_color, font=text_font)
+        e12.config(height=button_height, width=button_width)
+        e12.place(x=((int(x))/2)-side_tilt, y=y)
+    def backup():
+        e13 = Button(tk, text='Backup', command=options.backup, bg=button_color, foreground=text_color, font=text_font)
+        e13.config(height=15, width=15)
+        e13.pack(side=LEFT)
+    def remove_student(y=900):
+        e15 = Button(tk, text='Remove Student', command=options.remove_student, bg=button_color, foreground=text_color, font=text_font)
+        e15.config(height=button_height, width=button_width)
+        e15.place(x=((int(x))/2)-side_tilt, y=y)
+    def show_logged_items(y=900):
+        e16 = Button(tk, text='Show logged items', command=options.show_logged_items, bg=button_color, foreground=text_color, font=text_font)
+        e16.config(height=button_height, width=button_width)
+        e16.place(x=((int(x))/2)-side_tilt, y=y)
+    def show_students(y=0):
+        e17 = Button(tk, text='Show Students', command=options.show_students, bg=button_color, foreground=text_color, font=text_font)
+        e17.config(height=button_height, width=button_width)
+        e17.place(x=((int(x))/2)-side_tilt, y=y)
+class options:
+    def credits():
+        clear()
+        e1 = Label(tk, text='Created and Designed By Brandon Robinson\nPartial credit goes to Albert Plummer and Abdullahi Abdullahi\nGithub Page: github.com/sukadateam/database\nProgram Version: '+program_version, bg=button_color, foreground=text_color)
+        e1.pack()
+        e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+        e2.config(height=button_height, width=button_width)
+        e2.pack()
+        save_in_txtFile.students()
+        Tk.update_idletasks(tk)
+    def enable_debug():
+        global debug
+        debug=True
+        send()
+    def disable_debug():
+        global debug
+        debug=False
+        send()
+    def show_students():
+        clear()
+        e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
+        e1.config(height=button_height, width=button_width+8)
+        e1.pack()
+        e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+        e2.config(height=button_height, width=button_width)
+        e2.pack()
+        save_in_txtFile.students()
+        Tk.update_idletasks(tk)
+    def show_logged_items():
+        clear()
+        e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
+        e1.config(height=button_height, width=button_width+8)
+        e1.pack()
+        e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+        e2.config(height=button_height, width=button_width)
+        e2.pack()
+        save_in_txtFile.logs()
+        Tk.update_idletasks(tk)
+    def remove_student(notFound=False):
+        clear()
+        global other
+        e1=Label(tk, text='Enter A Students Name to Remove')
+        e1.pack()
+        other=Entry(tk)
+        other.pack()
+        e3=Button(tk, text='Submit', command=options.remove_student_next)
+        e3.pack()
+        e4=Button(tk, text='Back', command=send)
+        e4.pack()
+        if notFound==True:
+            e2=Label(tk, text='Student could not be found.')
+            e2.pack()
+        Tk.update_idletasks(tk)
+    def remove_student_next():
+        if other.get() in students:
+            students.remove(other.get())
+            send()
+        else:
+            options.remove_student(notFound=True)
+    def add_student(student_found=False):
+        clear()
+        global other
+        e3=Label(tk, text='New Students Name', bg=button_color, foreground=text_color)
+        e3.pack()
+        other=Entry(tk)
+        other.config(background=entry_background_color, fg=entry_text_color)
+        other.pack()
+        e1=Button(tk, text='Submit', command=options.add_student_next)
+        e1.config(height=button_height, width=button_width)
+        e1.pack()
+        e5 = Button(tk, text='Back', command=send)
+        e5.config(height=button_height, width=button_width)
+        e5.pack()
+        if student_found==True:
+            e2=Label(tk, text='Student Exists.', bg=button_color, foreground=text_color)
+            e2.pack()
+        Tk.update_idletasks(tk)
+    def add_student_next():
+        global other
+        if isinstance(other.get(), str) == True:
+            if other.get() not in students:
+                students.append(other.get())
+                print('Student Added.')
+                send()
             else:
-                print('There are no users.')
-            os.chdir(path)
-        def tools():
-            os.chdir('collections')
-            #Save all tools in a text file.
-            file=open('tools.txt','w')
-            for i in range(len(row)):
-                if (row[i])[0]=="tools":
-                    part, part1=display.space(str(((row[i])[1])[1]), hide=True, max_length=25, return_ShortenNotice=True)
-                    part2, part3=display.space(str(((row[i])[1])[0]), hide=True, max_length=25, return_ShortenNotice=True)
-                    if part3==True:
-                        part1=True
-                    file.write('Item: '+part2+'  Serial: '+str(part)+'Shorted: '+str(part1)+'\n')
-            file.write('\n\n#'+str(25)+' character max length.')
-            file.close()
-            os.chdir(path)
-    class display:
-        def space(var, max_length=10, hide=False, return_ShortenNotice=False):
-            #Works with display.database to create a nice table to display.
-            if isinstance(var, str)==True:
-                length=len(var)
-                if hide==False: print('Input length:',length)
-                notice=False
-                if length<max_length:
-                    #Add spaces to fit
-                    if hide==False: print('Total spaces to add:', max_length-length)
-                    for i in range(max_length-length):
-                        var+=' '
-                    if hide==False: print('Final Length:',len(var))
-                    if return_ShortenNotice==True:
-                        return var, notice
-                if length>max_length:
-                    #Shorten to fit
-                    var=var[0:max_length]
-                    if hide==False: print('Final Length:',len(var))
-                    notice=True
-                    if return_ShortenNotice==True:
-                        return var, notice
-                return var
+                print('Student Exists.')
+                options.add_student(student_found=True)
+        else:
+            print('Unknown Error.')
+    def backup():
+        global other3
+        print(other3)
+        backup.create(random_name=True, password=other, hide=True)
+    def clear_history():
+        history.clear()
+    def show_tools():
+        clear()
+        e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
+        e1.config(height=button_height, width=button_width+8)
+        e1.pack()
+        e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+        e2.config(height=button_height, width=button_width)
+        e2.pack()
+        save_in_txtFile.tools()
+        webbrowser.open('tools.txt')
+        Tk.update_idletasks(tk)
+    def signout_item(no_name=False, no_barcode=False, already_signed=False):
+        global other, other1
+        clear()
+        e1 = Label(tk, text='Barcode', bg=button_color, foreground=text_color)
+        e1.config(height=button_height, width=button_width)
+        e1.pack()
+        other = Entry(tk)
+        other.config(background=entry_background_color, fg=entry_text_color)
+        other.pack()
+        e2 = Label(tk, text='Your Name', bg=button_color, foreground=text_color)
+        e2.config(height=button_height, width=button_width)
+        e2.pack()
+        other1 = Entry(tk)
+        other1.config(background=entry_background_color, fg=entry_text_color)
+        other1.pack()
+        e3 = Button(tk, text='Submit', command=options.signout_item_next, bg=button_color, foreground=text_color)
+        e3.pack()
+        e5 = Button(tk, text='Back', command=send_student, bg=button_color, foreground=text_color)
+        e5.pack()
+        if no_name==True:
+            e6=Label(tk, text='Unknown Student', bg=button_color, foreground=text_color)
+            e6.pack()
+        if no_barcode==True:
+            e7=Label(tk, text='Unknown Barcode', bg=button_color, foreground=text_color)
+            e7.pack()
+        if already_signed==True:
+            e8=Label(tk, text='Item already signed out', bg=button_color, foreground=text_color)
+            e8.pack()
+        secret.note()
+        Tk.update_idletasks(tk)
+    def signout_item_next():
+        global other, other1
+        list1=[other.get(), other1.get()]
+        if list1[1] in students and check.barcode(list1[0])==False and check.signed_out_item(list1[0])==False:
+            data_base.edit.add_item(data_base='logs', item_to_add=list1)
+            clear()
+            save.all(hide=True)
+            send()
+        else:
+            name_no=False
+            if list1[1] not in students:
+                name_no=True
+            options.signout_item(no_name=name_no, no_barcode=check.barcode(list1[0]), already_signed=check.signed_out_item(list1[0]))
+    def signin_item(doesNotExist=False):
+        global other
+        clear()
+        #Remove item by barcode Not name.
+        e1 = Label(tk, text='Barcode', bg=button_color, foreground=text_color)
+        e1.config(height=button_height, width=button_width)
+        e1.pack()
+        other = Entry(tk)
+        other.config(background=entry_background_color, fg=entry_text_color)
+        other.pack()
+        e2 = Button(tk, text='Submit', command=options.signin_item_next, bg=button_color, foreground=text_color)
+        e2.config(height=button_height, width=button_width)
+        e2.pack()
+        e5 = Button(tk, text='Back', command=send_student, bg=button_color, foreground=text_color)
+        e5.config(height=button_height, width=button_width)
+        e5.pack()
+        if doesNotExist==True:
+            e4=Label(tk, text='Item was not signed out\nAnd/Or Item does not exist', bg=button_color, foreground=text_color)
+            e4.pack()
+        Tk.update_idletasks(tk)
+    def signin_item_next():
+        global other
+        if data_base.edit.app.remove_item(data_base='logs', barcode=other.get())==True:
+            clear()
+            save.all(hide=True)
+            send()
+        else:
+            options.signin_item(doesNotExist=True)
+    def remove_tool():
+        global other
+        clear()
+        e1 = Label(tk, text='Barcode')
+        e1.pack()
+        other = Entry(tk)
+        other.config(background=entry_background_color, fg=entry_text_color)
+        other.pack()
+        e2 = Button(tk, text='Submit', command=options.remove_tool_next)
+        e2.pack()
+        e5 = Button(tk, text='Back', command=send)
+        e5.pack()
+        Tk.update_idletasks(tk)
+    def remove_tool_next():
+        global other
+        name=other.get()
+        if profanityFilter.filter(name)==0:
+            data_base.edit.app.remove_row(data_base='tools', name=name)
+        clear()
+        send()
+    def add_tool(id_exists=False):
+        clear()
+        global other, other1
+        e1 = Label(tk, text='Item name')
+        e1.pack()
+        other = Entry(tk)
+        other.config(background=entry_background_color, fg=entry_text_color)
+        other.pack()
+        e2 = Label(tk, text='Barcode')
+        e2.pack()
+        other1 = Entry(tk)
+        other1.config(background=entry_background_color, fg=entry_text_color)
+        other1.pack()
+        e3 = Button(tk, text='Submit', command=options.add_tool_next)
+        e3.pack()
+        e5 = Button(tk, text='Back', command=send)
+        e5.pack()
+        if id_exists==True:
+            e6=Label(tk, text='Barcode Exists', bg=button_color, foreground=text_color)
+            e6.pack()
+        Tk.update_idletasks(tk)
+    def add_tool_next():
+        global other, other1
+        name = other.get()
+        id = other1.get()
+        if check.barcode(id)==True:
+            if profanityFilter.filter(name)==0 and profanityFilter.filter(id)==0:
+                data_base.edit.add_row(data_base='tools', new_row=[str(name),str(id)], split=False)
+            clear()
+            send()
+        else:
+            options.add_tool(id_exists=True)
+    def create_password():
+        global other
+        clear()
+        e1 = Label(tk, text='New password')
+        e1.pack()
+        other = Entry(tk)
+        other.config(background=entry_background_color, fg=entry_text_color)
+        other.pack()
+        e3 = Button(tk, text='Submit',command=options.create_password_next)
+        e3.pack()
+        e5 = Button(tk, text='Back', command=send)
+        e5.pack()
+        Tk.update_idletasks(tk)
+    def create_password_next():
+        global other
+        passw=other.get()
+        get.new_hash(passw=passw, normal=True)
+        send()
+    def logout():
+        users.logout()
+        clear()
+        login()
+    def create_user(user_exists=False, unknownPermission=False, PasswordDoesNotMeetReq=False):
+        clear()
+        global other, other1, other2
+        e1 = Label(tk, text='New user')
+        e1.pack()
+        other = Entry(tk)
+        other.config(background=entry_background_color, fg=entry_text_color)
+        other.pack()
+        e2 = Label(tk, text='Password')
+        e2.pack()
+        other1 = Entry(tk)
+        other1.config(background=entry_background_color, fg=entry_text_color)
+        other1.pack() 
+        e3 = Label(tk, text='Permission')
+        e3.pack()
+        other2 = Entry(tk)
+        other2.config(background=entry_background_color, fg=entry_text_color)
+        other2.pack()
+        e4 = Button(tk, text='Submit', command=options.create_user_next)
+        e4.pack()
+        e5 = Button(tk, text='Back', command=send)
+        e5.pack()
+        if user_exists==True:
+            e6=Label(tk, text='User exists', bg=button_color, foreground=text_color)
+            e6.pack()
+        if unknownPermission==True:
+            e7=Label(tk, text='Unknown Permission\nAllowed Permissions:\nAdmin, Teacher, Student', bg=button_color, foreground=text_color)
+            e7.pack()
+        if PasswordDoesNotMeetReq==True:
+            e8=Label(tk, text='Password Does Not Meet Requirements\nMin Length:'+str(min_length)+'\nMax Length: '+str(max_length)+'\nAllowed Characters: '+allowedPassword_chars, bg=button_color, foreground=text_color)
+            e8.pack()
+        Tk.update_idletasks(tk)
+    def create_user_next():
+        global other, other1, other2
+        name=other.get()
+        password=other1.get()
+        permission=other2.get()
+        if profanityFilter.filter(name)==0 and profanityFilter.filter(password)==0 and profanityFilter.filter(permission)==0:
+            if users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())==False:
+                options.create_user(user_exists=True)
+            elif users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())=="IncorrectPerm":
+                options.create_user(unknownPermission=True)
+            elif users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())=="PasswordDoesNotMeetReq":
+                options.create_user(PasswordDoesNotMeetReq=True)
             else:
-                if hide==False: print(errors.not_str())
-        def database(data_base=None, database=None, hide=False):
-            #Only works for column_row
-            #Prints a asked database to the screen in a nice format.
-            if data_base==None:
-                database=None
-            if data_base != None:
-                #Check to see if database exists
-                column_count=0
-                for i in range(len(data_bases)):
-                    if (data_bases[i])[0]==data_base:
-                        column_count=len((data_bases[i])[4])
-                        break
-                if hide==False:
-                    print('Column_count='+str(column_count))
-                #Print the column names.
-                list3=''
-                for i in range(len(data_bases)):
-                    if (data_bases[i])[0]==data_base:
-                        for x in range(column_count):
-                            list3+=display.space(((data_bases[i])[4])[x], hide=True)
-                        break
-                print(list3)
-                #Look for items in row var that corresponds with the database and display them.
-                for i in range(len(row)):
-                    if (row[i])[0]==data_base:
-                        list3=''
-                        for x in range(column_count):
-                            list3+=(display.space(((row[i])[1])[x], hide=True))
-                        print(list3)
-        def settings():
-            #Shows all settings on the screen.
-            settings1=['backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions','backupOn_StartUp','skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
-            for i in range(len(settings1)):
-                try:
-                    print(settings1[i]+'='+str(globals()[settings1[i]]))
-                except:
-                    print(settings1[i]+'='+'N/A')
-    class math:
-        def pi(accuracy=1000000):
-            # Initialize denominator
-            k = 1
-            # Initialize sum
-            s = 0
-            for i in range(accuracy):
-                # even index elements are positive
-                if i % 2 == 0:
-                    s += 4/k
-                else:
-                    # odd index elements are negative
-                    s -= 4/k
-                # denominator is odd
-                k += 2
-            return s
-        def distance(speed=None, time=None):
-            return speed/time
-        def force(mass=None, acceleration=None):
-            return mass*acceleration
-    class backup:
-        def reset_count():
-            try: os.remove('count.py')
-            except: pass
-            file=open('count.py','w')
-            file.write('backup_count='+str(backup_startNumber))
-            file.close()
-        def clear_all():
-            #Clear all files
-            shutil.rmtree('backups')
-            os.mkdir('backups')
-            backup.reset_count()
-        def create(backup_name=None, random_name=False, password=None, hide=False):
-            try:
-                password=password.get()
-            except:
-                pass
-            #Allow backwards compadibilty.
-            backup_name=None
-            random_name=None
-            global backup_count
-            #Create new backup.
-            if hide==False:
-                print('Current #:', backup_count)
-            #Get a name
-            backup_name=str(backup_count)
-            #Create the backup.
-            save.all(hide=hide)
-            #Encrypt Files
-            if encrypt.all(password) != 1:
-                #Backup Certian Files
-                list2=['custom_database.py','history_desc.py','vars_to_save','data_save.aes','history.aes', 'settings.py','paths.png','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
-                try: os.chdir('backups')
-                except: pass
-                zipObject= ZipFile(backup_name+'.zip', 'w')
-                try: os.chdir(path)
-                except: pass
-                for i in range(len(list2)):
-                    try:
-                        zipObject.write(list2[i])
-                    except:
-                        pass
-                try: os.chdir('backups')
-                except: pass
-                zipObject.close()
-                try: os.chdir(path)
-                except: pass
-                decrypt.all(password)
+                other, other1, other2 = None, None, None
+                send()
+    def remove_user(UserNotFound=False):
+        clear()
+        e1 = Label(tk, text='User')
+        e1.pack()
+        global other
+        other = Entry(tk)
+        other.config(background=entry_background_color, fg=entry_text_color)
+        other.pack()
+        e2 = Button(tk, text='Submit', command=options.remove_user_next)
+        e2.pack()
+        e5 = Button(tk, text='Back', command=send)
+        e5.pack()
+        if UserNotFound==True:
+            e6=Label(tk, text='User Does Not Exist', bg=button_color, foreground=text_color)
+            e6.pack()
+        Tk.update_idletasks(tk)
+    def remove_user_next():
+        global other
+        user=other.get()
+        user1, permission=users.return_login_cred()
+        if user1.lower() != user.lower() and profanityFilter.filter(user.lower())==0:
+            if users.remove(user=user)=="UserNotFound":
+                options.remove_user(UserNotFound=True)
             else:
-                pass
-            #Update count.py file.
-            backup_count+=1
-            os.remove('count.py')
-            file=open('count.py','w')
-            file.write('backup_count='+str(backup_count))
-            file.close()
-            #Remove shown hashes
-            try: os.remove('hash_other.txt')
-            except: pass
-            try: os.remove('hash.txt')
-            except: pass
-    class backup_older:
-        def clear_all():
-            try:
-                shutil.rmtree('backups')
-                os.makedirs('backups')
-            except:
-                pass
-        def remove(backup_name=None, hide=False):
-            #Check if function is called without using backup_name
-            if backup_name != None:
-                #Check to see if backup with the name ___ exists.
-                try:
-                    if user_permission in allowed_backupPermissions:
-                        try:
-                            os.chdir('backups')
-                            if os.path.exists(backup_name.lower()+'.zip')==True:
-                                os.remove(backup_name.lower()+'.zip')
-                                os.chdir(path)
-                        except:
-                            if hide==False:
-                                print(errors.FileDoesNotExist())
-                    else:
-                        os.chdir(path)
-                        if hide==False:
-                            print(errors.incorrect_perm())
-                except NameError:
-                    if hide==False:
-                        print(errors.NotSignedIn())
-        def create(backup_name=None, password=None, random_name=False, hide=False):
-            #Create random name if asked to
-            if random_name==True:
-                backup_name=''
-                for i in range(16):
-                    backup_name+=random.choice('1234567890qwertyuiopasdfghjklzxcvbnm')
-            #Check if function is called without using backup_name
-            if backup_name != None:
-                os.chdir('backups')
-                if os.path.exists(backup_name+'.zip') == True:
-                    os.chdir(path)
-                    if hide==False:
-                        print(errors.BackupNameExists())
-                else:
-                    pass
-                    #If backups with the name ___ does not exist. Create a backup.
-                    user, perm = users.return_login_cred()
-                    if perm in allowed_backupPermissions:
-                        #Check for profanity.
-                        if profanityFilter.filter(backup_name.lower())==1:
-                            print(errors.profanityDetected(var=backup_name, user=user_logged))
-                        else:
-                            #If no profanity is found then create the backup.
-                            os.chdir(path)
-                            save.all(hide=hide)
-                            #Encrypt certian files.
-                            if encrypt.all(password) != 1:
-                                #Files to backup
-                                list2=['custom_database.py','history_desc.py','vars_to_save','data_save.aes','history.aes', 'settings.py','paths.png','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
-                                try: os.chdir('backups')
-                                except: pass
-                                zipObject= ZipFile(backup_name.lower()+'.zip', 'w')
-                                try: os.chdir(path)
-                                except: pass
-                                for i in range(len(list2)):
-                                    try:
-                                        zipObject.write(list2[i])
-                                    except:
-                                        pass
-                                try: os.chdir('backups')
-                                except: pass
-                                zipObject.close()
-                                try: os.chdir(path)
-                                except: pass
-                                decrypt.all(password)
-                    else:
-                        os.chdir(path)
-                        if hide==False:
-                            print(errors.incorrect_perm())
-                os.chdir(path)
-                if backup_name == None:
-                    if hide==False:
-                        print(errors.cannot_call_func())
-            #Remove shown hashes
-            try: os.remove('hash_other.txt')
-            except: pass
-            try: os.remove('hash.txt')
-            except: pass
-    def check_settingsImproved(hide=False):
-        found=False
-        settings1=['backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions','backupOn_StartUp','skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
-        types=[int, int, bool, list, bool, bool,str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
-        for i in range(len(settings1)):
-            if isinstance(globals()[settings1[i]], types[i]) == False:
-                found=True
-                if hide==False:
-                    print(str(settings1[i]))
-        if found==True:
-            if hide==False:
-                print("1 or More settings are incorrect.")
-            exit()
-        check_settings(hide=hide)
-    def check_settings(hide=False):
-        #Checks settings.py to make sure all settings are correct and will not cause a proplem.
-        #If one or more items come back as a problem they will be listed,
-        error_found1=False
-        #Check to see if max is bigger/smaller than min
-        if max_length<min_length+1:
-            error_found1=True
-        if show_incorrect_settings==True:
-            if hide==False:
-                print('\nUnknown answers:')
-        list2=['7', '8','10','11']
-        found=True
-        for i in range(len(list2)):
-            if allow_windows_version != list2[i]:
-                found=False
-            if allow_windows_version == list2[i]:
-                found=True
-                break
-        if found==False:
-            if show_incorrect_settings==True:
-                if hide==False:
-                    print('  allow_windows_version must be set to 7, 8, 10, or 11')
-            error_found1=True
-        if len(drive_letter)>1 or len(drive_letter)<1:
-            if show_incorrect_settings==True:
-                if hide==False:
-                    print('  drive_letter must be 1 character')
-            error_found1=True
-        if isinstance(allowed_digists_forHistory, int):
-            if allowed_digists_forHistory>30 or allowed_digists_forHistory<1:
-                if show_incorrect_settings==True:
-                    if hide==False:
-                        print('  allowed_digists_forHistory can only be upto 30 and no less than 1.')
-                error_found1=True
-        if error_found1==False:
-            if show_incorrect_settings==True:
-                if hide==False:
-                    print('  None')
-        if quit_ifIncorrect == True:
-            if error_found1==True:
-                if hide==False:
-                    print()
-                exit()
-    class profanityFilter:
-        def disable():
-            #Redirect
-            profanityFilter.deactivate()
-        def enable():
-            #Redirect
-            profanityFilter.activate()
-        def activate():
-            #Enables profanity filter
-            global profanity_filter
-            profanity_filter=True
-        def deactivate():
-            #Disables profanity filter
-            global profanity_filter
-            profanity_filter=False
-        def setup():
-            #Called on startup if enabled to setup the filter.
-            global profanity_filter, auto_filter_profanity_speedBoost, list1
-            #Check profanity.txt to see if input matches.
-            if profanity_filter==True and auto_filter_profanity_speedBoost==False:
-                with open("profanity.txt", encoding="ascii") as file_in:
-                    for line in file_in:
-                        list1.append(line.replace('\n',''))
-            if profanity_filter==True and auto_filter_profanity_speedBoost==True:
-                with open("shorter_profanity.txt") as file_in:
-                    for line in file_in:
-                        list1.append(line.replace('\n',''))
-        def filter(var, manual=False, hide=False, test=False, record=True):
-            #Give this function a string to check.
-            #If a match is found 1 is returned. If none, 0 is returned.
-            global auto_filter_profanity
-            if test==True:
-                auto_filter_profanity=True
-            if auto_filter_profanity==True or manual==True:
-                global list1
-                if isinstance(var, str) == True:
-                    var=var.lower()
-                    for i in range(len(list1)):
-                        if str(var) == list1[i]:
-                            if record == True:
-                                errors.profanityDetected(var=var, user=user_logged)
-                            return 1
-                    return 0
-                else:
-                    for i in range(90):
-                        print()
-                    if hide == False:
-                        print('(Error) Unknown Class. This will not be recorded. Input must be a string.')
-            if auto_filter_profanity==False:
-                if debug==True:
-                    if hide==False:
-                        print('Profanity filter is off.')
-                return 0
-    def encrypt_check():
-        #Check to see if save file is encrypted.
-        #Return 1 if encrypted, if not return 0.
-        try:
-            open('data_save.aes', 'r')
-            open('history.aes', 'r')
-            return 1
-        except:
-            pass
-        return 0
-    class history:
-        def get_description(code=None, hide=False):
-            #Print description of selected history item in terminal if message is found.
-            if code!=None:
-                for i in range(len(history_id)):
-                    if history_id[i]==str(code):
-                        if hide==False:
-                            print('Code: '+str(code))
-                            print('Message: '+history_description[i])
-        def add_description(code=None, description=None):
-            #Create a description for history if requested.
-            #This is automatically called if used.
-            if code != None and description != None:
-                if isinstance(code, str)==True and isinstance(description, str)==True:
-                    history_id.append(str(code))
-                    history_description.append(str(description))
-        def check_forDuplicate(user, usage, hide=False):
-            #Prevents duplicate items to be recorded.
-            global debug
-            file=open('history.txt').read()
-            a=len(file)
-            a3=len(user)+len(usage)+2
-            last_object=(file[a-a3: a])
-            current_object=(usage+': '+user)
-            if debug==True and hide==False:
-                print('Current:', current_object)
-                print('Last:', last_object)
-            if str(current_object)==str(last_object):
-                if debug==True:
-                    if hide==False:
-                        print('Match Found. Skipping write to history file.')
-                return 1
-            else:
-                if debug==True:
-                    if hide==False:
-                        print('No match found. Writing to history file.')
-                return 0
-        def assign_letter(count, hide=False):
-            #Not in use yet.
-            global allowed_digists_forHistory
-            count=int(count)
-            a=''
-            for i in range(allowed_digists_forHistory-len(str(count))):
-                a+='0'
-            a+=str(count)
-            count+=1
-            save.all(hide=hide)
-            return a
-        def clear():
-            #Clears history file
-            try:
-                os.chdir(path)
-            except:
-                pass
-            history.delete()
-            history.create()
-            try:
-                os.remove('history_desc.py')
-            except:
-                pass
-            file=open('history_desc.py', 'w')
-            file.write('history_id=[]\nhistory_description=[]\ncount=1')
-            file.close()
-        def delete():
-            #Removes history file
-            try:
-                os.remove('history.txt')
-            except:
-                pass
-        def create():
-            #Creates history file
-            global d1
-            ah=open('history.txt','w')
-            ah.write('File created: '+d1)
-            ah.close()
-        def create_history(user, usage, manual_record=False, add_desc=False, desc=None, hide=False):
-            #Adds items to history file
-            if auto_history_record==True or manual_record==True:
-                if user==None:
-                    user='Null'
-                global d1, count
-                try:
-                    open('history.txt','r')
-                except:
-                    history.create()
-                allow=True
-                if skip_history_copy==True:
-                    if history.check_forDuplicate(user=user, usage=usage, hide=hide) == 1:
-                        allow=False
-                if allow==True:
-                    if add_desc==True:
-                        if assign_digit_forHistory==False:
-                            if debug==True:
-                                if hide==False:
-                                    print('assign_digit_forHistory needs to be enabled for history to add a description.')
-                        if desc!=None and assign_digit_forHistory==True:
-                            abc=history.assign_letter(count, hide=hide)
-                            history.add_description(code=abc, description=desc)
-                            ah=open('history.txt','a')
-                            ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user)+' : ('+str(abc)+')')
-                            ah.close()
-                            count+=1
-                            save.all(hide=hide)
-                        if desc==None:
-                            if hide==False:
-                                print('Please give a description to write history.')
-                    if add_desc==False:
-                        ah=open('history.txt','a')
-                        ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user))
-                        ah.close()
-    class optimize():
-        def determ(letter=None, set=None, test=False):
-            for i in range(26):
-                if letter == alphabet[i]:
-                    if test == False:
-                        return 0
-                    if test == True:
-                        a=globals()[set]
-                        a=a[i]
-                        return a
-        def run(save_optimizations=True, hide=False):
-            global data_bases, opto_data, opto_row, row, opto_lists, lists, debug, user_permission, user_logged
-            history.create_history(None, 'Optimize', hide=hide)
-            try:
-                user_logged=None
-                user_permission=None
-                opto_data=optimize.count(var='data_bases')
-                data_bases=optimize.list_org(var='data_bases')
-                opto_row=optimize.count(var='row')
-                row=optimize.list_org(var='row')
-                opto_lists=optimize.count(var='lists')
-                lists=optimize.list_org(var='lists')
-                if debug == True:
-                    if hide==False:
-                        print('Save file optimized.')
-            except:
-                if debug == True:
-                    if hide==False:
-                        print('An error occured.')
-            if save_optimizations==True:
-                if hide==False:
-                    print('All data saved.')
-                save.all(hide=hide)
-        def count(var):
-            #Count items in lists and get a rough count.
-            opto=[]
-            alphabet='abcdefghijklmnopqrstuvwxyz '
-            for i in range(26):
-                opto.append(0)
-            count=0
-            letter=''
-            rcount=len(globals()[var])
-            while letter != " ":
-                letter = alphabet[count]
-                for i in range(rcount):
-                    if (((globals()[var])[i])[0])[0] == letter:
-                        opto[count]+=1
-                count+=1
-            return opto
-        def list_org(var):
-            #Creates a list of alphabet count. Hard to explain. It makes opto_ row, list, and data
-            org=[]
-            max=len(globals()[var])
-            current=0
-            alphabet='abcdefghijklmnopqrstuvwxyz '
-            count=0
-            while current < max:
-                for i in range(max):
-                    if (((globals()[var])[i])[0])[0] == alphabet[count]:
-                        org.append((globals()[var])[i])
-                        current+=1
-                count+=1
-            return org
-    def check_data(hide=False):
-        #Also remove data sets that are not apart of a database.
-        print('\n')
-        global import_type
-        check=[False, False]
-        #Check data_bases var
-        for i in range(len(data_bases)):
-            try:
-                if (data_bases[i])[0] != None:
-                    if (data_bases[i])[1] != None:
-                        if (data_bases[i])[2] != None:
-                            if (data_bases[i])[3] == "column_row":
-                                if isinstance((data_bases[i])[4], list) == True:
-                                    check[0]=True
-                            if (data_bases[i])[3] == "list":
-                                check[0]=True
-            except:
-                check[0]=False
-                break
-        #Write down all current databases.
-        known_databases=[]
-        for i in range(len(data_bases)):
-            known_databases.append((data_bases[i])[0])
-        #Row check. Check to see if database and list are present for each, and if set databases doesn't exist.
-        for i in range(len(row)):
-            try:
-                if (row[i])[0] != None:
-                    if (row[i])[0] in known_databases:
-                        if isinstance((row[i])[1], list) == True:
-                            check[1]=True
-            except:
-                check[1]=False
-                break
-        if hide==False:
-            print('True = Working | False = Broken')
-            print('Database Check:',check[0])
-            print('Rows Check:',check[1])
-    def list_count(data_base=None, database=None):
-        if data_base == None:
-            data_base=database
-        for i in range(len(data_bases)):
-            if (data_bases[i])[0]==data_base:
-                return len((data_bases[i])[4])
-    def check_input(var):
-        global denied_inputs
-        for i in range(len(denied_inputs)):
-            if var==denied_inputs[i]:
-                return True
-        if var not in denied_inputs:
-            return False
-    def exit():
-        print('Application Closed')
-        sys.exit()
-    class restore:
-        def remove_old_backups():
-            #Removes backups older than set retain_backup_time=
-            #Uses a numbering scheme to calculate age.
-            #Search for all files in the backups folder and put the names in a list
-            f = []
-            for (dirpath, dirnames, filenames) in walk('backups'):
-                f.extend(filenames)
-                break
-            #Remove .zip from all files names in list
-            for i in range(len(f)):
-                try:
-                    f[i]=f[i].replace('.zip','')
-                except:
-                    f.pop(i)
-            #Find the highest number in list
-            highest=0
-            for i in range(len(f)):
-                try:
-                    if int(f[i])>highest:
-                        highest=int(f[i])
-                except:
-                    pass
-            #Remove old backups.
-            try:
-                os.chdir('backups')
-                for i in range(len(f)):
-                    if int(f[i])<highest-retain_backup_time+1:
-                        try:
-                            os.remove(f[i]+'.zip')
-                        except:
-                            pass
-                os.chdir(path)
-            except:
-                return False
-        def all(beta=False, backup_name=None, password=None, hide=False, restoreFile=['app.py','history_desc.aes','settings.py','data_save.aes','history.aes'], removeFile=['app.py','history_desc.py', 'settings.py','data_save.py','history.txt']):
-            #Restore everything from a backup.
-            if beta == True:
-                if password==None:
-                    if hide==False:
-                        print('A password is neeeded to restore from a backup.')
-                if password != None:
-                    if check.encyption_password(password)==0:
-                        if hide==False:
-                            print('Incorrect Password')
-                    if check.encyption_password(password)==1:
-                        #Search for all files in the backups folder and put the names in a list
-                        f = []
-                        for (dirpath, dirnames, filenames) in walk('backups'):
-                            f.extend(filenames)
-                            break
-                        #Remove .zip from all files names in list
-                        for i in range(len(f)):
-                            try:
-                                f[i]=f[i].replace('.zip','')
-                            except:
-                                f.pop(i)
-                        #Find the highest number in list
-                        highest=0
-                        for i in range(len(f)):
-                            try:
-                                if int(f[i])>highest:
-                                    highest=int(f[i])
-                            except:
-                                pass
-                        #Display on screen what the latest backup is.
-                        if highest != 0:
-                            if hide==False:
-                                print('Latest Backup:',str(highest)+'.zip')
-                            #Extract all files to restore folder after creating the folder
-                            if os.path.exists('restore')==False:
-                                os.mkdir('restore')
-                            with zipfile.ZipFile('backups/'+str(highest)+'.zip', 'r') as zip_ref:
-                                zip_ref.extractall('restore')
-                            #Replace all item in removeFile var to root
-                            for i in range(len(removeFile)):
-                                #Remove files in root
-                                try:
-                                    os.remove(removeFile[i])
-                                except:
-                                    if hide==False:
-                                        print('File '+removeFile[i]+' in backup could not be found')
-                            #Add files to root from restore folder
-                            for i in range(len(restoreFile)):
-                                try:
-                                    os.chdir('restore')
-                                except:
-                                    pass
-                                try:
-                                    shutil.copy(restoreFile[i],path)
-                                except:
-                                    if hide==False:
-                                        print('Could not restore file:',restoreFile[i])
-                            os.chdir(path)
-                            decrypt.all(password)
-                            shutil.rmtree('restore')
-                        if highest==0:
-                            print('No backups detected.')
-            if beta==False:
-                print('This function has not been implemented yet.\nA restore plan is in the works. Restore will not work until a complete backup plan is created. For now a temporary backup method has been added. You can run the app from a backup if needed.')
-    class info:
-        def operating_system():
-            global system
-            return system
-        def python_version():
-            return sys.version[0:len(required_version)]
-        def app_version():
-            global program_version
-            return program_version
-    class get:
-        def tool_name(serial):
-            for i in range(len(row)):
-                if (row[i])[0]=="tools":
-                    if ((row[i])[1])[1]==serial:
-                        return ((row[i])[1])[0]
-        def try_password(password):
-            if system=='windows':
-                global drive_letter
-                try:
-                    pyAesCrypt.decryptFile(drive_letter+':/hash.aes',drive_letter+':/hash.txt',password)
-                    pyAesCrypt.encryptFile(drive_letter+':/hash.txt',drive_letter+':/hash.aes',password)
-                    return 1
-                except:
-                    return 0
-            else:
-                try:
-                    pyAesCrypt.decryptFile('hash.aes','hash.txt',password)
-                    pyAesCrypt.encryptFile('hash.txt','hash.aes',password)
-                    return 1
-                except:
-                    return 0
-        def get_other_hash(password):
-            if system=="windows":
-                try:
-                    decrypt.hash(password)
-                    global drive_letter
-                    file=open(drive_letter+':/hash_other.txt','r').read()
-                    os.remove(drive_letter+':/hash_other.txt')
-                    return file
-                except ValueError:
-                    print('Incorrect Password!')
-            else:
-                try:
-                    decrypt.hash(password)
-                    file=open('hash_other.txt','r').read()
-                    os.remove('hash_other.txt')
-                except ValueError:
-                    print('Incorrect Password')
-        def get_hash():
-            try:
-                password = get.password()
-                decrypt.hash(password)
-                global drive_letter
-                if system=='windows':
-                    file=open(drive_letter+':/hash.txt','r').read()
-                    os.remove(drive_letter+':/hash.txt')
-                else:
-                    file=open('hash.txt','r')
-                    os.remove('hash.txt')
-                return file
-            except ValueError:
-                global global_password
-                if global_password==True:
-                    get.get_other_hash(password)
-        def new_hash(passw=None, normal=False, memory_float=False):
-            get.random_hash(single=normal, memory_float=memory_float)
-            get.encrypt_hash(passw)
-            password=None
-        def encrypt_hash(passw=None, other=False):
-            global drive_letter, global_password
-            if passw != None:
-                password=passw
-            if passw == None:
-                password=get.password()
-            if other == False:
-                if system=='windows':
-                    pyAesCrypt.encryptFile(drive_letter+':/hash.txt', drive_letter+':/hash.aes', password)
-                    os.remove(drive_letter+':/hash.txt')
-                else:
-                    pyAesCrypt.encryptFile('hash.txt','hash.aes',password)
-                    os.remove('hash.txt')
-            if other == True:
-                if global_password==True:
-                    if system=="windows":
-                        pyAesCrypt.encryptFile(drive_letter+':/hash_other.txt', drive_letter+':/hash_other.aes', password)
-                        os.remove(drive_letter+':/hash_other.txt')
-                    else:
-                        pyAesCrypt.encryptFile('hash_other.txt', 'hash_other.aes', password)
-                        os.remove('hash_other.txt')
-        def password():
-            return input('Password: ')
-        def random_hash(length=100, normal=True, single=False, memory_float=False):
-            if isinstance(length, int) == False:
-                print(errors.not_int())
-            if isinstance(length, int) == True:
-                ah=''
-                for i in range(length): 
-                    ah+=random.choice('ajfygweuoichwgbuieucr73rwecb638781417983b 623v9923 r t72344y 23uc3u2b4n9832 4b2c794y 237bc2423nc482b3c427 rfgshdfuw38263872guihfef86w4t878whryfeg48tg34hf7w')
-                if memory_float==True:
-                    global memory_hash
-                    memory_hash=ah
-                if normal==True: 
-                    global drive_letter
-                    if system=="windows": file=open(drive_letter+':/hash.txt','w')
-                    else: file=open('hash.txt', 'w')
-                    file.write(ah)
-                    file.close()
-                    if single==False:
-                        if system=="windows": file=open(drive_letter+':/hash_other.txt','w')
-                        else: file=open('hash_other.txt','w')
-                        file.write(ah)
-                        file.close()
-                if normal==False:
-                    return ah
-    class decrypt:
-        def hash(password):
-            global drive_letter
-            try:
-                if system=='windows':
-                    pyAesCrypt.decryptFile(drive_letter+':/hash.aes',drive_letter+':/hash.txt',password)
-                    return open(drive_letter+':/hash.txt','r').read()
-                else:
-                    pyAesCrypt.decryptFile('hash.aes','hash.txt',password)
-                    return open('hash.txt','r').read()
-            except:
-                try:
-                    if system=="windows":
-                        pyAesCrypt.decryptFile(drive_letter+':/hash_other.aes',drive_letter+':/hash_other.txt',password)
-                        return open(drive_letter+':/hash_other.txt','r').read()
-                    else:
-                        pyAesCrypt.decryptFile('hash_other.aes','hash_other.txt',password)
-                        return open('hash_other.txt','r').read()
-                except:
-                    if memory_hash != '':
-                        return memory_hash
-                    else:
-                        return False
-        def history(password):
-            try:
-                pyAesCrypt.decryptFile('history.aes','history.txt',password)
-                os.remove('history.aes')
-            except:
-                pass
-        def data(password):
-            try:
-                pyAesCrypt.decryptFile('data_save.aes','data_save.py',password)
-                os.remove('data_save.aes')
-            except:
-                pass
-        def cache(password):
-            pyAesCrypt.decryptFile('cache.aes','cache.py',password)
-            os.remove('cache.aes')
-        def opt(password):
-            pyAesCrypt.decryptFile('opt.aes','opt.py',password)
-            os.remove('opt.aes')
-        def history_desc(password):
-            pyAesCrypt.decryptFile('history_desc.py','history_desc.aes',password)
-            os.remove('history_desc.aes')
-        def all(password):
-            #decrypt.custom_database(password, True) Do not encrypt main file. This file is needed to decrypt!
-            try:
-                open('history.aes','r')
-                open('data_save.aes','r')
-                try:
-                    d_password=decrypt.hash(password)
-                    decrypt.data(d_password)
-                    decrypt.history(d_password)
-                    decrypt.history_desc(d_password)
-                except ValueError:
-                    return 1
-                try:
-                    global drive_letter
-                    if system=="windows": os.remove(drive_letter+':/hash.txt')
-                    else: os.remove('hash.txt')
-                except:
-                    pass
-                try:
-                    if system=="windows": os.remove(drive_letter+':/hash_other.txt')
-                    else: os.remove('hash_other.txt')
-                except:
-                    pass
-            except:
-                print('Cannot decrypt. Encrypted files do not exist.')
-    class encrypt:
-        def history(password):
-            global fail_safe
-            failed=False
-            if fail_safe==True:
-                try:
-                    open('history.aes','r')
-                    print('Existing file found. Cannot encrypt.')
-                    failed=True
-                except:
-                    pass
-                try:
-                    open('history.txt','r')
-                except:
-                    failed=True
-            if failed == False:
-                global do_not_remove
-                pyAesCrypt.encryptFile('history.txt','history.aes',password)
-                if do_not_remove==False:
-                    os.remove('history.txt')
-        def data(password):
-            global fail_safe
-            failed=False
-            if fail_safe==True:
-                try:
-                    open('data_save.aes','r')
-                    print('Existing file found. Cannot encrypt.')
-                    failed=True
-                except:
-                    pass
-                try:
-                    open('data_save.py','r')
-                except:
-                    failed=True
-            if failed == False:
-                global do_not_remove
-                pyAesCrypt.encryptFile('data_save.py','data_save.aes',password)
-                if do_not_remove==False:
-                    os.remove('data_save.py')
-        def cache(password):
-            global do_not_remove
-            pyAesCrypt.encryptFile('cache.py','cache.aes',password)
-            if do_not_remove==True:
-                os.remove('cache.py')
-        def opt(password):
-            global do_not_remove
-            pyAesCrypt.encryptFile('opt.py','opt.aes',password)
-            if do_not_remove==True:
-                os.remove('opt.py')
-        def history_desc(password):
-            global do_not_remove
-            pyAesCrypt.encryptFile('history_desc.py','history_desc.aes',password)
-            if do_not_remove==True:
-                os.remove('history_desc.py')
-        def all(password):
-            try:
-                d_password=decrypt.hash(password)
-                #encrypt.custom_database(password, True) Do not encrypt main file. This file is needed to decrypt!
-                encrypt.data(d_password)
-                encrypt.history(d_password)
-                encrypt.history_desc(d_password)
-                #encrypt.cache(d_password)
-                #encrypt.opt(d_password)
-                global drive_letter
-                try:
-                    if system=="windows":
-                        os.remove(drive_letter+':/hash.txt')
-                    else:
-                        os.remove('hash.txt')
-                except:
-                    pass
-                try:
-                    if system=="windows":
-                        os.remove(drive_letter+':/hash_other.txt')
-                    else:
-                        os.remove('hash_other.txt')
-                except:
-                    pass
-            except ValueError:
-                return 1
-    class save:
-        def all(hide=False):
-            if disable_save==False:
-                history.create_history(None, 'Save', hide=hide)
-                try:
-                    from vars_to_save import list
-                    file=open('data_save.py','w')
-                    for i in range(len(list)):
-                        file.write(list[i]+'='+str(globals()[list[i]])+'\n')
-                    file.write('\n')
-                    file.close()
-                    if advanced_history==True:
-                        file=open('history_desc.py', 'w')
-                        file.write('history_id='+str(history_id))
-                        file.write('\nhistory_description='+str(history_description))
-                        file.write('\ncount='+str(count))
-                except ModuleNotFoundError:
-                    print("Could not locate vars_to_save file.")
-            if disable_save==True:
-                history.create_history(user='True', usage='Skip Save', manual_record=auto_error_record, hide=hide)
-    class clear:
-        def normal():
-            for i in range(100):
-                print('')
-    class check:
-        def signed_out_item(barcode):
-            #Check to see if item has been signed out already.
-            for i in range(len(lists)):
-                #Find the database logs
-                if (lists[i])[0]=='logs':
-                    for x in range(len((lists[i])[1])):
-                        if debug==True:
-                            print((((lists[i])[1])[x])[0])
-                        if (((lists[i])[1])[x])[0]==barcode:
-                            #If found
-                            return True
-            #If not found
-            return False
-        def barcode(barcode):
-            #Check to see if barcode exists.
-            for i in range(len(row)):
-                #Find the database tools
-                if (row[i])[0]=="tools":
-                    try:
-                        if ((row[i])[1])[1]==barcode:
-                            #If found
-                            return False
-                    except:
-                        pass
-            #If not found
-            return True
-        def encyption_password(password):
-            if decrypt.hash(password=password)==False:
-                return 1
-            else:
-                return 0
-        def data_format(data_base=None):
-            #Returns database type.
-            num=check_data(data_base)
-            #Call to return data_base type.
-            if num == False:
-                global data_bases
-                for i in range(len(data_bases)):
-                    if (data_bases[i])[0]==data_base:
-                        return (data_bases[i])[3]
-            if num == True:
-                print(errors.cannot_call_func('check.data_format()'))
-        def data_base_exists(data_base=None):
-            #Check to see if database exists,
-            if isinstance(data_base, str) == False and data_base != None:
-                print(errors.not_str())
-            if isinstance(data_base, str) == True or data_base==None:
-                if data_base != None:
-                    global data_bases
-                    found=False
-                    for i in range(len(data_bases)):
-                        if (data_bases[i])[0]==data_base:
-                            found = True
-                    return found
-                if data_base == None:
-                    print(errors.cannot_call_func('check.data_base_exists()'))
-    class users:
-        def disable(user=None, hide=False):
-            num=check_input(user)
-            #Disables a user
-            if num == False:
-                global known_users, active_users
-                found=False
-                for i in range(len(known_users)):
-                    if known_users[i]==user:
-                        history.create_history(user, 'Disable user', hide=hide)
-                        active_users[i]=False
-                        found=True
-                if found==False:
-                    if hide==False:
-                        print(errors.user_not_found())
-            if num == True:
-                if hide==False:
-                    print(errors.cannot_call_func('users.disable()'))
-        def enable(user=None, hide=False):
-            num=check_input(user)
-            #Enables a user
-            if num == False:
-                global known_users, active_users
-                found=False
-                for i in range(len(known_users)):
-                    if known_users[i]==user:
-                        history.create_history(user, 'Enable user', hide=hide)
-                        active_users[i]=True
-                        found=True
-                if found==False:
-                    if hide==False:
-                        print(errors.user_not_found())
-            if num == True:
-                if hide==False:
-                    print(errors.cannot_call_func('users.disable()'))
-        def create(new_user=None, new_password=None, new_permission=None, hide=False):
-            global known_users, passwords, permissions
-            num1=check_input(new_user)
-            num2=check_input(new_password)
-            try:
-                new_user=new_user.lower()
-                new_permission=new_permission.lower()
-            except:
-                pass
-            if new_permission not in allowed_users:
-                if hide==False:
-                    print(errors.incorrect_perm())
-                    return 'IncorrectPerm'
-            if profanityFilter.filter(new_user)==1:
-                if hide==False:
-                    print(errors.profanityDetected(new_user, user=user_logged))
-            if profanityFilter.filter(new_password.lower())==1:
-                if hide==False:
-                    print(errors.profanityDetected(new_password, user=user_logged))
-            if num1 == False and num2 == False and new_permission in allowed_users and profanityFilter.filter(new_user)==0 and profanityFilter.filter(new_password.lower())==0:
-                if password_restrictions.check_password(new_password) == 1 or strict_password==False:
-                    skip=False
-                    for i in range(len(known_users)):
-                        if known_users[i]==new_user:
-                            skip=True
-                            print(errors.user_exists())
-                            return False
-                    if skip == False:
-                        if isinstance(new_user, str) == True:
-                            if isinstance(new_password, str) == True:
-                                if isinstance(new_permission, str) == True or new_permission==None:
-                                    history.create_history(new_user, 'Created user', hide=hide)
-                                    known_users.append(new_user)
-                                    passwords.append(new_password)
-                                    permissions.append(new_permission)
-                                    active_users.append(True)
-                        if isinstance(new_user, str) == False:
-                            if hide==False:
-                                print('new_user must be str')
-                        if isinstance(new_permission, str) == False:
-                            if hide==False:
-                                print('new_permission must be str')
-                        if isinstance(new_permission, str) == False and new_permission != None:
-                            if hide==False:
-                                print('new_password must be str or None') 
-                else:
-                    if hide==False:
-                        print(errors.doesNotObeyRestrictions())
-                        print('Password Min Lnegth:',min_length)
-                        print('Password Max Length:',max_length)
-                        print('Password can only contain:',allowedPassword_chars)
-                        return "PasswordDoesNotMeetReq"
-            if num1 == True or num2 == True:
-                print(errors.cannot_call_func('users.create()'))
-        def remove(user=None, hide=False):
-            num=check_input(user)
-            if num == False:
-                user=user.lower()
-                found=False
-                global known_users, passwords, permissions
-                for i in range(len(known_users)):
-                    if known_users[i]==user:
-                        history.create_history(user, 'Removed user', hide=hide)
-                        known_users.pop(i)
-                        passwords.pop(i)
-                        permissions.pop(i)
-                        active_users.pop(i)
-                        found=True
-                        break
-                if found==False:
-                    if hide==False:
-                        print(errors.user_not_found())
-                    return "UserNotFound"
-            if num == True:
-                if hide==False:
-                    print(errors.cannot_call_func('users.remove()'))
-        def show_all():
-            global known_users
-            for i in range(len(known_users)):
-                print('User: '+known_users[i])
-                print('Permission: '+permissions[i])
-        def change_permissions(user=None, new_permission=None, hide=False):
-            num1=check_input(user)
-            num2=check_input(new_permission)
-            if num1 == False and num2 == False:
-                for i in range(len(known_users)):
-                    if known_users[i]==user:
-                        history.create_history(user, 'Change permission', hide=hide)
-                        permissions[i]=new_permission
-            if num1 == True or num2 == True:
-                if hide==False:
-                    print(errors.cannot_call_func('users.change_permissions()'))
-        def change_name(user=None, new_name=None, hide=False):
-            num1=check_input(user)
-            num2=check_input(new_name)
-            if profanityFilter.filter(new_name)==1:
-                if hide==False:
-                    print(errors.profanityDetected(var=new_name, user=user_logged))
-            if num1 == False and num2 == False and profanityFilter.filter(new_name)==0:
-                found=False
-                for i in range(len(known_users)):
-                    if known_users[i]==user:
-                        history.create_history(user+' to '+new_name, 'Change name', hide=hide)
-                        known_users[i]=new_name
-                        found=True
-                if found==False:
-                    if hide==False:
-                        print(errors.user_not_found())
-            if num1 == True or num2 == True:
-                if hide==False:
-                    print(errors.cannot_call_func('users.change_name()'))
-        def change_password(user=None, new_password=None, hide=False):
-            global passwords
-            num=check_input(user)
-            if profanityFilter.filter(new_password)==1:
-                if hide==False:
-                    print(errors.profanityDetected(var=new_password, user=user_logged))
-            if num == False and profanityFilter.filter(new_password)==0:
-                found=False
-                for i in range(len(known_users)):
-                    if known_users[i]==user:
-                        history.create_history(user, 'Change password', hide=hide)
-                        passwords[i]=new_password
-                        found=True
-                if found==False:
-                    if hide==False:
-                        print(errors.user_not_found())
-            if num == True:
-                if hide==False:
-                    print(errors.cannot_call_func('users.change_password()'))
-        def return_users():
-            global known_users
-            return known_users
-        def login_request(user=None, password=None, hide=False):
-            #Will return True if credentials are correct, if not will return False
-            user=str(user)
-            password=str(password)
-            if user != None and password != None or password==None:
-                global known_users, passwords, user_logged, user_permission, profanity_filter, disable_filter_admin
-                if isinstance(user, str)==True and isinstance(password, str)==True or password == None:
-                    if user in known_users:
-                        for i in range(len(known_users)):
-                            if known_users[i]==user:
-                                if passwords[i] != password:
-                                    if hide==False:
-                                        print('Password is incorrect.')
-                                if passwords[i]==password:
-                                    if active_users[i]==True:
-                                        user_logged=known_users[i]
-                                        user_permission=permissions[i]
-                                        if user_permission=="admin":
-                                            if disable_filter_admin==True:
-                                                profanity_filter=False
-                                        return True
-                                    if active_users[i]==False:
-                                        if hide==False:
-                                            print('User is not active.')
-                if hide==False:
-                    if isinstance(user, str) == False:
-                        print(errors.not_str())
-                    if isinstance(password, str) == False and password != None:
-                        print(errors.not_str())
-                    if user not in known_users:
-                        print(errors.user_not_found())
-                try:
-                    if user_logged==False:
-                        return False
-                except:
-                    pass
-            if user == None:
-                if hide==False:
-                    print(errors.cannot_call_func('users.login_request()'))
-        def logout(hide=False):
-            global user_logged, user_permission, profanity_filter, disable_filter_admin
-            try:
-                if user_permission=="admin":
-                    if disable_filter_admin==True:
-                        profanity_filter=True
-                user_permission=None
-                user_logged=None
-            except:
-                if debug==True and hide==False:
-                    print("No user signed in.")
-        def return_login_cred():
-            try:
-                global user_logged, user_permission
-                if user_logged==None:
-                    return False
-                else:
-                    return user_logged, user_permission
-            except:
-                return False
-    class data_base:
-        def help():
-            print('Branches:\n  data_base.edit\n  data_base.empty\n  data_base.show\n  data_base.remove\n  data_base.create')
-        class edit:
-            def help():
-                print('Branches:\n  data_base.edit.search_rows()\n  data_base.edit.check_owner()\n  data_base.edit.add_row_term()\n  data_base.edit.add_item()\n  data_base.edit.remove_row()\n  data_base.edit.add_column()\n  data_base.edit.remove_column()')
-            def search_rows(data_base=None, id=None, database=None):
-                if data_base == None:
-                    data_base=database
-                if isinstance(data_base, str) == True and isinstance(id, str) == True:
-                    for i in range(len(row)):
-                        if (row[i])[0] == data_base:
-                            if ((row[i])[1])[1]==id:
-                                return 1
-                    return 0
-            def check_owner(data_base=None, user_perm=None, database=None):
-                if data_base == None:
-                    data_base=database
-                #Returns 1 is owner matches the database.
-                if isinstance(data_base, str) == True and isinstance(user_perm, str) == True:
-                    for i in range(len(data_bases)):
-                        if (data_bases[i])[2] == user_perm:
-                            return 1
-                    return 0
-            def add_row_term():
-                data=input('Database: ')
-                bra=False
-                try:
-                    for i in range(len(data_bases)):
-                        if bra == True:
-                            break
-                        if (data_bases[i])[0]==data:
-                            aa=input('Enter row/list with spaces between each: ')
-                    data_base.edit.add_row(data_base=data, new_row=aa)
-                except:
-                    pass
-            def add_item(data_base=None, item_to_add=None, create_if_notExist=True, database=None, hide=False):
-                if data_base == None:
-                    data_base=database
-                try:
-                    history.create_history(item_to_add, 'Add item', hide=hide)
-                except:
-                    pass
-                #Used for the list types.
-                global data_bases, lists
-                num1=check_input(data_base)
-                num2=check_input(item_to_add)
-                pass_it=False
-                try:
-                    if profanityFilter.filter(item_to_add[0])==1:
-                        print(errors.profanityDetected(var=item_to_add[0], user=user_logged))
-                        pass_it=True
-                        try:
-                            if profanityFilter.filter(item_to_add[1])==1:
-                                print(errors.profanityDetected(var=item_to_add[1], user=user_logged))
-                                pass_it=True
-                        except:
-                            pass
-                except:
-                    pass
-                if check.data_base_exists(data_base='logs')==True:
-                    letter_spot=optimize.determ(letter=data_base[0])
-                    if num1 == False and num2 == False:
-                        if create_if_notExist == True:
-                            failed=True
-                            for i in range(len(lists)):
-                                if (lists[i])[0] == data_base:
-                                    failed=False
-                                    break
-                                failed=True
-                            if failed==True:
-                                lists.append([data_base,[]])
-                        data_base=data_base.lower()
-                        for i in range(len(data_bases)):
-                            if (data_bases[i+letter_spot])[0] == data_base:
-                                if (data_bases[i+letter_spot])[3]=="list":
-                                    for x in range(len(lists)):
-                                        if (lists[x])[0]==data_base:
-                                            (lists[x])[1].append(item_to_add)
-                                            break
-                    if num1==True or num2==True and pass_it==False:
-                        if hide==False:
-                            print(errors.cannot_call_func('data_base.edit.add_item()'))
-                else:
-                    if hide==False:
-                        print(errors.database_does_not_exist())
-            def remove_item(data_base=None, item_to_remove=None, database=None):
-                if data_base == None:
-                    data_base=database
-                history.create_history(item_to_remove, 'Remove item', hide=hide)
-                #Used for the list types.
-                num1=check_input(data_base)
-                num2=check_input(item_to_remove)
-                global data_bases, lists
-                letter_spot=optimize.determ(letter=data_base[0], set='opto_data')
-                if num1 == False and num2 == False:
-                    data_base=data_base.lower()
-                    for i in range(len(data_bases)):
-                        if (data_bases[i+letter_spot])[0]==data_base:
-                            if (data_bases[i+letter_spot])[3]=="list":
-                                for x in range(len(lists)):
-                                    if (lists[x])[0]==data_base:
-                                        try:
-                                            (lists[x])[1].remove(item_to_remove)
-                                            print(lists)
-                                        except:
-                                           pass
-                                        break
-                if num1 == True or num2 == True:
-                    print(errors.cannot_call_func('data_base.edit.remove_item()'))
-            def add_row(data_base=None, new_row=None, split=True, database=None):
-                if data_base == None:
-                    data_base=database
-                if isinstance(new_row, str)==True:
-                    history.create_history(new_row, 'Add row', hide=hide)
-                #You can add as many objects to a row as you please, but it may not fit in your assinged constraints. No problems will occur though.
-                if split==True:
-                    new_row=new_row.split()
-                #print(new_row)
-                num1=check_input(data_base)
-                num2=check_input(new_row)
-                if num1 == False and num2 == False:
-                    data_base=data_base.lower()
-                    if isinstance(new_row, list) == True:
-                        row.append([data_base,new_row])
-                        #print("Added new row!")
-                    if isinstance(new_row, list) == False:
-                        print(errors.not_list())
-                if num1 == True or num2 == True:
-                    print(errors.cannot_call_func('data_base.edit.add_row()'))
-            def remove_row(data_base=None, database=None):
-                if data_base == None:
-                    data_base=database
-                num1=check_input(data_base)
-                if num1 == False:
-                    data_base=data_base.lower()
-                    history.create_history(data_base, 'Remove row', hide=hide)
-                    global row
-                    rows=[]
-                    rows_count=0
-                    a=0
-                    #Gather sets that correspond with called data_base
-                    try:
-                        for i in range(len(row)):
-                            if (row[i-a])[0]==data_base:
-                                rows.append(row[i-a])
-                                row.pop(i-a)
-                                a+=1
-                                rows_count+=1
-                    except:
-                        pass
-                    #Print known sets on screen.
-                    for i in range(len(rows)):
-                        print('#'+str(i)+' : '+str(rows[i]))
-                    try:
-                        a=input('Choose a set to delete: ')
-                        try:
-                            a=a.replace('#','')
-                        except:
-                            pass
-                        a=int(a)
-                    except ValueError:
-                        print('Please enter the corresponding number #?')
-                    #If input is correct then ask user if they wish to remove it.
-                    if isinstance(a, int) == True:
-                        if rows_count-1 >= a:
-                            print('Remove:',rows[a])
-                            choice = input('Are you sure(y/n): ').lower()
-                            if choice == "yes" or "y":
-                                rows.pop(a)
-                            elif choice == "no" or "n":
-                                print('No changes have occured.')
-                            else:
-                                print('Invalid response.')
-                        if rows_count <= a:
-                            print('That item does not exist.')
-                    for i in range(len(rows)):
-                        row.append(rows[i])
-                if num1 == True:
-                    print(errors.cannot_call_func('data_base.edit.remove_row()'))
-                #Must be column_row
-            def add_column(data_base=None, column_name=None, database=None):
-                if data_base == None:
-                    data_base=database
-                history.create_history(column_name, 'Add column', hide=hide)
-                letter_spot=optimize.determ(letter=data_base[0], set='opto_data')
-                num1=check_input(data_base)
-                num2=check_input(column_name)
-                global debug, data_bases
-                if profanityFilter.filter(column_name) == 1:
-                    print(errors.profanityDetected(var=column_name, user=user_logged))
-                else:
-                    found=False
-                    for i in range(len(data_bases)):
-                        if (data_bases[i])[0] == data_base:
-                            found=True
-                            break
-                    if found==False:
-                        print(errors.database_does_not_exist())
-                    if num1 == False and num2 == False and found==True:
-                        data_base=data_base.lower()
-                        if debug==True:
-                            print("Adding column at",data_base,"with name",column_name.lower())
-                        for i in range(len(data_bases)):
-                            if (data_bases[i+letter_spot])[0] == data_base:
-                                if (data_bases[i+letter_spot])[3]=="column_row":
-                                    (data_bases[i+letter_spot])[4].append(column_name.lower())
-                    if num1 == True or num2 == True:
-                        print(errors.cannot_call_func('data_base.edit.add_column()'))
-            def remove_column(data_base=None, column=None, remove_row=False, database=None):
-                if data_base == None:
-                    data_base=database
-                try:
-                    history.create_history(column, 'Remove Column', hide=hide)
-                    num1=check_input(data_base)
-                    num2=check_input(column)
-                    found=False
-                    letter_spot=optimize.determ(letter=data_base[0])
-                    if num1 == False and num2 == False:
-                        data_base=data_base.lower()
-                        global data_bases, debug, row
-                        for i in range(len(data_bases)):
-                            if (data_bases[i+letter_spot])[0]==data_base:
-                                if debug==True:
-                                    print('Database Found!')
-                                found=True
-                                if (data_bases[i+letter_spot])[3] == "column_row":
-                                    if debug==True:
-                                        print("Correct data_base type!")
-                                    if column in (data_bases[i+letter_spot])[4]:
-                                        print("Removed: "+str(column))
-                                        a=len((data_bases[i+letter_spot])[4])
-                                        for e in range(a):
-                                            if ((data_bases[i+letter_spot])[4])[e] == column:
-                                                print(e)
-                                                break
-                                        (data_bases[i+letter_spot])[4].remove(column)
-                                        print(data_bases[i+letter_spot])
-                                        rows=[]
-                                        rows_count=0
-                                        a=0
-                                        #Gather sets that correspond with called data_base
-                                        try:
-                                            for i in range(len(row)):
-                                                if (row[i-a])[0]==data_base:
-                                                    rows.append(row[i-a])
-                                                    row.pop(i-a)
-                                                    a+=1
-                                                    rows_count+=1
-                                        except:
-                                            pass
-                                        #Remove or Empty column(s) in row(s)
-                                        if remove_row==False:
-                                            for i in range(rows_count):
-                                                ((rows[i])[1])[e]=None
-                                        if remove_row==True:
-                                            for i in range(rows_count):
-                                                ((rows[i])[1]).pop(e)
-                                        print(rows)
-                    if num1 == True or num2 == True:
-                        print(errors.cannot_call_func('data_base.edit.remove_column()'))
-                    if found==False and data_base != None:
-                        print(errors.database_does_not_exist())
-                except:
-                    pass
-                #Goes through all lists for the column and changes it to equal None.
-                #Must be column_row
-            #Used for my auto_motive app.
-            class app:
-                def remove_row(data_base=None, name=None, database=None, hide=False):
-                    if data_base == None:
-                        data_base=database
-                    found=False
-                    if isinstance(name, str) == True and isinstance(data_base, str) == True:
-                        global row
-                        for i in range(len(row)):
-                            if (row[i])[0] == data_base:
-                                if ((row[i])[1])[1] == name:
-                                    row.pop(i)
-                                    found=True
-                                    break
-                    else:
-                        if hide==False:
-                            print(errors.not_str())
-                    return found
-                def remove_item(data_base=None, barcode=None, database=None):
-                    if data_base == None:
-                        data_base=database
-                    if isinstance(data_base, str) == True and isinstance(barcode, str) == True:
-                        global lists
-                        for i in range(len(lists)):
-                            if (lists[i])[0]==data_base:
-                                for x in range(len((lists[i])[1])):
-                                    if (((lists[i])[1])[x])[0]==barcode:
-                                        ((lists[i])[1]).pop(x)
-                    else:
-                        print(errors.not_str())
-                def show_tools(data_base=None, database=None):
-                    if data_base == None:
-                        data_base=database
-                    if isinstance(data_base, str) == True:
-                        for i in range(len(row)):
-                            print('Item:',((row[i])[1])[0],' | Serial:',((row[i])[1])[1])
-        class empty:
-            #Clear all info in 1 or more databases.
-            def all(hide=False):
-                #Reset all data compiled for databases.
-                history.create_history(None, 'Reset all databases', hide=hide)
-                global lists, row
-                lists=[]
-                row=[]
-            def one(data_base=None, recall=False, database=None):
-                if data_base == None:
-                    data_base=database
-                #Empty all data compiled for one database.
-                if recall==False:
-                    num1=check_input(data_base)
-                    if num1 == False:
-                        a=0
-                        global row, lists
-                        for i in range(len(row)):
-                            if (row[i-a])[0]==data_base:
-                                row.pop(i-a)
-                                a+=1
-                        a=0
-                        for i in range(len(lists)):
-                            if (lists[i-a])[0]==data_base:
-                                lists.pop(i-a)
-                                a+=1
-                    if num1 == True:
-                        print(errors.cannot_call_func('data_base.empty.one()'))
-        class show:
-            def show_column(data_base=None, database=None):
-                if data_base == None:
-                    data_base=database
-                num=check_input(data_base)
-                if num == False:
-                    for i in range(len(data_bases)):
-                        if (data_bases[i])[0]==data_base:
-                            if (data_bases[i])[3]=="column_row":
-                                print((data_bases[i])[4])
-                if num == True:
-                    print(errors.cannot_call_func('data_base.show.show_column()'))
-            def show_row(data_base=None, database=None):
-                if data_base == None:
-                    data_base=database
-                num=check_input(data_base)
-                #Must be column_row type
-                global row
-                if num == False:
-                    for x in range(len(row)):
-                        if (row[x])[0]==data_base:
-                            print((row[x])[1])
-                print('Complete')
-                if num == True:
-                    print(errors.cannot_call_func('data_base.show.show_row()'))
-            def show_lists(data_base=None, database=None):
-                if data_base == None:
-                    data_base=database
-                num=check_input(data_base)
-                global lists
-                if num == False:
-                    for x in range(len(lists)):
-                        if (lists[x])[0]==data_base:
-                            print(lists[x])
-                if num == True:
-                    print(errors.cannot_call_func('data_base.show.show_lists'))
-            def all_in_database(data_base=None, database=None):
-                if data_base == None:
-                    data_base=database
-                num=check_input(data_base)
-                global data_bases, row, debug, sets, rows, type
-                sets=[]
-                rows=[]
-                type=None
-                if num == False:
-                    for i in range(len(data_bases)):
-                        if (data_bases[i])[0] == data_base:
-                            if (data_bases[i])[3] == 'list':
-                                if debug==True:
-                                    print('(System) List found')
-                                type='list'
-                                break
-                            if (data_bases[i])[3] == 'column_row':
-                                if debug==True:
-                                    print('Data base found!')
-                                type='column_row'
-                                break
-                    if type == "column_row":
-                        if multi_process==False:
-                            for x in range(len((data_bases[i])[4])):
-                                sets.append(((data_bases[i])[4])[x])
-                            for n in range(len(row)):
-                                if (row[n])[0] == data_base:
-                                    rows.append((row[n])[1])
-                            print(sets)
-                            for i in range(len(rows)):
-                                print(rows[i])
-                    if type == "list":
-                        for i in range(len(lists)):
-                            if (lists[i])[0]==data_base:
-                                print((lists[i])[1])
-                if num == True:
-                    print(errors.cannot_call_func('data_base.show.all()'))
-            def all_data_bases():
-                global data_bases
-                print('Known databases:')
-                for i in range(len(data_bases)):
-                    print('  ',(data_bases[i])[0])
-            def info(data_base=None, database=None):
-                if data_base == None:
-                    data_base=database
-                num=check_input(data_base)
-                global data_bases, type
-                if num == False:
-                    type=None
-                    for i in range(len(data_bases)):
-                        if (data_bases[i])[0] == data_base:
-                            if (data_bases[i])[3] == 'list':
-                                if debug==True:
-                                    print('(System) List found')
-                                    type='list'
-                                    break
-                            if (data_bases[i])[3] == 'column_row':
-                                if debug==True:
-                                    print('Data base found!')
-                                    type='column_row'
-                                    break
-                    if type == "column_row":
-                        print('Database Name:',(data_bases[i])[0])
-                        print('Database status:',(data_bases[i])[1])
-                        print('Database access:',(data_bases[i])[2])
-                        print('Database type:',(data_bases[i])[3])
-                    if type == "list":
-                        print('Database Name:',(data_bases[i])[0])
-                        print('Database status:',(data_bases[i])[1])
-                        print('Database access:',(data_bases[i])[2])
-                        print('Database type:',(data_bases[i])[3])
-                if num == True:
-                    print(errors.cannot_call_func('data_base.show.info()'))
-        class remove:
-            def all(hide=False):
-                history.create_history(None, 'Remove All', hide=hide)
-                global data_bases, row, lists
-                data_bases=[]
-                lists=[]
-                row=[]
-            def one_set(data_base=None, database=None, hide=False):
-                if data_base == None:
-                    data_base=database
-                history.create_history(None, 'Remove One Set', hide=hide)
-                num=check_input(data_base)
-                global data_bases, row, lists
-                if num == False:
-                    found=False
-                    for i in range(len(data_bases)):
-                        if (data_bases[i])[0] == data_base:
-                            data_bases.pop(i)
-                            found=True
-                            break
-                    for x in range(len(row)):
-                        try:
-                            if (row[x-1])[0]==data_base:
-                                row.pop(x-1)
-                        except IndexError:
-                            pass
-                    for x in range(len(lists)):
-                        try:
-                            if (lists[x-1])[0]==data_base:
-                                lists.pop(x-1)
-                        except:
-                            pass
-                if found == False and num == False:
-                    print(errors.database_does_not_exist())
-                if num == True:
-                    print(errors.cannot_call_func('data_base.remove.one()'))
-            def reset_to_standard(hide=False):
-                history.create_history(None, 'Reset to Standard', hide=hide)
-                try:
-                    os.remove('data_save.py')
-                except:
-                    pass
-        class create:
-            def database(data_base=None, database=None, status=True, type=None, owner='all', columns=None, hide=False):
-                if data_base == None:
-                    data_base=database
-                history.create_history(data_base, 'Create Database', hide=hide)
-                found1=False
-                found2=False
-                found3=False
-                print(data_base)
-                #Check to see if database already exists.
-                for i in range(len(data_bases)):
-                    if (data_bases[i])[0]==data_base:
-                        if hide==False:
-                            print('That database already exists.')
-                        found1=True
-                        break
-                if type not in allowed_types:
-                    if hide==False:
-                        print('An incorrect data type has been entered.')
-                    found2=False
-                if type in allowed_types:
-                    found2=True
-                for i in range(len(data_base)):
-                    if data_base[i] in alphabet:
-                        found3=True
-                    if data_base[i] not in alphabet:
-                        found3=False
-                        if hide==False:
-                            print('Database name can only consist of lowercase letters.')
-                        break
-                #Check database for profanity.
-                if profanityFilter.filter(data_base)==1:
-                    if hide==False:
-                        print(errors.profanityDetected(var=data_base, user=user_logged))
-                else:
-                #If database doesn't exist continue on creating it.
-                    if found3 == True and found2 == True and found1 == False:
-                        if hide==False:
-                            print('Database created!')
-                        num1=check_input(data_base)
-                        num2=check_input(type)
-                        if num1 == False and num2 == False:
-                            if isinstance(owner, str) == True and isinstance(type, str) == True and isinstance(owner, str) == True and isinstance(status, bool) :
-                                if columns==None or isinstance(columns, list) == True:
-                                    if type == "list":
-                                        data_bases.append([data_base, status, owner, 'list'])
-                                    if type == "column_row":
-                                        if columns==None:
-                                            data_bases.append([data_base, status, owner, 'column_row', []])
-                                        if columns != None:
-                                            data_bases.append([data_base, status, owner, 'column_row', columns])
-                            if isinstance(status, bool) == False:
-                                print(errors.not_bool(item='status'))
-                            if columns != None and isinstance(columns, list) == False:
-                                print(errors.not_list(item='columns'))
-                            if isinstance(owner, str) == False:
-                                print(errors.not_str(item='owner'))
-                            if isinstance(data_base, str) == False:
-                                print(errors.not_str(item='type'))
-                            if isinstance(type, str) == False:
-                                print(errors.not_str(item='data_base'))
-                        if num1 == True and num2 == True:
-                            print(errors.cannot_call_func('data_base.create.datebase()'))
-    class password_restrictions:
-        def check_password(password):
-            pass_1=0
-            if len(password)>min_length-1 and len(password)-1<max_length:
-                for i in range(len(password)):
-                    if password[i] in allowedPassword_chars:
-                        pass_1=1
-                    else:
-                        print('Incorrect Item:',password[i])
-                        return 0
-            return pass_1
-        def set_min_length(value=None):
-            global min_length
-            history.create_history(str(value), 'Set min length', hide=hide)
-            num=check_input(value)
-            #Check if value is a number
-            if num==False and isinstance(value, int) == True:
-                #Assign new value
-                 min_length=value
-            if isinstance(value, int) == False:
-                print(errors.not_int(item='value'))
-            if num == True:
-                print(errors.cannot_call_func('password_restrictions.set_min_length()'))
-        def set_max_length(value=None):
-            global min_length, max_length
-            history.create_history(str(value), 'Set max length', hide=hide)
-            num=check_input(value)
-            #Check if value is a number
-            if num == False and isinstance(value, int) == True:
-                #Check to see if value is bigger than min_length
-                if value>min_length:
-                    #Assign new value
-                    max_length=value
-                else:
-                    print('')
-            if num == True:
-                print(errors.cannot_call_func('password_restrictions.set_max_length()'))
-    class errors:
-        def FileDoesNotExist(var):
-            history.create_history(var, 'FileDoesNotExist', manual_record=auto_error_record, hide=debug)
-            print('(Error) File does not exist.')
-        def NotSignedIn():
-            history.create_history('None', 'NotSignedIn', manual_record=auto_error_record, hide=debug)
-            print('(Error) No user is signed in to allow this function to work.')
-        def BackupNameExists():
-            history.create_history('admin', 'BackupNameExists', manual_record=auto_filter_profanity, hide=debug)
-            print('(Error) A backup with the same name already exists.')
-        def profanityDetected(var, user):
-            try:
-                history.create_history(user, 'profanityDetected', manual_record=auto_error_record, add_desc=True, desc=user+' tried to use a curse word knwon as: '+var, hide=debug)
-            except:
-                print(errors.cannot_call_func('<Null>'))
-            print('Not Alllowed: ',var)
-        def doesNotObeyRestrictions():
-            history.create_history('doesNotObeyRestrictions', 'Error', manual_record=auto_error_record, hide=debug)
-            return('(Error) Password given does not meet the requirments.')
-        def database_does_not_exist():
-            history.create_history('database_does_not_exist', 'Error', manual_record=auto_error_record, hide=debug)
-            return '(Error) Database requested could not be found.'
-        def cannot_call_func(var):
-            history.create_history('cannot_call_func', 'Error', manual_record=auto_error_record, hide=debug)
-            return '(Error) The function '+var+' that was called is missing 1 or more required variables.'
-        def not_list(item=None):
-            history.create_history('not_list', 'Error', manual_record=auto_error_record, hide=debug)
-            if item==None:
-                return '(Error) A list was expected, but was not given.'
-            if item != None:
-                return '(Error) A list was expected, but was not given. Item: '+str(item)
-        def user_not_found():
-            history.create_history('user_not_found', 'Error', manual_record=auto_error_record, hide=debug)
-            return '(Error) The user specified was not found.'
-        def not_str(item=None):
-            history.create_history('not_str', 'Error', manual_record=auto_error_record, hide=debug)
-            if item==None:
-                return '(Error) A string was expected, but was not given.'
-            if item != None:
-                return '(Error) A string was excepted, but was not given. Item: '+str(item)
-        def user_exists():
-            history.create_history('user_exists', 'Error', manual_record=auto_error_record, hide=debug)
-            return('(Error) This user already exists.')
-        def not_bool(item=None):
-            history.create_history('not_bool', 'Error', manual_record=auto_error_record, hide=debug)
-            if item==None:
-                return '(Error) A bool was expected, but was not given.'
-            if item != None:
-                return '(Error) A bool was expected, but was not given. Item: '+str(item)
-        def not_int(item=None):
-            history.create_history('not_int', 'Error', manual_record=auto_error_record, hide=debug)
-            if item==None:
-                return '(Error) A int was expected, but was not given.'
-            if item != None:
-                return '(Error) A int was expected, but was not given. Item: '+str(item)
-        def incorrect_perm():
-            history.create_history('incorrect_perm','Error', manual_record=auto_error_record, hide=debug)
-            return '(Error) The permission requested is not allowed.'
-    if profanity_filter==True:
-        profanityFilter.setup()
-    if allow_windows_version == "11":
-        allow_windows_version="10"
-        #Windows 11 still thinks it's windows 10. I know it's weird.
-    if optimize_on_startup==True:
-        optimize.run(hide=debug)
-        #Optmize on startup if setting is set to True.
-    if app_version_control==True and "-skipVersionCheck" not in n:
-        #Checks what version the app was setup at.
-        from version import setup_version
-        if program_version != setup_version:
-            try:
-                open('history.txt','r')
-            except:
-                history.create()
-            ah=open('history.txt','a')
-            ah.write('\n('+d1+')'+' Program Version Control: Incorrect Version')
-            ah.close()
-            print('(Error) This program was setup on a different version.\nTo disable this prompt goto settings and set app_version_control to False.')
-            exit()
-    if system != 'windows' and system != "macos" and system != "linux":
-        print('Invalid setting. system=')
-        history.create_history(usage='Invalid Setting', user='system=Error()', hide=debug)
-    from sys import platform
-    if platform == "linux" or platform == "linux2":
-        print('OS: Linux Distro.')
-        systemDetectedOperatingSystem='linux'
-        #Linux
-        if system != "linux" and set_operating_system==True:
-            print('Incorrect OS')
-            history.create_history(usage='Operating System Exception', user='linux', hide=debug)
-            exit()
-    elif platform == "darwin":
-        print('OS: Mac OS')
-        systemDetectedOperatingSystem='macos'
-        # OS X
-        if system != "macos" and set_operating_system==True:
-            print('Incorrect OS')
-            history.create_history(usage='Operating System Exception', user='macos')
-            exit()
-    elif platform == "win32":
-        print('OS: Windows')
-        systemDetectedOperatingSystem='windows'
-        # Windows...
-        if system != "windows" and set_operating_system==True:
-            print('Incorrect OS')
-            history.create_history(usage='Operating System Exception', user='windows', hide=debug)
-            exit() 
-    if setup_backup_response==True:
-        if os.path.exists('count.py')==False:
-            file=open('count.py','w')
-            file.write('backup_count='+str(backup_startNumber))
-            file.close()
-            backup_count=backup_startNumber
-    if os.path.exists('backups')==False:
-        os.mkdir('backups')
-    check_settingsImproved()
-    profanityFilter.setup()
-    print('System Started Correctly!')
-    try:
-        if "-release" in n:
-            c=''
-            beta=''
-            while True:
-                print("(1)Beta\n(2)Full\n")
-                c=input('Is this a Beta or Full release: ')
-                if c == "1" or c=="2":
-                    break
-            if c=="1":
-                c="Beta"
-                beta=input('What beta version is this: Ex: 1, 2, 3: ')
-            if c=="2":
-                c='Full'
-            version_in=input('Enter the Version: Ex: 0.2.7 or hit enter: ')
-            if version_in=="":
-                version_in=program_version
-            if beta != '':
-                backup_name=version_in+' '+c+' '+beta
-            else:
-                backup_name=version_in+' '+c
-            list2=['app.py', 'count.py', 'custom_database.py','data.py','get_directory.py','files_to_backup.py','history_desc.py','patch_notes.txt','profanity.txt','requirements.txt','settings.py','shell.py','vars_to_save.py','version_config.py']
-            #Backup Certian Files
-            zipObject= ZipFile(backup_name+'.zip', 'w')
-            for i in range(len(list2)):
-                try:
-                    zipObject.write(list2[i])
-                except:
-                    print('Could\'t find:',list2[i])
-            zipObject.close()
-        if "-v" in n:
-            from settings import program_version
-            print('Current Version: '+program_version)
-            ex=True
-        if "-info" in n:
-            print('Created By Brandon Robinson.')
-            print('GitHub: github.com/sukadateam')
-            ex=True
-        if "-reset" in n:
-            list2=['version.pyc','directory.pyc','history_desc.pyc','users.txt','tools.txt','count.py','data_save.py','version.py', 'directory.py','history.txt','hash_other.aes','hash.aes','hash_other.txt','hash.txt','settings.pyc','app.pyc','data.pyc']
-            for i in range(len(list2)):
-                try:
-                    os.remove(list2[i])
-                except:
-                    print(list2[i],'not found')
-            backup.clear_all()
-            history.clear()
-            try:
-                shutil.rmtree('__pycache__')
-            except:
-                pass
-            print('Exiting...')
-            ex=True
-    except:
-        pass
+                clear()
+                send()
+        else:
+            clear()
+            send()
+    def save():
+        save.all(hide=True)
+    def optimize():
+        optimize.run(save_optimizations=True, hide=True)
+        clear()
+        login()
+def send_student():
+    send()
+#Call to clear the screen.
+def clear():
+    for widget in tk.winfo_children():
+        widget.destroy()
+#Sends logged in users to correct area depending on permissions.
+def send():
+    global force
+    try: os.remove('data_save.aes')
+    except: pass
+    try: os.remove('history.aes')
+    except: pass
+    save.all(hide=True)
     try:
         os.remove('hash.txt')
     except:
         pass
-    if os.path.exists('history_desc.py')==False:
-        history.clear()
-    if os.path.exists('data_save.py')==True:
+    try:
+        name, perm= users.return_login_cred()
+    except:
+        pass
+    if force!=None:
+       perm=force
+    if perm=="secret":
+        secret_screen()
+    if perm == "admin":
+        admin_screen()
+    if perm == "teacher":
+        teacher_screen()
+    if perm == "student":
+        student_screen()
+def secret_screen():
+    clear()
+    e1=Label(tk, text='Wow. You found the 4th secret! One more to go!')
+    e1.pack()
+    buttons.logout(y=100)
+class secret:
+    def note():
+        e51=Label(tk, text='<secret>\nPATHS')
+        e51.pack(anchor=SW, side=RIGHT)
+    def save_answer(question, answer):
         try:
-            os.remove('data_save.aes')
+            file=open('answers.txt','a')
+        except:
+            file=open('answers.txt','w')
+        file.write('Question: '+display.space(question, max_length=35)+'  Answer: '+display.space(answer, max_length=35)+'\n')
+        file.close()
+    def random():
+        #Question, Button1, Button2
+        list15=[['Oh no, our table it\'s broken! What should we do?','Go to Ikea. :(','Use some duct tape!'],['Is english hard?','Engrish','No. It\'s easy.'],['Potato + Squash = ?','Squatato','Watermelon'],['What\'s funnier than 24?','25','23'],['Are you human?','Yes','No'],['Do you like this app?','Yes, It\'s perfect!','No, it could be better.'],['Are taco bell bathrooms clean?','Yes','Oh hell nay!'],['Have you heard of Linus Tech Tips?','Yes','No'],['Who is the first President of the United States?','John Adams','George Washington'],['Do you like memes?','Yes','No'],['Do you like video games?','Yes','No'],['Are you a good person?','Yes','No'],['Who lives in a pineapple under the sea?','Patrick','Spongebob'],['What does Mr. Krabs like the most?','Money','Krappy Patty Formula'],['Chief Wiggims is from what show?','American Dad','Family Guy'],['Peter Griffion is from what show?','American Dad','Family Guy'],['Sally has 10 hotdogs. She ate 5 of them.\nHow many are left?','5','10'],['Dogs Or Cats?','Dogs','Cats'],['Sara would like to send you a picture.','Yes Please!','No thanks.'],['Marvel or DC?','Marvel','DC'],['Click the Yes button.','No','Yes'],['1+1=','2','3'],['Life Or Death?','Life','Death'],['Click No','No','Yes'],['Apple or Samsung?','Apple','Samsung'],['Gem rush your town hall? (COC)','Yes','No! Don\'t waste your gems!'],['Are you an American?','Yes','No'],['Are you a Lefty or Righty?','Righty','Lefty'],['59+125=','184','187'],['Can I get a hiyah?!','Hiyah!','I\'m not a little kid'], ['Do you like PATHS?', 'Yes', 'No'], ['Do you agree?', 'Yes', 'No'], ['What color is blue?','Red','Blue'], ['Is the earth flat?','Yes','No'], ['Does Ohio exist?','Yes','No'], ['Is water wet?','Yes','No'], ['Time for Crab.','Rate','Close'], ['2+2=','21','4.01'], ['Who lives in a pinapple under the sea?','Squidward','SpongQuan'], ['Why are you gay?','What?','Who said i\'m gay?'], ['Fries or Onion rings?','Yes','No'], ['Do you support raccoon rights?','Yes','Yes'], ['Is proper grammar important in an online setting','n0p3','Yes, it is'], ['Do all your base belong to us?','Yes','No'], ['Waffles or Pancakes','Waffles','Pancakes'], ['Badger Badger Badger Badger Badger Badger','Mushroom','Mushroom'], ['You werent supposed to see this get out','Leave','Leave'],['Your teammate has initiated a surrender','F1 Surrender','F2 Continue'], ['Ninjas or Pirates','Ninjas','Pirates'], ['Bulbasaur,Charmander or Squirtle','Charmander','Squirtle'], ['Heads or Tails','Heads','Tails'], ['Is the washington post a reliable source of news','No','Yes'], ['Eat the rich?','Yes','Yes'], ['Is dirt dirty','Yes','No'], ['What\'s brown and sticky','A stick','*redacted*'], ['Soup or Salad?','soup','WHATS A SUPERSALAD'], ['Up or down?','dowp','upown'], ['Is this statement true?','True','False'], ['Could we cover the earth in pudding?','Maybe','Hmmmm Pudding!'],['Are we real?','Yes','Mayonaise'],['Is mayonaise an instrament?','Pudding','Horseraddish'],['Do you like your teacher?','Yes','No'], ['Which do you like more?', 'Tacos', 'Salad']]
+        item=random.randint(0, len(list15)-1)
+        return (list15[item])[0], (list15[item])[1], (list15[item])[2]
+    def item1():
+        e50=Button(tk, text='PATHS', command=secret.item1_next)
+        e50.pack(anchor=NW)
+    def item1_next():
+        global other1, other2, other
+        clear()
+        other, other1, other2=secret.random()
+        e1=Label(tk, text=other)
+        e1.pack(anchor=N)
+        button3=Button(tk, text=other1, command=secret.button3)
+        button3.pack(anchor=N)
+        button4=Button(tk, text=other2, command=secret.button4)
+        button4.pack(anchor=N)
+    def button3():
+        global other, other1
+        secret.save_answer(question=other, answer=other1)
+        send()
+    def button4():
+        global other, other2
+        secret.save_answer(question=other, answer=other2)
+        send()
+#If permission is student
+def student_screen():
+    clear()
+    buttons.signout_item()
+    buttons.signin_item()
+    buttons.credit()
+    buttons.logout(y=300)
+    secret.item1()
+    version_note()
+#If permission is teacher. First page.
+def teacher_screen():
+    global other3
+    clear()
+    version_note()
+    buttons.add_tool()
+    buttons.remove_tool()
+    buttons.show_tools()
+    buttons.create_user()
+    buttons.remove_user()
+    buttons.show_students(y=500)
+    buttons.add_student(y=600)
+    buttons.remove_student(y=700)
+    e25=Button(tk, text='Next Screen', command=teacher_page2, bg=button_color, foreground=text_color, font=text_font)
+    e25.config(height=button_height, width=button_width)
+    e25.place(x=((int(x))/2)-side_tilt, y=800)
+#Teacher second page.
+def teacher_page2():
+    clear()
+    version_note()
+    buttons.show_logged_items(y=0)
+    buttons.show_students(y=100)
+    buttons.logout(y=200)
+    e25=Button(tk, text='Back', command=teacher_screen, bg=button_color, foreground=text_color, font=text_font)
+    e25.config(height=button_height, width=button_width)
+    e25.place(x=((int(x))/2)-side_tilt, y=300)
+#If permission is admin. First page.
+def admin_screen():
+    clear()
+    version_note()
+    buttons.add_tool()
+    buttons.remove_tool()
+    buttons.show_tools()
+    buttons.create_user()
+    buttons.remove_user()
+    buttons.save()
+    buttons.optimize()
+    buttons.clear_history()
+    buttons.backup()
+    if debug==True:
+        buttons.disable_debug(y=700)
+    else:
+        buttons.enable_debug(y=700)
+    e25=Button(tk, text='Next Screen', command=admin_page2, bg=button_color, foreground=text_color, font=text_font)
+    e25.config(height=button_height, width=button_width)
+    e25.place(x=((int(x))/2)-side_tilt, y=800)
+#Admin second page
+def admin_page2():
+    clear()
+    version_note()
+    buttons.logout(y=0)
+    buttons.signin_item(y=100)
+    buttons.signout_item(y=200)
+    buttons.show_logged_items(y=300)
+    buttons.show_students(y=400)
+    buttons.change_password(y1=500)
+    e25=Button(tk, text='Back', command=admin_screen, bg=button_color, foreground=text_color, font=text_font)
+    e25.config(height=button_height, width=button_width)
+    e25.place(x=((int(x))/2)-side_tilt, y=600)
+#Ask the database if the entered credentials are correct.
+def ask(command=send):
+    global name, password, startup
+    try:
+        user=name.get()
+        pass_w=password.get()
+        s=True
+    except:
+        s=True
+        login()
+    if user=="<turtles>":
+        if pass_w=="forever":
+            clear()
+            e1=Label(tk, text='Congrats you found (a) secret page. Try and find more! (2/5)\nHint: A button is not what it seems.')
+            e1.pack()
+            e2=Button(tk, text='Back', command=login)
+            e2.pack()
+            s=False
+    if user=="<secret>":
+        if pass_w=="PATHS":
+            clear()
+            e1=Label(tk, text='Congrats you found (a) secret page. Try and find more! (1/5)\n<turtles> should live forever')
+            e1.pack()
+            e2=Button(tk, text='Back', command=login)
+            e2.pack()
+            s=False
+    if s==True:
+        if users.login_request(user=user.lower(), password=pass_w) == True:
+            if profanityFilter.filter(str(name))==0 and profanityFilter.filter(str(pass_w))==0:
+                print('Login Success!')
+                try:
+                    backup.create(random_name=True, password=pass_w, hide=True)
+                except:
+                    pass
+                u, p = users.return_login_cred()
+                if p == "admin" or p=="teacher":
+                    if startup==True:
+                        ask_encrypt_password()
+                    else:
+                        try:
+                            backup.create(random_name=True, password=other3, hide=True)
+                        except:
+                            pass
+                        command()
+                else:
+                    command()
+            else:
+                command()
+        else:
+            clear()
+            print('Incorrect Password Attempt')
+            history.create_history(user=user, usage='Login Failed', add_desc=True, desc='Incorrect Password', manual_record=True, hide=True)
+            login(wrong=True)
+#Ask for the encyption password to allow for auto backups.
+def ask_encrypt_password(wrong=False): 
+    if os.path.exists('hash.aes')==1:
+        global other3
+        clear()
+        version_note()
+        e1=Label(tk, text='Enter Encrypt/Decrypt Password', width=23)
+        e1.pack()
+        other3=Entry(tk, show='*')
+        other3.config(background=entry_background_color, fg=entry_text_color)
+        other3.pack()
+        e3=Button(tk, text='Submit', command=ask_encrypt_password_next)
+        e3.pack()
+        e5=Button(tk, text='Back', command=options.logout)
+        e5.pack()
+        if wrong==True:
+            e4=Label(tk, text='Incorrect Password', width=20)
+            e4.pack()
+        Tk.update_idletasks(tk)
+    else:
+        print('Could not find hash. Asking user to create one.')
+        clear()
+        create_encryption_password()
+def ask_encrypt_password_next():
+    global other3, startup
+    other3=other3.get()
+    clear()
+    if check.encyption_password(other3) == 0:
+        startup=False
+        send()
+    else:
+        history.create_history('Unknown User', 'Incorrect Encryption Password', manual_record=True, hide=True)
+        ask_encrypt_password(wrong=True)
+#Display a screen that allows the user to login.
+def login(wrong=False, e1_button='Login', command=ask, show_student_button=True, show_exit_button=True):
+    clear()
+    version_note()
+    global name, password, force
+    force=None
+    e2 = Label(tk, text='Username: ')
+    e2.pack()
+    name = Entry(tk, highlightbackground='Black')
+    name.config(background=entry_background_color, fg=entry_text_color)
+    name.pack()
+    e4 = Label(tk, text='Password: ')
+    e4.pack()
+    password = Entry(tk, show='*')
+    password.config(background=entry_background_color, fg=entry_text_color, highlightbackground='Black')
+    password.pack()
+    e1 = Button(tk, text=e1_button, command=command, bg=button_color, foreground=text_color, font=text_font)
+    e1.config(height=1, width=7)
+    e1.pack()
+    if show_exit_button==True:
+        e5 = Button(tk, text='Exit', command=exit_app, width=20, bg=button_color, foreground=text_color, font=text_font)
+        e5.config(height=1, width=button_width)
+        e5.config(width=7)
+        e5.pack()
+    if show_student_button==True:
+        e7=Button(tk, text='Student', command=force_student, width=20, bg=button_color, foreground=text_color, font=text_font)
+        e7.config(height=1, width=7)
+        e7.pack()
+    if wrong==True:
+        e6=Label(tk, text='Incorrect Password', width=20)
+        e6.pack()
+    Tk.update_idletasks(tk)
+#Force the student page.
+def force_student():
+    global user_permission, user_logged, force
+    user_logged='student'
+    user_permission='student'
+    force='student'
+    send()
+#Exit application
+def exit_app():
+    global other
+    clear()
+    e1 = Label(tk, text='Password')
+    e1.pack()
+    other = Entry(tk, show='*')
+    other.config(background=entry_background_color, fg=entry_text_color)
+    other.pack()
+    e3 = Button(tk, text='Submit',command=exit_app_next)
+    e3.pack()
+    e4 = Button(tk, text='Back', command=login)
+    e4.pack()
+    Tk.update_idletasks(tk)
+def exit_app_next():
+    global other
+    pass_w=other.get()
+    if encrypt.all(password=pass_w) == 1:
+        clear()
+        login()
+    else:
+        exit()
+#Decrypt app
+def open_app():
+    global other
+    clear()
+    e1 = Label(tk, text='Password')
+    e1.pack()
+    other = Entry(tk, show='*')
+    other.config(background=entry_background_color, fg=entry_text_color)
+    other.pack()
+    e3 = Button(tk, text='Submit', command=open_app_next)
+    e3.pack()
+def open_app_next():
+    global other
+    pass_w=other.get()
+    if decrypt.all(password=pass_w) == 1:
+        clear()
+        open_app()
+    else:
+        clear()
+        exit()
+#If encryption password(s) don't exist, ask them to make one.
+def create_encryption_password():
+    version_note()
+    global other3
+    e1=Label(tk, text='Enter new Encryption Password', width=22)
+    e1.pack()
+    other3=Entry(tk)
+    other3.config(background=entry_background_color, fg=entry_text_color)
+    other3.pack()
+    e2=Button(tk, text='Submit', command=create_encryption_password_next)
+    e2.pack()
+    Tk.update_idletasks(tk)
+def create_encryption_password_next():
+    global other3, startup
+    try:
+        get.new_hash(normal=True, passw=str(other3.get()), memory_float=True) #Makes a new hash
+        startup=False
+        send()
+    except:
+        print("Something happened in create_encryption_password")
+        clear()
+        try:
+            os.remove('hash.txt')
         except:
             pass
-    if os.path.exists('history.txt')==True:
-        try:
-            os.remove('history.aes')
-        except:
-            pass
-    if resetCollections==True:
-        if os.path.exists('collections')==True:
-            shutil.rmtree('collections')
-    if os.path.exists('collections')==False:
-        os.mkdir('collections')
-    #You must set a Normal level password
-    #You can set a global password if need be. Basically a backup.
-    #To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
-    #Test bench
-    #<--Indent to here
+        create_encryption_password()
+tk.config(bg=bg_color)
+if systemDetectedOperatingSystem=="macos":
+    side_tilt=330
+if systemDetectedOperatingSystem != "macos":
+    side_tilt=165
+    button_height=int(button_height*2)
+    button_width=int(button_width*2)
+#Check if the save file is encrypted. If so, ask user for the decrypt password.
+if os.path.exists('history.aes')==True or os.path.exists('data_save.aes'):
+    open_app()
+else:
+    login()
+tk.mainloop()
