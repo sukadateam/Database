@@ -17,10 +17,18 @@ startup=True
 other=None
 other1=None
 other2=None
-other3=None #Encypt/Decrypt Password
+other3=None #Encrypt/Decrypt Password
 force=None
 #If a button is called, it is displayed on the screen.
+def version_note():
+    global y
+    e90=Label(tk, text='Program Version: '+program_version)
+    e90.pack(side=BOTTOM, anchor=W)
 class buttons:
+    def credit(y=200):
+        e20 = Button(tk, text='Credits', command=options.credits, bg=button_color, foreground=text_color, font=text_font)
+        e20.config(height=button_height, width=button_width)
+        e20.place(x=((int(x))/2)-side_tilt, y=y)
     def enable_debug(y=700):
         e18 = Button(tk, text='Enable Debug', command=options.enable_debug, bg=button_color, foreground=text_color, font=text_font)
         e18.config(height=button_height, width=button_width)
@@ -72,7 +80,7 @@ class buttons:
         e9.place(x=((int(x))/2)-side_tilt, y=200)
     def clear_history(anchor=None, side=None):
         e10 = Button(tk, text='Clear History', command=options.clear_history, bg=button_color, foreground=text_color, font=text_font)
-        e10.config(height=button_width, width=button_width)
+        e10.config(height=15, width=15)
         e10.place(x=0, y=0)
     def signout_item(anchor=None, side=None, y=100):
         e11 = Button(tk, text='Signout item', command=options.signout_item, bg=button_color, foreground=text_color, font=text_font)
@@ -84,7 +92,7 @@ class buttons:
         e12.place(x=((int(x))/2)-side_tilt, y=y)
     def backup():
         e13 = Button(tk, text='Backup', command=options.backup, bg=button_color, foreground=text_color, font=text_font)
-        e13.config(height=button_width, width=button_width)
+        e13.config(height=15, width=15)
         e13.pack(side=LEFT)
     def remove_student(y=900):
         e15 = Button(tk, text='Remove Student', command=options.remove_student, bg=button_color, foreground=text_color, font=text_font)
@@ -99,6 +107,15 @@ class buttons:
         e17.config(height=button_height, width=button_width)
         e17.place(x=((int(x))/2)-side_tilt, y=y)
 class options:
+    def credits():
+        clear()
+        e1 = Label(tk, text='Created and Designed By Brandon Robinson\nPartial credit goes to Albert Plummer and Abdullahi Abdullahi\nGithub Page: github.com/sukadateam/database\nProgram Version: '+program_version, bg=button_color, foreground=text_color)
+        e1.pack()
+        e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+        e2.config(height=button_height, width=button_width)
+        e2.pack()
+        save_in_txtFile.students()
+        Tk.update_idletasks(tk)
     def enable_debug():
         global debug
         debug=True
@@ -340,7 +357,7 @@ class options:
         users.logout()
         clear()
         login()
-    def create_user(user_exists=False):
+    def create_user(user_exists=False, unknownPermission=False, PasswordDoesNotMeetReq=False):
         clear()
         global other, other1, other2
         e1 = Label(tk, text='New user')
@@ -365,6 +382,12 @@ class options:
         if user_exists==True:
             e6=Label(tk, text='User exists', bg=button_color, foreground=text_color)
             e6.pack()
+        if unknownPermission==True:
+            e7=Label(tk, text='Unknown Permission\nAllowed Permissions:\nAdmin, Teacher, Student', bg=button_color, foreground=text_color)
+            e7.pack()
+        if PasswordDoesNotMeetReq==True:
+            e8=Label(tk, text='Password Does Not Meet Requirements\nMin Length:'+str(min_length)+'\nMax Length: '+str(max_length)+'\nAllowed Characters: '+allowedPassword_chars, bg=button_color, foreground=text_color)
+            e8.pack()
         Tk.update_idletasks(tk)
     def create_user_next():
         global other, other1, other2
@@ -374,10 +397,14 @@ class options:
         if profanityFilter.filter(name)==0 and profanityFilter.filter(password)==0 and profanityFilter.filter(permission)==0:
             if users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())==False:
                 options.create_user(user_exists=True)
+            elif users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())=="IncorrectPerm":
+                options.create_user(unknownPermission=True)
+            elif users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())=="PasswordDoesNotMeetReq":
+                options.create_user(PasswordDoesNotMeetReq=True)
             else:
                 other, other1, other2 = None, None, None
                 send()
-    def remove_user():
+    def remove_user(UserNotFound=False):
         clear()
         e1 = Label(tk, text='User')
         e1.pack()
@@ -389,19 +416,27 @@ class options:
         e2.pack()
         e5 = Button(tk, text='Back', command=send)
         e5.pack()
+        if UserNotFound==True:
+            e6=Label(tk, text='User Does Not Exist', bg=button_color, foreground=text_color)
+            e6.pack()
         Tk.update_idletasks(tk)
     def remove_user_next():
         global other
         user=other.get()
         user1, permission=users.return_login_cred()
-        if user1 != user and profanityFilter.filter(user)==0:
-            users.remove(user=user)
-        clear()
-        send()
+        if user1.lower() != user.lower() and profanityFilter.filter(user.lower())==0:
+            if users.remove(user=user)=="UserNotFound":
+                options.remove_user(UserNotFound=True)
+            else:
+                clear()
+                send()
+        else:
+            clear()
+            send()
     def save():
         save.all(hide=True)
     def optimize():
-        optimize.run(save_optimizations=True)
+        optimize.run(save_optimizations=True, hide=True)
         clear()
         login()
 def send_student():
@@ -454,7 +489,7 @@ class secret:
         file.close()
     def random():
         #Question, Button1, Button2
-        list15=[['Are you human?','Yes','No'],['Do you like this app?','Yes, It\'s perfect!','No, it could be better.'],['Are taco bell bathrooms clean?','Yes','Oh hell nay!'],['Have you heard of Linus Tech Tips?','Yes','No'],['Who is the first President of the United States?','John Adams','George Washington'],['Do you like memes?','Yes','No'],['Do you like video games?','Yes','No'],['Are you a good person?','Yes','No'],['Who lives in a pineapple under the sea?','Patrick','Spongebob'],['What does Mr. Krabs like the most?','Money','Krappy Patty Formula'],['Chief Wiggims is from what show?','American Dad','Family Guy'],['Peter Griffion is from what show?','American Dad','Family Guy'],['Sally has 10 hotdogs. She ate 5 of them.\nHow many are left?','5','10'],['Dogs Or Cats?','Dogs','Cats'],['Sara would like to send you a picture.','Yes Please!','No thanks.'],['Marvel or DC?','Marvel','DC'],['Click the Yes button.','No','Yes'],['1+1=','2','3'],['Life Or Death?','Life','Death'],['Click No','No','Yes'],['Apple or Samsung?','Apple','Samsung'],['Gem rush your town hall? (COC)','Yes','No! Don\'t waste your gems!'],['Are you an American?','Yes','No'],['Are you a Lefty or Righty?','Righty','Lefty'],['59+125=','184','187'],['Can I get a hiyah?!','Hiyah!','I\'m not a little kid'], ['Do you like PATHS?', 'Yes', 'No'], ['Do you agree?', 'Yes', 'No'], ['What color is blue?','Red','Blue'], ['Is the earth flat?','Yes','No'], ['Does Ohio exist?','Yes','No'], ['Is water wet?','Yes','No'], ['Time for Crab.','Rate','Close'], ['2+2=','21','4.01'], ['Who lives in a pinapple under the sea?','Squidward','SpongQuan'], ['Why are you gay?','What?','Who said i\'m gay?'], ['Fries or Onion rings?','Yes','No'], ['Do you support raccoon rights?','Yes','Yes'], ['Is proper grammar important in an online setting','n0p3','Yes, it is'], ['Do all your base belong to us?','Yes','No'], ['Waffles or Pancakes','Waffles','Pancakes'], ['Badger Badger Badger Badger Badger Badger','Mushroom','Mushroom'], ['You werent supposed to see this get out','Leave','Leave'],['Your teammate has initiated a surrender','F1 Surrender','F2 Continue'], ['Ninjas or Pirates','Ninjas','Pirates'], ['Bulbasaur,Charmander or Squirtle','Charmander','Squirtle'], ['Heads or Tails','Heads','Tails'], ['Is the washington post a reliable source of news','No','Yes'], ['Eat the rich?','Yes','Yes'], ['Is dirt dirty','Yes','No'], ['What\'s brown and sticky','A stick','*redacted*'], ['Soup or Salad?','soup','WHATS A SUPERSALAD'], ['Up or down?','dowp','upown'], ['Is this statement true?','True','False'], ['Could we cover the earth in pudding?','Maybe','Hmmmm Pudding!'],['Are we real?','Yes','Mayonaise'],['Is mayonaise an instrament?','Pudding','Horseraddish'],['Do you like your teacher?','Yes','No'], ['Which do you like more?', 'Tacos', 'Salad']]
+        list15=[['Oh no, our table it\'s broken! What should we do?','Go to Ikea. :(','Use some duct tape!'],['Is english hard?','Engrish','No. It\'s easy.'],['Potato + Squash = ?','Squatato','Watermelon'],['What\'s funnier than 24?','25','23'],['Are you human?','Yes','No'],['Do you like this app?','Yes, It\'s perfect!','No, it could be better.'],['Are taco bell bathrooms clean?','Yes','Oh hell nay!'],['Have you heard of Linus Tech Tips?','Yes','No'],['Who is the first President of the United States?','John Adams','George Washington'],['Do you like memes?','Yes','No'],['Do you like video games?','Yes','No'],['Are you a good person?','Yes','No'],['Who lives in a pineapple under the sea?','Patrick','Spongebob'],['What does Mr. Krabs like the most?','Money','Krappy Patty Formula'],['Chief Wiggims is from what show?','American Dad','Family Guy'],['Peter Griffion is from what show?','American Dad','Family Guy'],['Sally has 10 hotdogs. She ate 5 of them.\nHow many are left?','5','10'],['Dogs Or Cats?','Dogs','Cats'],['Sara would like to send you a picture.','Yes Please!','No thanks.'],['Marvel or DC?','Marvel','DC'],['Click the Yes button.','No','Yes'],['1+1=','2','3'],['Life Or Death?','Life','Death'],['Click No','No','Yes'],['Apple or Samsung?','Apple','Samsung'],['Gem rush your town hall? (COC)','Yes','No! Don\'t waste your gems!'],['Are you an American?','Yes','No'],['Are you a Lefty or Righty?','Righty','Lefty'],['59+125=','184','187'],['Can I get a hiyah?!','Hiyah!','I\'m not a little kid'], ['Do you like PATHS?', 'Yes', 'No'], ['Do you agree?', 'Yes', 'No'], ['What color is blue?','Red','Blue'], ['Is the earth flat?','Yes','No'], ['Does Ohio exist?','Yes','No'], ['Is water wet?','Yes','No'], ['Time for Crab.','Rate','Close'], ['2+2=','21','4.01'], ['Who lives in a pinapple under the sea?','Squidward','SpongQuan'], ['Why are you gay?','What?','Who said i\'m gay?'], ['Fries or Onion rings?','Yes','No'], ['Do you support raccoon rights?','Yes','Yes'], ['Is proper grammar important in an online setting','n0p3','Yes, it is'], ['Do all your base belong to us?','Yes','No'], ['Waffles or Pancakes','Waffles','Pancakes'], ['Badger Badger Badger Badger Badger Badger','Mushroom','Mushroom'], ['You werent supposed to see this get out','Leave','Leave'],['Your teammate has initiated a surrender','F1 Surrender','F2 Continue'], ['Ninjas or Pirates','Ninjas','Pirates'], ['Bulbasaur,Charmander or Squirtle','Charmander','Squirtle'], ['Heads or Tails','Heads','Tails'], ['Is the washington post a reliable source of news','No','Yes'], ['Eat the rich?','Yes','Yes'], ['Is dirt dirty','Yes','No'], ['What\'s brown and sticky','A stick','*redacted*'], ['Soup or Salad?','soup','WHATS A SUPERSALAD'], ['Up or down?','dowp','upown'], ['Is this statement true?','True','False'], ['Could we cover the earth in pudding?','Maybe','Hmmmm Pudding!'],['Are we real?','Yes','Mayonaise'],['Is mayonaise an instrament?','Pudding','Horseraddish'],['Do you like your teacher?','Yes','No'], ['Which do you like more?', 'Tacos', 'Salad']]
         item=random.randint(0, len(list15)-1)
         return (list15[item])[0], (list15[item])[1], (list15[item])[2]
     def item1():
@@ -483,12 +518,15 @@ def student_screen():
     clear()
     buttons.signout_item()
     buttons.signin_item()
-    buttons.logout(y=200)
+    buttons.credit()
+    buttons.logout(y=300)
     secret.item1()
+    version_note()
 #If permission is teacher. First page.
 def teacher_screen():
     global other3
     clear()
+    version_note()
     buttons.add_tool()
     buttons.remove_tool()
     buttons.show_tools()
@@ -503,6 +541,7 @@ def teacher_screen():
 #Teacher second page.
 def teacher_page2():
     clear()
+    version_note()
     buttons.show_logged_items(y=0)
     buttons.show_students(y=100)
     buttons.logout(y=200)
@@ -512,6 +551,7 @@ def teacher_page2():
 #If permission is admin. First page.
 def admin_screen():
     clear()
+    version_note()
     buttons.add_tool()
     buttons.remove_tool()
     buttons.show_tools()
@@ -531,6 +571,7 @@ def admin_screen():
 #Admin second page
 def admin_page2():
     clear()
+    version_note()
     buttons.logout(y=0)
     buttons.signin_item(y=100)
     buttons.signout_item(y=200)
@@ -599,6 +640,7 @@ def ask_encrypt_password(wrong=False):
         print('Hash file found')
         global other3
         clear()
+        version_note()
         e1=Label(tk, text='Enter Encrypt/Decrypt Password', width=23)
         e1.pack()
         other3=Entry(tk, show='*')
@@ -629,6 +671,7 @@ def ask_encrypt_password_next():
 #Display a screen that allows the user to login.
 def login(wrong=False, e1_button='Login', command=ask, show_student_button=True, show_exit_button=True):
     clear()
+    version_note()
     global name, password, force
     force=None
     e2 = Label(tk, text='Username: ')
@@ -708,6 +751,7 @@ def open_app_next():
         exit()
 #If encryption password(s) don't exist, ask them to make one.
 def create_encryption_password():
+    version_note()
     global other3
     e1=Label(tk, text='Enter new Encryption Password', width=22)
     e1.pack()
@@ -735,7 +779,9 @@ tk.config(bg=bg_color)
 if systemDetectedOperatingSystem=="macos":
     side_tilt=330
 if systemDetectedOperatingSystem != "macos":
-    side_tilt=80
+    side_tilt=165
+    button_height=int(button_height*2)
+    button_width=int(button_width*2)
 #Check if the save file is encrypted. If so, ask user for the decrypt password.
 if os.path.exists('history.aes')==True or os.path.exists('data_save.aes'):
     open_app()
