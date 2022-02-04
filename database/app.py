@@ -1,5 +1,6 @@
 from email.utils import parseaddr
 from operator import truediv
+from platform import python_version
 from tkinter import *
 from xml.etree.ElementTree import TreeBuilder
 from custom_database import *
@@ -637,7 +638,6 @@ def ask(command=send):
 #Ask for the encyption password to allow for auto backups.
 def ask_encrypt_password(wrong=False): 
     if os.path.exists('hash.aes')==1:
-        print('Hash file found')
         global other3
         clear()
         version_note()
