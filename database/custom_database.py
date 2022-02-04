@@ -1,5 +1,5 @@
 #Things to do next:
-#Nothin'''!
+#Nothin'!!!
 import sys, os
 from os import stat
 from os import remove, walk
@@ -1212,6 +1212,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             if new_permission not in allowed_users:
                 if hide==False:
                     print(errors.incorrect_perm())
+                    return 'IncorrectPerm'
             if profanityFilter.filter(new_user)==1:
                 if hide==False:
                     print(errors.profanityDetected(new_user, user=user_logged))
@@ -1249,7 +1250,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         print(errors.doesNotObeyRestrictions())
                         print('Password Min Lnegth:',min_length)
                         print('Password Max Length:',max_length)
-                        print('Passwoed can only contain:',allowedPassword_chars)
+                        print('Password can only contain:',allowedPassword_chars)
+                        return "PasswordDoesNotMeetReq"
             if num1 == True or num2 == True:
                 print(errors.cannot_call_func('users.create()'))
         def remove(user=None, hide=False):
@@ -1270,6 +1272,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 if found==False:
                     if hide==False:
                         print(errors.user_not_found())
+                    return "UserNotFound"
             if num == True:
                 if hide==False:
                     print(errors.cannot_call_func('users.remove()'))
@@ -2103,7 +2106,9 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 beta=input('What beta version is this: Ex: 1, 2, 3: ')
             if c=="2":
                 c='Full'
-            version_in=input('Enter the Version: Ex: 0.2.7: ')
+            version_in=input('Enter the Version: Ex: 0.2.7 or hit enter: ')
+            if version_in=="":
+                version_in=program_version
             if beta != '':
                 backup_name=version_in+' '+c+' '+beta
             else:
@@ -2165,5 +2170,6 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         os.mkdir('collections')
     #You must set a Normal level password
     #You can set a global password if need be. Basically a backup.
+    #To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
     #Test bench
     #<--Indent to here
