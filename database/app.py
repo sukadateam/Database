@@ -21,6 +21,8 @@ other2=None
 other3=None #Encrypt/Decrypt Password
 force=None
 #If a button is called, it is displayed on the screen.
+def close_app_option():
+    safe_exit.close(create_backup=True, encryption_passw="Gertie", hide=True, random_name=True)
 def version_note():
     global y
     e90=Label(tk, text='Program Version: '+program_version)
@@ -241,7 +243,8 @@ class options:
         if already_signed==True:
             e8=Label(tk, text='Item already signed out', bg=button_color, foreground=text_color)
             e8.pack()
-        secret.note()
+        if secretsAllowed==True:
+            secret.note()
         Tk.update_idletasks(tk)
     def signout_item_next():
         global other, other1
@@ -592,22 +595,23 @@ def ask(command=send):
     except:
         s=True
         login()
-    if user=="<turtles>":
-        if pass_w=="forever":
-            clear()
-            e1=Label(tk, text='Congrats you found (a) secret page. Try and find more! (2/5)\nHint: A button is not what it seems.')
-            e1.pack()
-            e2=Button(tk, text='Back', command=login)
-            e2.pack()
-            s=False
-    if user=="<secret>":
-        if pass_w=="PATHS":
-            clear()
-            e1=Label(tk, text='Congrats you found (a) secret page. Try and find more! (1/5)\n<turtles> should live forever')
-            e1.pack()
-            e2=Button(tk, text='Back', command=login)
-            e2.pack()
-            s=False
+    if secretsAllowed==True:
+        if user=="<turtles>":
+            if pass_w=="forever":
+                clear()
+                e1=Label(tk, text='Congrats you found (a) secret page. Try and find more! (2/5)\nHint: A button is not what it seems.')
+                e1.pack()
+                e2=Button(tk, text='Back', command=login)
+                e2.pack()
+                s=False
+        if user=="<secret>":
+            if pass_w=="PATHS":
+                clear()
+                e1=Label(tk, text='Congrats you found (a) secret page. Try and find more! (1/5)\n<turtles> should live forever')
+                e1.pack()
+                e2=Button(tk, text='Back', command=login)
+                e2.pack()
+                s=False
     if s==True:
         if users.login_request(user=user.lower(), password=pass_w) == True:
             if profanityFilter.filter(str(name))==0 and profanityFilter.filter(str(pass_w))==0:
@@ -688,7 +692,7 @@ def login(wrong=False, e1_button='Login', command=ask, show_student_button=True,
     e1.config(height=1, width=7)
     e1.pack()
     if show_exit_button==True:
-        e5 = Button(tk, text='Exit', command=exit_app, width=20, bg=button_color, foreground=text_color, font=text_font)
+        e5 = Button(tk, text='Exit', command=close_app_option, width=20, bg=button_color, foreground=text_color, font=text_font)
         e5.config(height=1, width=button_width)
         e5.config(width=7)
         e5.pack()
