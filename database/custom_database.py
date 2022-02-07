@@ -1,10 +1,13 @@
 #Things to do next:
 #Nothin'!!!
+from email.encoders import encode_7or8bit
 import sys, os
 from os import stat
 from os import remove, walk
+from venv import create
 from xmlrpc.client import FastMarshaller
 import zipfile
+import time
 ex=False
 memory_hash=''
 n = list(sys.argv)
@@ -88,19 +91,44 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     except:
         print("Couldn't import pyAesCrypt")
     #A class for my application.
+    class safe_exit():
+        def close(create_backup=True, encryption_passw=None, hide=False, random_name=False, backup_name=None):
+            print('Safe Exit Protocol In Action! DO NOT CLOSE APPLICATION!')
+            safe_exit.RmExcessFiles()
+            if create_backup==True:
+                try:
+                    if backup.create(password=encryption_passw, hide=hide, random_name=random_name, backup_name=backup_name) != "WrongPassword":
+                        print('Application Safely Closed. App will force quit in 5 seconds.')
+                        time.sleep(5)
+                        exit()
+                except:
+                    print('Illegal Instruction.')
+        def RmExcessFiles():
+            #Clean files and folders.
+            try: shutil.rmtree('collections')
+            except: pass
+            try: os.remove('hash.txt')
+            except: pass
+            try: os.remove('hash_other.txt')
+            except: pass
     class save_in_txtFile:
         def remove_files(hide=False):
-            os.chdir('collections')
-            history.create_history('Null', 'Remove Files In Collections Folder', hide=hide)
-            #Remove any and all files created by this class.
-            file=['student_logs.txt', 'users.txt', 'tools.txt']
-            for i in range(len(file)):
-                try:
-                    os.remove(file[i])
-                except:
-                    if debug==True:
-                        print('Could Not Locate:', file[i])
             os.chdir(path)
+            if os.path.exists('collections')==True:
+                os.chdir('collections')
+                history.create_history('Null', 'Remove Files In Collections Folder', hide=hide)
+                #Remove any and all files created by this class.
+                file=['student_logs.txt', 'users.txt', 'tools.txt']
+                for i in range(len(file)):
+                    try:
+                        os.remove(file[i])
+                    except:
+                        if debug==True:
+                            print('Could Not Locate:', file[i])
+                os.chdir(path)
+            else:
+                if hide==False:
+                    print('Folder does not exist.')
         def students():
             os.chdir('collections')
             file=open('student.txt','w')
@@ -239,7 +267,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             file.close()
         def clear_all():
             #Clear all files
-            shutil.rmtree('backups')
+            try: shutil.rmtree('backups')
+            except: pass
             os.mkdir('backups')
             backup.reset_count()
         def create(backup_name=None, random_name=False, password=None, hide=False):
@@ -259,30 +288,37 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             #Create the backup.
             save.all(hide=hide)
             #Encrypt Files
-            if encrypt.all(password) != 1:
-                #Backup Certian Files
-                list2=['custom_database.py','history_desc.py','vars_to_save','data_save.aes','history.aes', 'settings.py','paths.png','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
-                try: os.chdir('backups')
-                except: pass
-                zipObject= ZipFile(backup_name+'.zip', 'w')
-                try: os.chdir(path)
-                except: pass
-                for i in range(len(list2)):
-                    try:
-                        zipObject.write(list2[i])
-                    except:
-                        pass
-                try: os.chdir('backups')
-                except: pass
-                zipObject.close()
-                try: os.chdir(path)
-                except: pass
-                decrypt.all(password)
-            else:
-                pass
+            try:
+                if encrypt.all(password) != 1:
+                    #Backup Certian Files
+                    list2=['custom_database.py','history_desc.py','vars_to_save','data_save.aes','history.aes', 'settings.py','paths.png','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
+                    try: os.chdir('backups')
+                    except: pass
+                    zipObject= ZipFile(backup_name+'.zip', 'w')
+                    try: os.chdir(path)
+                    except: pass
+                    for i in range(len(list2)):
+                        try:
+                            zipObject.write(list2[i])
+                        except:
+                            pass
+                    try: os.chdir('backups')
+                    except: pass
+                    zipObject.close()
+                    try: os.chdir(path)
+                    except: pass
+                    decrypt.all(password)
+                else:
+                    pass
+            except:
+                print('Wrong Password.')
+                return 'WrongPassword'
             #Update count.py file.
             backup_count+=1
-            os.remove('count.py')
+            try:
+                os.remove('count.py')
+            except:
+                pass
             file=open('count.py','w')
             file.write('backup_count='+str(backup_count))
             file.close()
@@ -1950,7 +1986,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         print('Incorrect Item:',password[i])
                         return 0
             return pass_1
-        def set_min_length(value=None):
+        def set_min_length(value=None, hide=False):
             global min_length
             history.create_history(str(value), 'Set min length', hide=hide)
             num=check_input(value)
@@ -1962,7 +1998,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 print(errors.not_int(item='value'))
             if num == True:
                 print(errors.cannot_call_func('password_restrictions.set_min_length()'))
-        def set_max_length(value=None):
+        def set_max_length(value=None, hide=False):
             global min_length, max_length
             history.create_history(str(value), 'Set max length', hide=hide)
             num=check_input(value)
