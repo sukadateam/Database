@@ -22,7 +22,9 @@ other3=None #Encrypt/Decrypt Password
 force=None
 #If a button is called, it is displayed on the screen.
 def close_app_option():
-    safe_exit.close(create_backup=True, encryption_passw="Gertie", hide=True, random_name=True)
+    global other3
+    password1=other3.get()
+    safe_exit.close(create_backup=True, encryption_passw=password1, hide=True, random_name=True)
 def version_note():
     global y
     e90=Label(tk, text='Program Version: '+program_version)
