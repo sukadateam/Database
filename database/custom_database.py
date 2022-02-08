@@ -91,7 +91,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     except:
         print("Couldn't import pyAesCrypt")
     #A class for my application.
-    class safe_exit():
+    class safe_exit:
         def close(create_backup=True, encryption_passw=None, hide=False, random_name=False, backup_name=None):
             print('Safe Exit Protocol In Action! DO NOT CLOSE APPLICATION!')
             safe_exit.RmExcessFiles()
@@ -2223,4 +2223,3 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     #To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
     #Test bench
     #<--Indent to here
-    errors.help()
