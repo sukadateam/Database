@@ -25,3 +25,9 @@ To start the program:
 5. Enter 7, 1, 1. Now create a user. Use permission (admin).
 
 6. Exit shell and open app.py and login. After login it will ask you to create a encrypt/decrypt password.
+
+
+#Current Notes For Code:
+<br>1. custom_database.py may not return "WrongPassword" Correctly. Currently Working on a fix.
+<br>2. Documentation is currently being added into the source code.
+<br>3. Working on fixing typos such as Grammer.
