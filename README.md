@@ -4,7 +4,7 @@ Discord Server: N/A
 
 To setup. Install all items in requirements.txt using pip and run custom_database.py. That's it!
 <br>pip install -r requirements.txt
-<br>python3 -m pip install -r requirments.txt
+<br>python3 -m pip install -r requirements.txt
 
 <br>Please note: Windows And MacOS are currently be used for application testing.
 <br><br>Nerdy Stuff:<br>For the absolute latest version download the source code. Not in releases. May cause issues. It won't always be tested before updated. Do not do this if you are looking for a stable version.
