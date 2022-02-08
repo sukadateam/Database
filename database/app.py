@@ -20,11 +20,19 @@ other1=None
 other2=None
 other3=None #Encrypt/Decrypt Password
 force=None
+try:
+    abdsdfugvyub=debug
+except:
+    print('Debug Var Not Found. Setting Debug To False.')
+    debug=False
 #If a button is called, it is displayed on the screen.
 def close_app_option():
     global other3
-    password1=other3.get()
-    safe_exit.close(create_backup=True, encryption_passw=password1, hide=True, random_name=True)
+    if other3==None:
+        exit()
+    else:
+        password1=other3.get()
+        safe_exit.close(create_backup=True, encryption_passw=password1, hide=debug, random_name=True)
 def version_note():
     global y
     e90=Label(tk, text='Program Version: '+program_version)
@@ -202,8 +210,7 @@ class options:
             print('Unknown Error.')
     def backup():
         global other3
-        print(other3)
-        backup.create(random_name=True, password=other, hide=True)
+        backup.create(random_name=True, password=other3, hide=debug)
     def clear_history():
         history.clear()
     def show_tools():
@@ -254,7 +261,7 @@ class options:
         if list1[1] in students and check.barcode(list1[0])==False and check.signed_out_item(list1[0])==False:
             data_base.edit.add_item(data_base='logs', item_to_add=list1)
             clear()
-            save.all(hide=True)
+            save.all(hide=debug)
             send()
         else:
             name_no=False
@@ -285,11 +292,11 @@ class options:
         global other
         if data_base.edit.app.remove_item(data_base='logs', barcode=other.get())==True:
             clear()
-            save.all(hide=True)
+            save.all(hide=debug)
             send()
         else:
             options.signin_item(doesNotExist=True)
-    def remove_tool():
+    def remove_tool(toolDoesNotExist=False):
         global other
         clear()
         e1 = Label(tk, text='Barcode')
@@ -301,14 +308,19 @@ class options:
         e2.pack()
         e5 = Button(tk, text='Back', command=send)
         e5.pack()
+        if toolDoesNotExist==True:
+            e4=Label(tk, text='Tool Does Not Exist')
+            e4.pack()
         Tk.update_idletasks(tk)
     def remove_tool_next():
         global other
         name=other.get()
         if profanityFilter.filter(name)==0:
-            data_base.edit.app.remove_row(data_base='tools', name=name)
-        clear()
-        send()
+            if data_base.edit.app.remove_row(data_base='tools', name=name) == True:
+                clear()
+                send()
+            else:
+                options.remove_tool(toolDoesNotExist=True)
     def add_tool(id_exists=False):
         clear()
         global other, other1
@@ -440,9 +452,9 @@ class options:
             clear()
             send()
     def save():
-        save.all(hide=True)
+        save.all(hide=debug)
     def optimize():
-        optimize.run(save_optimizations=True, hide=True)
+        optimize.run(save_optimizations=True, hide=debug)
         clear()
         login()
 def send_student():
@@ -458,7 +470,7 @@ def send():
     except: pass
     try: os.remove('history.aes')
     except: pass
-    save.all(hide=True)
+    save.all(hide=debug)
     try:
         os.remove('hash.txt')
     except:
@@ -618,17 +630,13 @@ def ask(command=send):
         if users.login_request(user=user.lower(), password=pass_w) == True:
             if profanityFilter.filter(str(name))==0 and profanityFilter.filter(str(pass_w))==0:
                 print('Login Success!')
-                try:
-                    backup.create(random_name=True, password=pass_w, hide=True)
-                except:
-                    pass
                 u, p = users.return_login_cred()
                 if p == "admin" or p=="teacher":
                     if startup==True:
                         ask_encrypt_password()
                     else:
                         try:
-                            backup.create(random_name=True, password=other3, hide=True)
+                            backup.create(random_name=True, password=other3, hide=debug)
                         except:
                             pass
                         command()
@@ -639,7 +647,7 @@ def ask(command=send):
         else:
             clear()
             print('Incorrect Password Attempt')
-            history.create_history(user=user, usage='Login Failed', add_desc=True, desc='Incorrect Password', manual_record=True, hide=True)
+            history.create_history(user=user, usage='Login Failed', add_desc=True, desc='Incorrect Password', manual_record=True, hide=debug)
             login(wrong=True)
 #Ask for the encyption password to allow for auto backups.
 def ask_encrypt_password(wrong=False): 
@@ -672,8 +680,9 @@ def ask_encrypt_password_next():
         startup=False
         send()
     else:
-        history.create_history('Unknown User', 'Incorrect Encryption Password', manual_record=True, hide=True)
+        history.create_history('Unknown User', 'Incorrect Encryption Password', manual_record=True, hide=debug)
         ask_encrypt_password(wrong=True)
+    Tk.update_idletasks(tk)
 #Display a screen that allows the user to login.
 def login(wrong=False, e1_button='Login', command=ask, show_student_button=True, show_exit_button=True):
     clear()
