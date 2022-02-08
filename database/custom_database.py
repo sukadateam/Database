@@ -1734,6 +1734,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         for i in range(len(row)):
                             print('Item:',((row[i])[1])[0],' | Serial:',((row[i])[1])[1])
         class empty:
+            def help():
+                print('Branches:\n  data_base.empty.all()\n  data_base.empty.one()')
             #Clear all info in 1 or more databases.
             def all(hide=False):
                 #Reset all data compiled for databases.
@@ -1762,6 +1764,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     if num1 == True:
                         print(errors.cannot_call_func('data_base.empty.one()'))
         class show:
+            def help():
+                print('Branches:\n  data_base.show.show_column()\n  data_base.show.show_row()\n  data_base.show.show_lists()\n  data_base.show.all_in_database()\n  data_base.show.all_data_bases()\n  data_base.show.info()')
             def show_column(data_base=None, database=None):
                 if data_base == None:
                     data_base=database
@@ -1871,6 +1875,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.info()'))
         class remove:
+            def help():
+                print('Branches:\n  data_base.remove.all()\n  data_base.remove.one_set()\n  data_base.remove.reset_to_standard()')
             def all(hide=False):
                 history.create_history(None, 'Remove All', hide=hide)
                 global data_bases, row, lists
@@ -1913,6 +1919,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 except:
                     pass
         class create:
+            def help():
+                print('Branches:\n  data_base.create.database()')
             def database(data_base=None, database=None, status=True, type=None, owner='all', columns=None, hide=False):
                 if data_base == None:
                     data_base=database
@@ -1976,6 +1984,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         if num1 == True and num2 == True:
                             print(errors.cannot_call_func('data_base.create.datebase()'))
     class password_restrictions:
+        def help():
+            print('Branches:\n  password_restrictions.check_password()\n  password_restrictions.set_min_length()\n  password_restrictions.set_max_length()')
         def check_password(password):
             pass_1=0
             if len(password)>min_length-1 and len(password)-1<max_length:
@@ -2013,6 +2023,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             if num == True:
                 print(errors.cannot_call_func('password_restrictions.set_max_length()'))
     class errors:
+        def help():
+            print('Branches:\n  errors.FileDoesNotExist()\n  errors.NotSignedIn()\n  errors.BackupNameExists()\n  errors.profanityDetected()\n  errors.doesNotObeyRestrictions()\n  errors.database_does_not_exist()\n  errors.cannot_call_func()\n  errors.incorrect_perm()\n  errors.user_exists()\n  errors.user_not_found()\n  errors.not_list()\n  errors.not_str()\n  errors.not_bool()\n  errors.not_int()')
         def FileDoesNotExist(var):
             history.create_history(var, 'FileDoesNotExist', manual_record=auto_error_record, hide=debug)
             print('(Error) File does not exist.')
@@ -2211,3 +2223,4 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     #To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
     #Test bench
     #<--Indent to here
+    errors.help()
