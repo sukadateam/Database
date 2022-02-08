@@ -1,8 +1,11 @@
-For all devices.
+pip install -r requirements.txt (Universal) or python3 -m pip install -r requirements.txt (MacOS/UnAssigned)
 
-Manually install items in requirements.txt then
-Run custom_database.py
+Edit settings.py and scroll to the bottom and set side_tilt=330 to side_tilt=80 #MacOS and Windows has a different ratio port so this is needed.
 
-All done.
+Recommended python 3.10.2. if else: change required_version to your version in settings.py
 
-Custom_database now automatically sets things up on startup.
+Open Shell.py with python.
+
+Enter 7, 1, 1. Now create a user. Use permission (admin).
+
+Exit shell and open app.py and login. After login it will ask you to create a encrypt/decrypt password.
