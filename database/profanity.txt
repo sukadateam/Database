@@ -82,7 +82,6 @@ alchoholic
 drugs
 drug
 coccaine
-meth
 pot
 marijuana
 marryjane
@@ -231,3 +230,4 @@ knocker
 stone
 shooter
 yeast
+bdsm
