@@ -4,6 +4,7 @@ from platform import python_version
 from tkinter import *
 from xml.etree.ElementTree import TreeBuilder
 from custom_database import *
+import subprocess
 import webbrowser
 import count
 import time
@@ -32,7 +33,7 @@ def close_app_option():
         exit()
     else:
         password1=other3.get()
-        safe_exit.close(create_backup=True, encryption_passw=password1, hide=debug, random_name=True)
+        safe_exit.close(create_backup=True, encryption_passw=password1, hide=logic.gate.not_gate(debug), random_name=True)
 def version_note():
     global y
     e90=Label(tk, text='Program Version: '+program_version)
@@ -146,6 +147,12 @@ class options:
         e2.config(height=button_height, width=button_width)
         e2.pack()
         save_in_txtFile.students()
+        os.chdir('collections')
+        if systemDetectedOperatingSystem=="windows":
+            os.system('notepad.exe student.txt')
+        if systemDetectedOperatingSystem=="macos":
+            subprocess.call(['open', '-a', 'TextEdit', 'student.txt'])
+        os.chdir(path)
         Tk.update_idletasks(tk)
     def show_logged_items():
         clear()
@@ -156,6 +163,12 @@ class options:
         e2.config(height=button_height, width=button_width)
         e2.pack()
         save_in_txtFile.logs()
+        os.chdir('collections')
+        if systemDetectedOperatingSystem=="windows":
+            os.system('notepad.exe student_logs.txt')
+        if systemDetectedOperatingSystem=="macos":
+            subprocess.call(['open', '-a', 'TextEdit', 'student_logs.txt'])
+        os.chdir(path)
         Tk.update_idletasks(tk)
     def remove_student(notFound=False):
         clear()
@@ -210,7 +223,7 @@ class options:
             print('Unknown Error.')
     def backup():
         global other3
-        backup.create(random_name=True, password=other3, hide=debug)
+        backup.create(random_name=True, password=other3, hide=logic.gate.not_gate(debug))
     def clear_history():
         history.clear()
     def show_tools():
@@ -222,7 +235,12 @@ class options:
         e2.config(height=button_height, width=button_width)
         e2.pack()
         save_in_txtFile.tools()
-        webbrowser.open('tools.txt')
+        os.chdir('collections')
+        if systemDetectedOperatingSystem=="windows":
+            os.system('notepad.exe tools.txt')
+        if systemDetectedOperatingSystem=="macos":
+            subprocess.call(['open', '-a', 'TextEdit', 'tools.txt'])
+        os.chdir(path)
         Tk.update_idletasks(tk)
     def signout_item(no_name=False, no_barcode=False, already_signed=False):
         global other, other1
@@ -241,7 +259,7 @@ class options:
         other1.pack()
         e3 = Button(tk, text='Submit', command=options.signout_item_next, bg=button_color, foreground=text_color)
         e3.pack()
-        e5 = Button(tk, text='Back', command=send_student, bg=button_color, foreground=text_color)
+        e5 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
         e5.pack()
         if no_name==True:
             e6=Label(tk, text='Unknown Student', bg=button_color, foreground=text_color)
@@ -261,7 +279,7 @@ class options:
         if list1[1] in students and check.barcode(list1[0])==False and check.signed_out_item(list1[0])==False:
             data_base.edit.add_item(data_base='logs', item_to_add=list1)
             clear()
-            save.all(hide=debug)
+            save.all(hide=logic.gate.not_gate(debug))
             send()
         else:
             name_no=False
@@ -281,7 +299,7 @@ class options:
         e2 = Button(tk, text='Submit', command=options.signin_item_next, bg=button_color, foreground=text_color)
         e2.config(height=button_height, width=button_width)
         e2.pack()
-        e5 = Button(tk, text='Back', command=send_student, bg=button_color, foreground=text_color)
+        e5 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
         e5.config(height=button_height, width=button_width)
         e5.pack()
         if doesNotExist==True:
@@ -292,7 +310,7 @@ class options:
         global other
         if data_base.edit.app.remove_item(data_base='logs', barcode=other.get())==True:
             clear()
-            save.all(hide=debug)
+            save.all(hide=logic.gate.not_gate(debug))
             send()
         else:
             options.signin_item(doesNotExist=True)
@@ -452,13 +470,11 @@ class options:
             clear()
             send()
     def save():
-        save.all(hide=debug)
+        save.all(hide=logic.gate.not_gate(debug))
     def optimize():
-        optimize.run(save_optimizations=True, hide=debug)
+        optimize.run(save_optimizations=True, hide=logic.gate.not_gate(debug))
         clear()
         login()
-def send_student():
-    send()
 #Call to clear the screen.
 def clear():
     for widget in tk.winfo_children():
@@ -470,7 +486,7 @@ def send():
     except: pass
     try: os.remove('history.aes')
     except: pass
-    save.all(hide=debug)
+    save.all(hide=logic.gate.not_gate(debug))
     try:
         os.remove('hash.txt')
     except:
@@ -636,7 +652,7 @@ def ask(command=send):
                         ask_encrypt_password()
                     else:
                         try:
-                            backup.create(random_name=True, password=other3, hide=debug)
+                            backup.create(random_name=True, password=other3, hide=logic.gate.not_gate(debug))
                         except:
                             pass
                         command()
@@ -647,7 +663,7 @@ def ask(command=send):
         else:
             clear()
             print('Incorrect Password Attempt')
-            history.create_history(user=user, usage='Login Failed', add_desc=True, desc='Incorrect Password', manual_record=True, hide=debug)
+            history.create_history(user=user, usage='Login Failed', add_desc=True, desc='Incorrect Password', manual_record=True, hide=logic.gate.not_gate(debug))
             login(wrong=True)
 #Ask for the encyption password to allow for auto backups.
 def ask_encrypt_password(wrong=False): 
@@ -680,7 +696,7 @@ def ask_encrypt_password_next():
         startup=False
         send()
     else:
-        history.create_history('Unknown User', 'Incorrect Encryption Password', manual_record=True, hide=debug)
+        history.create_history('Unknown User', 'Incorrect Encryption Password', manual_record=True, hide=logic.gate.not_gate(debug))
         ask_encrypt_password(wrong=True)
     Tk.update_idletasks(tk)
 #Display a screen that allows the user to login.
