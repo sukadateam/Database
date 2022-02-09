@@ -9,6 +9,7 @@ from venv import create
 from xmlrpc.client import FastMarshaller
 import zipfile
 import time
+startupCount=time.time()
 ex=False
 memory_hash=''
 n = list(sys.argv)
@@ -31,13 +32,8 @@ except:
     print('Please manually install all required items in requirements.txt.')
 password=None
 from settings import *
-try:
-    import directory
-    import version
-except:
-    print('Automatic setup in progess.')
-    import get_directory
-    import version_config
+import get_directory
+import version_config
 systemDetectedOperatingSystem=None
 list1=[]
 try:
@@ -95,6 +91,25 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         class gate:
             def help():
                 print('Branches:\n  logic.gate.not_gate()\n  logic.gate.and_gate()\n  logic.gate.or_gate()')
+            def xor_gate(input1, input2):
+                if input1 == 0 and input2 == 0:
+                    return 0
+                elif input1 == 1 and input2 == 1:
+                    return 0
+                elif input1 == 0 and input2 == 1:
+                    return 1
+                elif input1 == 1 and input2 == 0:
+                    return 1
+                elif input1 == False and input2 == False:
+                    return False
+                elif input1 == True and input2 == True:
+                    return False
+                elif input1 == False and input2 == True:
+                    return True
+                elif input1 == True and input2 == False:
+                    return True
+                else:
+                    return "None"
             def not_gate(input1):
                 if input1==1:
                     return 0
@@ -2178,9 +2193,46 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             backup_count=backup_startNumber
     if os.path.exists('backups')==False:
         os.mkdir('backups')
-    check_settingsImproved()
+    try:
+        os.remove('hash.txt')
+    except:
+        pass
+    if os.path.exists('history_desc.py')==False:
+        history.clear()
+    if os.path.exists('data_save.py')==True:
+        try:
+            os.remove('data_save.aes')
+        except:
+            pass
+    if os.path.exists('history.txt')==True:
+        try:
+            os.remove('history.aes')
+        except:
+            pass
+    if resetCollections==True:
+        if os.path.exists('collections')==True:
+            shutil.rmtree('collections')
+    if os.path.exists('collections')==False:
+        os.mkdir('collections')
+    try:
+        abcd=open('data_save.aes', 'r').read()
+        if abcd=="":
+            os.remove('data_save.aes')
+    except:
+        pass
+    try:
+        abcd=open('history.aes', 'r').read()
+        if abcd=="":
+            os.remove('history.aes')
+    except:
+        pass
+    check_settingsImproved(hide=True)
     profanityFilter.setup()
-    print('System Started Correctly!')
+    print('\nSystem Started Correctly!')
+    if time.time()-startupCount<.01:
+        print('Est Time:', str(round(time.time()-startupCount, 2))+'<')
+    else:
+        print('Est Time:', round(time.time()-startupCount, 2))
     try:
         if "-release" in n:
             c=''
@@ -2234,39 +2286,6 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 pass
             print('Exiting...')
             ex=True
-    except:
-        pass
-    try:
-        os.remove('hash.txt')
-    except:
-        pass
-    if os.path.exists('history_desc.py')==False:
-        history.clear()
-    if os.path.exists('data_save.py')==True:
-        try:
-            os.remove('data_save.aes')
-        except:
-            pass
-    if os.path.exists('history.txt')==True:
-        try:
-            os.remove('history.aes')
-        except:
-            pass
-    if resetCollections==True:
-        if os.path.exists('collections')==True:
-            shutil.rmtree('collections')
-    if os.path.exists('collections')==False:
-        os.mkdir('collections')
-    try:
-        abcd=open('data_save.aes', 'r').read()
-        if abcd=="":
-            os.remove('data_save.aes')
-    except:
-        pass
-    try:
-        abcd=open('history.aes', 'r').read()
-        if abcd=="":
-            os.remove('history.aes')
     except:
         pass
     #You must set a Normal level password
