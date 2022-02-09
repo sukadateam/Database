@@ -1,5 +1,6 @@
 #Things to do next:
-#Nothin'!!!
+#Add logic Gates.
+#After that Bug Fixes!
 from email.encoders import encode_7or8bit
 import sys, os
 from os import stat
@@ -90,7 +91,45 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         import pyAesCrypt
     except:
         print("Couldn't import pyAesCrypt")
-    #A class for my application.
+    class logic:
+        class gate:
+            def help():
+                print('Branches:\n  logic.gate.not_gate()\n  logic.gate.and_gate()\n  logic.gate.or_gate()')
+            def not_gate(input1):
+                if input1==1:
+                    return 0
+                if input1==0:
+                    return 1
+                if input1==True:
+                    return False
+                if input1==False:
+                    return True
+            def and_gate(input1, input2):
+                if input1 == 0 and input2 == 0:
+                    return 0
+                if input1 == 1 and input2 == 1:
+                    return 1
+                if input1 == 1 and input2 == 0:
+                    return 0
+                if input1 == 0 and input2 == 1:
+                    return 0
+                if input1 == False and input2 == False:
+                    return False
+                if input1 == True and input2 == True:
+                    return True
+                if input1 == True and input2 == False:
+                    return False
+                if input1 == False and input2 == True:
+                    return False
+            def or_gate(input1, input2):
+                if input1 == 0 and input2 == 0:
+                    return 0
+                if input1 == 1 or input2 == 1:
+                    return 1
+                if input1 == False and input2 == False:
+                    return False
+                if input1 == True or input2 == True:
+                    return True
     class safe_exit:
         def close(create_backup=True, encryption_passw=None, hide=False, random_name=False, backup_name=None):
             print('Safe Exit Protocol In Action! DO NOT CLOSE APPLICATION!')
@@ -2218,6 +2257,18 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             shutil.rmtree('collections')
     if os.path.exists('collections')==False:
         os.mkdir('collections')
+    try:
+        abcd=open('data_save.aes', 'r').read()
+        if abcd=="":
+            os.remove('data_save.aes')
+    except:
+        pass
+    try:
+        abcd=open('history.aes', 'r').read()
+        if abcd=="":
+            os.remove('history.aes')
+    except:
+        pass
     #You must set a Normal level password
     #You can set a global password if need be. Basically a backup.
     #To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
