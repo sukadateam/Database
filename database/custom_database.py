@@ -42,10 +42,12 @@ except:
     print('Could not find the required file: history_desc.py You may experience problems.')
 print('This Project is hosted on github. github.com/sukadateam')
 print('If problems occur, try to check if a new version exists.\n\n')
-if sys.version[0:len(required_version)] != required_version and "-skipPythonCheck" not in n:
+if sys.version[0:len(required_version)] != required_version and "-skipPythonCheck" not in n and skip_pythonCheck==False:
     print('Required python version:', required_version)
     print('Current python version:', sys.version[0:len(required_version)])
     sys.exit()
+if skip_pythonCheck==True:
+    n.append('-skipPythonCheck')
 if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck" in n:
     #Used for history file.
     from datetime import date
@@ -154,9 +156,9 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     if backup.create(password=encryption_passw, hide=hide, random_name=random_name, backup_name=backup_name) != "WrongPassword":
                         print('Application Safely Closed. App will force quit in 5 seconds.')
                         time.sleep(5)
-                        exit()
                 except:
-                    print('Illegal Instruction.')
+                    pass
+            exit()
         def RmExcessFiles():
             #Clean files and folders.
             try: shutil.rmtree('collections')
