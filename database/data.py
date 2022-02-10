@@ -8,12 +8,12 @@ lists=[]
 #Data_base, items in list
 
 #Authentication
-known_users=['admin']
-passwords=['admin']
+known_users=['admin', 'teacher']
+passwords=['admin', 'teacher']
 #Look at line 24 for allowed permissions. allowed_users=[]
-permissions=['admin']
-#True =Enabled, False = Disabled.
-active_users=[True]
+permissions=['admin', 'teacher']
+#True = Enabled, False = Disabled.
+active_users=[True, True]
 
 #Current user logged in
 user_logged=None
