@@ -32,7 +32,7 @@ def close_app_option():
     if other3==None:
         exit()
     else:
-        password1=other3.get()
+        password1=other3
         safe_exit.close(create_backup=True, encryption_passw=password1, hide=logic.gate.not_gate(debug), random_name=True)
 def version_note():
     global y
@@ -276,14 +276,15 @@ class options:
     def signout_item_next():
         global other, other1
         list1=[other.get(), other1.get()]
-        if list1[1] in students and check.barcode(list1[0])==False and check.signed_out_item(list1[0])==False:
-            data_base.edit.add_item(data_base='logs', item_to_add=list1)
-            clear()
-            save.all(hide=logic.gate.not_gate(debug))
-            send()
+        if check.barcode(list1[0])==False and check.signed_out_item(list1[0])==False:
+            if list1[1] in students or OnlyAllowKnownStudents==False:
+                data_base.edit.add_item(data_base='logs', item_to_add=list1)
+                clear()
+                save.all(hide=logic.gate.not_gate(debug))
+                send()
         else:
             name_no=False
-            if list1[1] not in students:
+            if list1[1] not in students and OnlyAllowKnownStudents==True:
                 name_no=True
             options.signout_item(no_name=name_no, no_barcode=check.barcode(list1[0]), already_signed=check.signed_out_item(list1[0]))
     def signin_item(doesNotExist=False):
@@ -566,22 +567,26 @@ def teacher_screen():
     buttons.show_tools()
     buttons.create_user()
     buttons.remove_user()
-    buttons.show_students(y=500)
-    buttons.add_student(y=600)
-    buttons.remove_student(y=700)
-    e25=Button(tk, text='Next Screen', command=teacher_page2, bg=button_color, foreground=text_color, font=text_font)
-    e25.config(height=button_height, width=button_width)
-    e25.place(x=((int(x))/2)-side_tilt, y=800)
+    if OnlyAllowKnownStudents==True:
+        buttons.show_students(y=500)
+        buttons.add_student(y=600)
+        buttons.remove_student(y=700)
+        e25=Button(tk, text='Next Screen', command=teacher_page2, bg=button_color, foreground=text_color, font=text_font)
+        e25.config(height=button_height, width=button_width)
+        e25.place(x=((int(x))/2)-side_tilt, y=800)
+    else:
+        e25=Button(tk, text='Next Screen', command=teacher_page2, bg=button_color, foreground=text_color, font=text_font)
+        e25.config(height=button_height, width=button_width)
+        e25.place(x=((int(x))/2)-side_tilt, y=500)
 #Teacher second page.
 def teacher_page2():
     clear()
     version_note()
     buttons.show_logged_items(y=0)
-    buttons.show_students(y=100)
-    buttons.logout(y=200)
+    buttons.logout(y=100)
     e25=Button(tk, text='Back', command=teacher_screen, bg=button_color, foreground=text_color, font=text_font)
     e25.config(height=button_height, width=button_width)
-    e25.place(x=((int(x))/2)-side_tilt, y=300)
+    e25.place(x=((int(x))/2)-side_tilt, y=200)
 #If permission is admin. First page.
 def admin_screen():
     clear()
@@ -651,10 +656,6 @@ def ask(command=send):
                     if startup==True:
                         ask_encrypt_password()
                     else:
-                        try:
-                            backup.create(random_name=True, password=other3, hide=logic.gate.not_gate(debug))
-                        except:
-                            pass
                         command()
                 else:
                     command()
