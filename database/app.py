@@ -318,7 +318,7 @@ class options:
     def remove_tool(toolDoesNotExist=False):
         global other
         clear()
-        e1 = Label(tk, text='Barcode')
+        e1 = Label(tk, text='Barcode', bg=button_color, foreground=text_color)
         e1.pack()
         other = Entry(tk)
         other.config(background=entry_background_color, fg=entry_text_color)
@@ -328,7 +328,7 @@ class options:
         e5 = Button(tk, text='Back', command=send)
         e5.pack()
         if toolDoesNotExist==True:
-            e4=Label(tk, text='Tool Does Not Exist')
+            e4=Label(tk, text='Tool Does Not Exist', bg=button_color, foreground=text_color)
             e4.pack()
         Tk.update_idletasks(tk)
     def remove_tool_next():
@@ -343,12 +343,12 @@ class options:
     def add_tool(id_exists=False):
         clear()
         global other, other1
-        e1 = Label(tk, text='Item name')
+        e1 = Label(tk, text='Item name', bg=button_color, foreground=text_color)
         e1.pack()
         other = Entry(tk)
         other.config(background=entry_background_color, fg=entry_text_color)
         other.pack()
-        e2 = Label(tk, text='Barcode')
+        e2 = Label(tk, text='Barcode', bg=button_color, foreground=text_color)
         e2.pack()
         other1 = Entry(tk)
         other1.config(background=entry_background_color, fg=entry_text_color)
@@ -375,7 +375,7 @@ class options:
     def create_password():
         global other
         clear()
-        e1 = Label(tk, text='New password')
+        e1 = Label(tk, text='New password', bg=button_color, foreground=text_color)
         e1.pack()
         other = Entry(tk)
         other.config(background=entry_background_color, fg=entry_text_color)
@@ -394,20 +394,20 @@ class options:
         users.logout()
         clear()
         login()
-    def create_user(user_exists=False, unknownPermission=False, PasswordDoesNotMeetReq=False):
+    def create_user(user_exists=False, unknownPermission=False, PasswordDoesNotMeetReq=False, NoUsernameEntered=False):
         clear()
         global other, other1, other2
-        e1 = Label(tk, text='New user')
+        e1 = Label(tk, text='New user', bg=button_color, foreground=text_color)
         e1.pack()
         other = Entry(tk)
         other.config(background=entry_background_color, fg=entry_text_color)
         other.pack()
-        e2 = Label(tk, text='Password')
+        e2 = Label(tk, text='Password', bg=button_color, foreground=text_color)
         e2.pack()
         other1 = Entry(tk)
         other1.config(background=entry_background_color, fg=entry_text_color)
         other1.pack() 
-        e3 = Label(tk, text='Permission')
+        e3 = Label(tk, text='Permission', bg=button_color, foreground=text_color)
         e3.pack()
         other2 = Entry(tk)
         other2.config(background=entry_background_color, fg=entry_text_color)
@@ -425,23 +425,30 @@ class options:
         if PasswordDoesNotMeetReq==True:
             e8=Label(tk, text='Password Does Not Meet Requirements\nMin Length:'+str(min_length)+'\nMax Length: '+str(max_length)+'\nAllowed Characters: '+allowedPassword_chars, bg=button_color, foreground=text_color)
             e8.pack()
+        if NoUsernameEntered==True:
+            e9=Label(tk, text='Give the user a name', bg=button_color, foreground=text_color)
+            e9.pack()
         Tk.update_idletasks(tk)
     def create_user_next():
         global other, other1, other2
         name=other.get()
         password=other1.get()
         permission=other2.get()
-        if profanityFilter.filter(name)==0 and profanityFilter.filter(password)==0 and profanityFilter.filter(permission)==0:
-            if users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())==False:
-                options.create_user(user_exists=True)
-            elif users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())=="IncorrectPerm":
-                options.create_user(unknownPermission=True)
-            elif users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())=="PasswordDoesNotMeetReq":
-                options.create_user(PasswordDoesNotMeetReq=True)
-            else:
-                other, other1, other2 = None, None, None
-                send()
-    def remove_user(UserNotFound=False):
+        if name in [None, '', ' ', '  ']:
+            options.create_user(NoUsernameEntered=True)
+        else:
+            if profanityFilter.filter(name)==0 and profanityFilter.filter(password)==0 and profanityFilter.filter(permission)==0:
+                if users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())==False:
+                    options.create_user(user_exists=True)
+                elif users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())=="IncorrectPerm":
+                    options.create_user(unknownPermission=True)
+                elif users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())=="PasswordDoesNotMeetReq":
+                    options.create_user(PasswordDoesNotMeetReq=True)
+                else:
+                    other, other1, other2 = None, None, None
+                    send()
+        Tk.update_idletasks(tk)
+    def remove_user(UserNotFound=False, ThatsYou=False):
         clear()
         e1 = Label(tk, text='User')
         e1.pack()
@@ -453,6 +460,9 @@ class options:
         e2.pack()
         e5 = Button(tk, text='Back', command=send)
         e5.pack()
+        if ThatsYou==True:
+            e7=Label(tk, text='Wait! That was you. I cannot get rid of you.\nI need you here.', bg=button_color, foreground=text_color)
+            e7.pack()
         if UserNotFound==True:
             e6=Label(tk, text='User Does Not Exist', bg=button_color, foreground=text_color)
             e6.pack()
@@ -461,15 +471,20 @@ class options:
         global other
         user=other.get()
         user1, permission=users.return_login_cred()
-        if user1.lower() != user.lower() and profanityFilter.filter(user.lower())==0:
-            if users.remove(user=user)=="UserNotFound":
-                options.remove_user(UserNotFound=True)
+        if user1==user.lower():
+            options.remove_user(ThatsYou=True)
+        elif str(user.lower()) in [None, '', ' ', '  ']:
+            options.remove_user(UserNotFound=True)
+        else:
+            if user1.lower() != user.lower() and profanityFilter.filter(user.lower())==0:
+                if users.remove(user=str(user.lower()))=="UserNotFound":
+                    options.remove_user(UserNotFound=True)
+                else:
+                    clear()
+                    send()
             else:
                 clear()
                 send()
-        else:
-            clear()
-            send()
     def save():
         save.all(hide=logic.gate.not_gate(debug))
     def optimize():
@@ -782,7 +797,7 @@ def open_app_next():
         clear()
         exit()
 #If encryption password(s) don't exist, ask them to make one.
-def create_encryption_password():
+def create_encryption_password(InvalidPassword=False):
     version_note()
     global other3
     e1=Label(tk, text='Enter new Encryption Password', width=22)
@@ -792,21 +807,29 @@ def create_encryption_password():
     other3.pack()
     e2=Button(tk, text='Submit', command=create_encryption_password_next)
     e2.pack()
+    if InvalidPassword==True:
+        e3=Label(tk, text='Invalid Password')
+        e3.pack()
     Tk.update_idletasks(tk)
 def create_encryption_password_next():
     global other3, startup
-    try:
-        get.new_hash(normal=True, passw=str(other3.get()), memory_float=True) #Makes a new hash
-        startup=False
-        send()
-    except:
-        print("Something happened in create_encryption_password")
+    if str(other3.get()) in [None, '', ' ','  ']:
+        print('Got it')
         clear()
+        create_encryption_password(InvalidPassword=True)
+    else:
         try:
-            os.remove('hash.txt')
+            get.new_hash(normal=True, passw=str(other3.get()), memory_float=True) #Makes a new hash
+            startup=False
+            send()
         except:
-            pass
-        create_encryption_password()
+            print("Something happened in create_encryption_password")
+            clear()
+            try:
+                os.remove('hash.txt')
+            except:
+                pass
+            create_encryption_password()
 tk.config(bg=bg_color)
 if systemDetectedOperatingSystem=="macos":
     side_tilt=330
