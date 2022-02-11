@@ -1,4 +1,4 @@
-data_bases=[]
+data_bases=[['tools', True, 'all', 'column_row', ['name','id']], ['logs', True, 'all', 'list']]
 #Name, Active status, owner, type, columns(if type == column_row)
 row=[]
 #Side to side
@@ -29,3 +29,4 @@ students=[]
 opto_data=[]
 opto_row=[]
 opto_lists=[]
+v
