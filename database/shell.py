@@ -10,12 +10,15 @@ while True:
         choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\n(8)Optimize save file\n(9)Check profanity\n(10)Decrypt file\n(11)Encrypt file\n(12)Login\nYour choice: ')
     else:
         choice = input('(1)Create new hash\n(2)Encrypt database\n(3)Decrypt database\n(4)Backup\n(5)Create database\n(6)Save\n(7)Edit database\n(8)Optimize save file\n(9)Check profanity\n(10)Decrypt file\n(11)Encrypt file\n(12)Logout\nYour choice: ')
+    os.system("cls" if os.name == "nt" else "clear")
     if choice == "exit":
-        break
+        safe_exit.close(create_backup=True, encryption_passw=input('Encryption Password: '), hide=True, random_name=True)
+        os.system("cls" if os.name == "nt" else "clear")
     if choice=='11':
         try:
             file=input('What file: ')
             pyAesCrypt.encryptFile(file+'.py', file+'.aes', passw=input('Password: '))
+            os.system("cls" if os.name == "nt" else "clear")
         except:
             print('File does not exist.')
     if choice=='10':
@@ -61,6 +64,7 @@ while True:
         choice=input('\n\n\n(1)Users\n(2)Add row\n(3)Show databases\n(4)Delete database\n(5)Remove row\n(6)Show items in database\n(7)Add Column\n(8)Remove Column\n(9)Overload\nYour choice: ')
         if choice == "9":
             import random
+            dat=input('Enter database to overload: ')
             for i in range(int(input('Choose a Number(100-10000);No comas: '))):
                 a=''
                 b=''
@@ -68,7 +72,7 @@ while True:
                     a+=random.choice('12q9fhecycgy43gf6ucw4b6fxnc')
                 for i in range(8):
                     b+=random.choice('12q9fhecycgy43gf6ucw4b6fxnc')
-                data_base.edit.add_row(data_base=input('Enter database to overload: '), new_row=[a, b], split=False)
+                data_base.edit.add_row(data_base=dat, new_row=[a, b], split=False)
             save.all()
         if choice == "1":
             other=input('\n\n\n(1)Create user\n(2)Remove user\nYour choice: ')
