@@ -1,6 +1,7 @@
 #Things to do next:
 #Add logic Gates.
 #After that Bug Fixes!
+#Make Entry Fields bigger in app.py
 from email.encoders import encode_7or8bit
 import sys, os
 from os import stat
@@ -198,10 +199,11 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             file=open('student_logs.txt','w')
             for i in range(len(lists)):
                 if (lists[i])[0]=="logs":
-                    serial=(((lists[i])[1])[0])[0]
-                    student=(((lists[i])[1])[0])[1]
-                    tool_name=get.tool_name(serial)
-                    file.write('Item: '+display.space(tool_name, max_length=25, hide=True)+' Serial: '+display.space(serial, max_length=25, hide=True)+' Student: '+display.space(student, max_length=25, hide=True))
+                    for x in range(len((lists[i])[1])):
+                        serial=(((lists[i])[1])[x])[0]
+                        student=(((lists[i])[1])[x])[1]
+                        tool_name=get.tool_name(serial)
+                        file.write('Item: '+display.space(tool_name, max_length=25, hide=True)+' Serial: '+display.space(serial, max_length=25, hide=True)+' Student: '+display.space(student, max_length=25, hide=True)+'\n')
                 file.write('\n\n#'+str(25)+' character max length.')
                     #Save Item name, Serial, And student name.
                     #Search tools with serial to find item name.
@@ -1349,6 +1351,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             if num1 == True or num2 == True:
                 print(errors.cannot_call_func('users.create()'))
         def remove(user=None, hide=False):
+            print(type(user))
+            print('User:'+user+':')
             num=check_input(user)
             if num == False:
                 user=user.lower()
@@ -2295,3 +2299,4 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     #To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
     #Test bench
     #<--Indent to here
+    save_in_txtFile.logs()
