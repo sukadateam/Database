@@ -2,6 +2,7 @@
 #Add logic Gates.
 #After that Bug Fixes!
 #Make Entry Fields bigger in app.py
+from dis import show_code
 from email.encoders import encode_7or8bit
 import sys, os
 from os import stat
@@ -50,6 +51,8 @@ if sys.version[0:len(required_version)] != required_version and "-skipPythonChec
 if skip_pythonCheck==True:
     n.append('-skipPythonCheck')
 if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck" in n:
+    if "resetCollections" not in locals() or "resetCollections" not in globals():
+        resetCollections=False
     #Used for history file.
     from datetime import date
     today=date.today()
@@ -291,7 +294,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         print(list3)
         def settings():
             #Shows all settings on the screen.
-            settings1=['backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions','backupOn_StartUp','skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+            settings1=['resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions','backupOn_StartUp','skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
             for i in range(len(settings1)):
                 try:
                     print(settings1[i]+'='+str(globals()[settings1[i]]))
@@ -474,13 +477,18 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             except: pass
     def check_settingsImproved(hide=False):
         found=False
-        settings1=['backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions','backupOn_StartUp','skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
-        types=[int, int, bool, list, bool, bool,str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
+        settings1=['resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions','backupOn_StartUp','skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+        types=[bool, int, int, int, bool, list, bool, bool,str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
         for i in range(len(settings1)):
-            if isinstance(globals()[settings1[i]], types[i]) == False:
-                found=True
-                if hide==False:
-                    print(str(settings1[i]))
+            skip=False
+            if skip_missing_settings==True:
+                if settings1[i] in locals() or settings1[i] in globals():
+                    skip=True
+            if skip==False:
+                if isinstance(globals()[settings1[i]], types[i]) == False:
+                    found=True
+                    if hide==False:
+                        print(str(settings1[i]))
         if found==True:
             if hide==False:
                 print("1 or More settings are incorrect.")
@@ -519,6 +527,18 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 if show_incorrect_settings==True:
                     if hide==False:
                         print('  allowed_digists_forHistory can only be upto 30 and no less than 1.')
+                error_found1=True
+        if isinstance(min_length, int)==True:
+            if min_length<5 or min_length+1>max_length:
+                if show_incorrect_settings==True:
+                    if hide==False:
+                        print('  min_length cannot be less than 5 and/or cannot be bigger than max_length')
+                error_found1=True
+        if isinstance(max_length, int)==True:
+            if max_length-1<min_length or max_length>99:
+                if show_incorrect_settings==True:
+                    if hide==False:
+                        print('  max_length cannot be bigger than 99 and/or cannot be smaller than min_length')
                 error_found1=True
         if error_found1==False:
             if show_incorrect_settings==True:
@@ -2234,7 +2254,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             os.remove('history.aes')
     except:
         pass
-    check_settingsImproved(hide=True)
+    check_settingsImproved(hide=logic.gate.not_gate(show_incorrect_settings))
     profanityFilter.setup()
     print('\nSystem Started Correctly!')
     if time.time()-startupCount<.01:
