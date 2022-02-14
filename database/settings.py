@@ -3,7 +3,7 @@
 #Required python version to run program.
 required_version='3.10.2'
 #Application version. Just for show.
-program_version='0.4.7'
+program_version='0.4.8'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only.
@@ -85,7 +85,7 @@ skip_history_copy=True
 #Enable automated history_file for functions. 
 auto_error_record=True
 #Quit app if one or more settings are incorrect. For safety purposes do not disable.
-quit_ifIncorrect=True
+quit_ifIncorrect=False
 #Record a more informed description of a item in history.txt
 advanced_history=True
 #Automatically check inputs for profanity. May use more CPU power than normal.
@@ -118,7 +118,7 @@ resetCollections=True
 #Settings coming soon. Do not change unless your a dare devil.
 #No settings are pending. Send a request on GitHub for ideas.
 #If a setting is missing, not present, or not there, skip it.
-skip_missing_settings=False
+skip_missing_settings=True
 #When you start the database a backup will be made.
 backupOn_StartUp=False
 #Allowed permissions to create, remove, edit backups.
