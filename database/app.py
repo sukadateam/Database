@@ -39,6 +39,10 @@ def version_note():
     e90=Label(tk, text='Program Version: '+program_version)
     e90.pack(side=BOTTOM, anchor=W)
 class buttons:
+    def center_buttons(y=100):
+        e20 = Button(tk, text='Center Buttons', command=options.center_buttons, bg=button_color, foreground=text_color, font=text_font)
+        e20.config(height=button_height, width=button_width)
+        e20.place(x=((int(x))/2)-side_tilt, y=y)
     def credit(y=200):
         e20 = Button(tk, text='Credits', command=options.credits, bg=button_color, foreground=text_color, font=text_font)
         e20.config(height=button_height, width=button_width)
@@ -121,6 +125,31 @@ class buttons:
         e17.config(height=button_height, width=button_width)
         e17.place(x=((int(x))/2)-side_tilt, y=y)
 class options:
+    def center_buttons(notInteger=False):
+        global other2
+        clear()
+        e1=Label(tk, text='Change Settings file to permanently change.\nCurrent Value: '+str(side_tilt))
+        e1.pack()
+        other2=Entry(tk)
+        other2.config(background=entry_background_color, fg=entry_text_color, width=button_width)
+        other2.pack()
+        e3=Button(tk, text='Submit', command=options.center_buttons_next)
+        e3.pack()
+        e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+        e2.config(height=button_height, width=button_width)
+        e2.pack()
+        if notInteger==True:
+            e4=Label(tk, text='Please enter a number')
+            e4.pack()
+        Tk.update_idletasks(tk)
+    def center_buttons_next():
+        global other2, side_tilt
+        try:
+            side_tilt=int(other2.get())
+            save.all(side_tiltForce=int(other2.get()))
+            send()
+        except ValueError:
+            options.center_buttons(notInteger=True)
     def credits():
         clear()
         e1 = Label(tk, text='Created and Designed By Brandon Robinson\nPartial credit goes to Albert Plummer and Abdullahi Abdullahi\nGithub Page: github.com/sukadateam/database\nProgram Version: '+program_version, bg=button_color, foreground=text_color)
@@ -197,7 +226,7 @@ class options:
         e3=Label(tk, text='New Students Name', bg=button_color, foreground=text_color)
         e3.pack()
         other=Entry(tk)
-        other.config(background=entry_background_color, fg=entry_text_color)
+        other.config()
         other.pack()
         e1=Button(tk, text='Submit', command=options.add_student_next)
         e1.config(height=button_height, width=button_width)
@@ -630,9 +659,10 @@ def admin_page2():
     buttons.show_logged_items(y=300)
     buttons.show_students(y=400)
     buttons.change_password(y1=500)
+    buttons.center_buttons(y=600)
     e25=Button(tk, text='Back', command=admin_screen, bg=button_color, foreground=text_color, font=text_font)
     e25.config(height=button_height, width=button_width)
-    e25.place(x=((int(x))/2)-side_tilt, y=600)
+    e25.place(x=((int(x))/2)-side_tilt, y=700)
 #Ask the database if the entered credentials are correct.
 def ask(command=send):
     global name, password, startup
@@ -745,6 +775,7 @@ def login(wrong=False, e1_button='Login', command=ask, show_student_button=True,
         e6=Label(tk, text='Incorrect Password', width=20)
         e6.pack()
     Tk.update_idletasks(tk)
+    Tk.update(tk)
 #Force the student page.
 def force_student():
     global user_permission, user_logged, force
@@ -829,12 +860,6 @@ def create_encryption_password_next():
                 pass
             create_encryption_password()
 tk.config(bg=bg_color)
-if systemDetectedOperatingSystem=="macos":
-    side_tilt=330
-if systemDetectedOperatingSystem != "macos":
-    side_tilt=165
-    button_height=int(button_height*2)
-    button_width=int(button_width*2)
 #Check if the save file is encrypted. If so, ask user for the decrypt password.
 if os.path.exists('history.aes')==True or os.path.exists('data_save.aes'):
     open_app()
