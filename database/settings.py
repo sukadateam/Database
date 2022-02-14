@@ -21,8 +21,8 @@ set_operating_system=False
 #Allowed windows versions. You can choose 7, 8, 10, 11. Only works if system setting is set to windows.
 allow_windows_version='10'
 #min and max password lengths, and allowed characters
-min_length=5
-max_length=16
+min_length=5 #MCannot be smaller than 5
+max_length=15 #Cannot be bigger than 99
 allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890*()# '
 
 
@@ -114,20 +114,19 @@ disable_filter_admin=False
 retain_backup_time=25 #Startups
 #Clear collections folder on app startup.
 resetCollections=True
-
-#Settings coming soon. Do not change unless your a dare devil.
-#No settings are pending. Send a request on GitHub for ideas.
 #If a setting is missing, not present, or not there, skip it.
 skip_missing_settings=True
-#When you start the database a backup will be made.
-backupOn_StartUp=False
+#Backups goes in order of numbers and this var changes where it starts. Only works on first backup.
+backup_startNumber=1
 #Allowed permissions to create, remove, edit backups.
 #User must be signed in to create a backup.
 allowed_backupPermissions=['admin','teacher']
-#Setup backup response. Do not disable if using backup.
+#Setup backup response. Do not disable if using backup. Used for debugging.
 setup_backup_response=True
-#Nothin :)
-backup_startNumber=1
+
+#Settings coming soon. Do not change unless your a dare devil.
+#No settings are pending. Send a request on GitHub for ideas.
+
 
 #Remove if you aren't using my custom application.
 #Settings for application.
