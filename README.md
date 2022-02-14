@@ -1,5 +1,5 @@
 # Database
-<br>Current Stage: Testing/Bug Fixing/Touch Ups
+<br>Current Stage: Testing/Bug Fixing/Touch Ups/Long Term Dev Features
 
 To setup. Install all items in requirements.txt using pip and run custom_database.py. That's it!
 <br>pip install -r requirements.txt
