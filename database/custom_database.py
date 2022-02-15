@@ -2,15 +2,22 @@
 #Add logic Gates.
 #After that Bug Fixes!
 #Make Entry Fields bigger in app.py
+#Tool names needs to have a limit.
+#Add a setting to limit it. MaxToolNameLength=20
 from dis import show_code
 from email.encoders import encode_7or8bit
+from ftplib import error_reply
+from json import tool
+from re import L
 import sys, os
 from os import stat
 from os import remove, walk
 from venv import create
 from xmlrpc.client import FastMarshaller
 import zipfile
+from pandas import *
 import time
+import math
 startupCount=time.time()
 ex=False
 memory_hash=''
@@ -94,6 +101,25 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         import pyAesCrypt
     except:
         print("Couldn't import pyAesCrypt")
+    class setupDatabaseWithSpreadSheet:
+        def run():
+            toolType, toolName, serialNumber, modelNumber, purchaseDate, loanedTo = setupDatabaseWithSpreadSheet.getAll()
+            for i in range(len(toolType)):
+                list3=[toolType[i], toolName[i], serialNumber[i], modelNumber[i], purchaseDate[i], loanedTo[i]]
+                for x in range(len(list3)):
+                    if type(list3[x]) == float:
+                        list3[x]="N/A"
+                        print(list3[x])
+                data_base.edit.add_row(data_base='tools', new_row=[str(list3[0]), str(list3[1]),str(list3[2]), str(list3[3]), str(list3[4]), str(list3[5])], split=False)
+        def getAll():
+            data=read_csv("tools.csv")
+            toolType=data['Tool Type'].tolist()
+            toolName=data['Tool Name'].tolist()
+            serialNumber=data['Serial Number'].tolist()
+            modelNumber=data['Model Number'].tolist()
+            purchaseDate=data['Purchase Date'].tolist()
+            loandedTo=data['Loaned out to'].tolist()
+            return toolType, toolName, serialNumber, modelNumber, purchaseDate, loandedTo
     class logic:
         class gate:
             def help():
@@ -190,6 +216,9 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             else:
                 if hide==False:
                     print('Folder does not exist.')
+        def itemsNotSignedOut():
+            notSignedOutItem=[]
+            check.signed_out_item()
         def students():
             os.chdir('collections')
             file=open('student.txt','w')
@@ -207,8 +236,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         serial=(((lists[i])[1])[x])[0]
                         student=(((lists[i])[1])[x])[1]
                         tool_name=get.tool_name(serial)
-                        file.write('Item: '+display.space(tool_name, max_length=25, hide=True)+' Serial: '+display.space(serial, max_length=25, hide=True)+' Student: '+display.space(student, max_length=25, hide=True)+'\n')
-                file.write('\n\n#'+str(25)+' character max length.')
+                        file.write('Item: '+display.space(tool_name, max_length=35, hide=True)+' Serial: '+display.space(serial, max_length=35, hide=True)+' Student: '+display.space(student, max_length=35, hide=True)+'\n')
+                file.write('\n\n#'+str(35)+' character max length.')
                     #Save Item name, Serial, And student name.
                     #Search tools with serial to find item name.
             file.close()
@@ -230,11 +259,16 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             file=open('tools.txt','w')
             for i in range(len(row)):
                 if (row[i])[0]=="tools":
-                    part, part1=display.space(str(((row[i])[1])[1]), hide=True, max_length=25, return_ShortenNotice=True)
-                    part2, part3=display.space(str(((row[i])[1])[0]), hide=True, max_length=25, return_ShortenNotice=True)
-                    if part3==True:
+                    #Item Returned, True/False
+                    part, part1=display.space(str(((row[i])[1])[2]), hide=True, max_length=25, return_ShortenNotice=True)
+                    part2, part3=display.space(str(((row[i])[1])[1]), hide=True, max_length=25, return_ShortenNotice=True)
+                    part4, part5=display.space(str(((row[i])[1])[3]), hide=True, max_length=25, return_ShortenNotice=True)
+                    part6, part7=display.space(str(((row[i])[1])[4]), hide=True, max_length=25, return_ShortenNotice=True)
+                    part8, part9=display.space(str(((row[i])[1])[5]), hide=True, max_length=25, return_ShortenNotice=True)
+                    part10, part11=display.space(str(((row[i])[1])[0]), hide=True, max_length=25, return_ShortenNotice=True)
+                    if part3==True or part5==True or part7==True or part9==True or part11==True:
                         part1=True
-                    file.write('Item: '+part2+'  Serial: '+str(part)+'Shorted: '+str(part1)+'\n')
+                    file.write('Tool Type: '+str(part10)+'Item: '+part2+'  Serial: '+str(part)+'Model Number: '+str(part4)+'Purchase Date: '+str(part6)+'Loaned To: '+str(part8)+'Shortened: '+str(part1)+'\n')
             file.write('\n\n#'+str(25)+' character max length.')
             file.close()
             os.chdir(path)
@@ -294,13 +328,13 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         print(list3)
         def settings():
             #Shows all settings on the screen.
-            settings1=['resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions','backupOn_StartUp','skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+            settings1=['resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions','skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
             for i in range(len(settings1)):
                 try:
                     print(settings1[i]+'='+str(globals()[settings1[i]]))
                 except:
                     print(settings1[i]+'='+'N/A')
-    class math:
+    class math1:
         def pi(accuracy=1000000):
             # Initialize denominator
             k = 1
@@ -477,8 +511,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             except: pass
     def check_settingsImproved(hide=False):
         found=False
-        settings1=['resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions','backupOn_StartUp','skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
-        types=[bool, int, int, int, bool, list, bool, bool,str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
+        settings1=['resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+        types=[bool, int, int, int, bool, list, bool, str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
         for i in range(len(settings1)):
             skip=False
             if skip_missing_settings==True:
@@ -839,7 +873,14 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         print('Application Closed')
         sys.exit()
     class restore:
-        def remove_old_backups():
+        def remove_old_backups(TempChange_retain_backup_time=None, hide=False):
+            if TempChange_retain_backup_time != None:
+                if isinstance(TempChange_retain_backup_time, int)==True:
+                    temp=retain_backup_time
+                    retain_backup_time=TempChange_retain_backup_time
+                else:
+                    if hide==False:
+                        print('TempChange_retain_backup_time Must be a(n) interger.')
             #Removes backups older than set retain_backup_time=
             #Uses a numbering scheme to calculate age.
             #Search for all files in the backups folder and put the names in a list
@@ -870,6 +911,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                             os.remove(f[i]+'.zip')
                         except:
                             pass
+                retain_backup_time=temp
                 os.chdir(path)
             except:
                 return False
@@ -1209,10 +1251,6 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 file=open('data_save.py','w')
                 for i in range(len(list)):
                     file.write(list[i]+'='+str(globals()[list[i]])+'\n')
-                if side_tiltForce != None:
-                    file.write('side_tilt='+str(side_tiltForce))
-                else:
-                    file.write('side_tilt=200')
                 file.write('\n')
                 file.close()
                 if advanced_history==True:
@@ -1622,7 +1660,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                                         break
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.remove_item()'))
-            def add_row(data_base=None, new_row=None, split=True, database=None):
+            def add_row(data_base=None, new_row=None, split=True, database=None, hide=False):
                 if data_base == None:
                     data_base=database
                 if isinstance(new_row, str)==True:
@@ -1642,7 +1680,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         print(errors.not_list())
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.add_row()'))
-            def remove_row(data_base=None, database=None):
+            def remove_row(data_base=None, database=None, hide=False):
                 if data_base == None:
                     data_base=database
                 num1=check_input(data_base)
@@ -1693,7 +1731,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 if num1 == True:
                     print(errors.cannot_call_func('data_base.edit.remove_row()'))
                 #Must be column_row
-            def add_column(data_base=None, column_name=None, database=None):
+            def add_column(data_base=None, column_name=None, database=None, hide=False):
                 if data_base == None:
                     data_base=database
                 history.create_history(column_name, 'Add column', hide=hide)
@@ -1721,7 +1759,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                                     (data_bases[i+letter_spot])[4].append(column_name.lower())
                     if num1 == True or num2 == True:
                         print(errors.cannot_call_func('data_base.edit.add_column()'))
-            def remove_column(data_base=None, column=None, remove_row=False, database=None):
+            def remove_column(data_base=None, column=None, remove_row=False, database=None, hide=False):
                 if data_base == None:
                     data_base=database
                 try:
