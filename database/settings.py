@@ -3,7 +3,7 @@
 #Required python version to run program.
 required_version='3.10.2'
 #Application version. Just for show.
-program_version='0.4.8'
+program_version='0.4.9'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only.
@@ -141,3 +141,4 @@ entry_background_color='White'
 entry_text_color='Black'
 OnlyAllowKnownStudents=False
 secretsAllowed=False
+side_tilt=200
