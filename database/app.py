@@ -1,3 +1,5 @@
+#Give a report of items not signed out, and items signed out. Not signed out on top. Signed out on bottom.
+#Will be used to help the teacher see what may be missing.
 from email.utils import parseaddr
 from operator import truediv
 from platform import python_version
@@ -16,6 +18,10 @@ tk.geometry(x+"x"+y+"+10+20")
 name=None
 password=None
 startup=True
+other4=None
+other5=None
+other6=None
+other7=None
 other=None
 other1=None
 other2=None
@@ -27,6 +33,7 @@ except:
     print('Debug Var Not Found. Setting Debug To False.')
     debug=False
 #If a button is called, it is displayed on the screen.
+tk.attributes("-fullscreen")
 def close_app_option():
     global other3
     if other3==None:
@@ -128,7 +135,7 @@ class options:
     def center_buttons(notInteger=False):
         global other2
         clear()
-        e1=Label(tk, text='Change Settings file to permanently change.\nCurrent Value: '+str(side_tilt))
+        e1=Label(tk, text='Change data_save file to permanently change.\nCurrent Value: '+str(side_tilt))
         e1.pack()
         other2=Entry(tk)
         other2.config(background=entry_background_color, fg=entry_text_color, width=button_width)
@@ -170,7 +177,7 @@ class options:
     def show_students():
         clear()
         e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
-        e1.config(height=button_height, width=button_width+8)
+        e1.config(height=button_height, width=button_width+10)
         e1.pack()
         e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
         e2.config(height=button_height, width=button_width)
@@ -186,7 +193,7 @@ class options:
     def show_logged_items():
         clear()
         e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
-        e1.config(height=button_height, width=button_width+8)
+        e1.config(height=button_height, width=button_width+10)
         e1.pack()
         e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
         e2.config(height=button_height, width=button_width)
@@ -258,7 +265,7 @@ class options:
     def show_tools():
         clear()
         e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
-        e1.config(height=button_height, width=button_width+8)
+        e1.config(height=button_height, width=button_width+10)
         e1.pack()
         e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
         e2.config(height=button_height, width=button_width)
@@ -369,8 +376,13 @@ class options:
                 options.remove_tool(toolDoesNotExist=True)
     def add_tool(id_exists=False):
         clear()
-        global other, other1
-        e1 = Label(tk, text='Item name', bg=button_color, foreground=text_color)
+        global other, other1, other4, other5, other6, other7
+        e10 = Label(tk, text='Tool Type', bg=button_color, foreground=text_color)
+        e10.pack()
+        other7 = Entry(tk)
+        other7.config(background=entry_background_color, fg=entry_text_color)
+        other7.pack()
+        e1 = Label(tk, text='Tool Name', bg=button_color, foreground=text_color)
         e1.pack()
         other = Entry(tk)
         other.config(background=entry_background_color, fg=entry_text_color)
@@ -380,6 +392,21 @@ class options:
         other1 = Entry(tk)
         other1.config(background=entry_background_color, fg=entry_text_color)
         other1.pack()
+        e7 = Label(tk, text='Model Number', bg=button_color, foreground=text_color)
+        e7.pack()
+        other4 = Entry(tk)
+        other4.config(background=entry_background_color, fg=entry_text_color)
+        other4.pack()
+        e8 = Label(tk, text='Purchase Date', bg=button_color, foreground=text_color)
+        e8.pack()
+        other5 = Entry(tk)
+        other5.config(background=entry_background_color, fg=entry_text_color)
+        other5.pack()
+        e9 = Label(tk, text='Loaned To', bg=button_color, foreground=text_color)
+        e9.pack()
+        other6 = Entry(tk)
+        other6.config(background=entry_background_color, fg=entry_text_color)
+        other6.pack()
         e3 = Button(tk, text='Submit', command=options.add_tool_next)
         e3.pack()
         e5 = Button(tk, text='Back', command=send)
@@ -389,12 +416,24 @@ class options:
             e6.pack()
         Tk.update_idletasks(tk)
     def add_tool_next():
-        global other, other1
+        global other, other1, other4, other5, other6, other7
         name = other.get()
         id = other1.get()
+        modelNumber=other4.get()
+        purchaseDate=other5.get()
+        loandedTo=other6.get()
+        toolType=other7.get()
+        if modelNumber in [None, '', ' ', '  ']:
+            modelNumber="N/A"
+        if purchaseDate in [None, '', ' ', '  ']:
+            purchaseDate='N/A'
+        if loandedTo in [None, '', ' ', '  ']:
+            loandedTo='N/A'
+        if toolType in [None, '', ' ', '  ']:
+            toolType='N/A'
         if check.barcode(id)==True:
             if profanityFilter.filter(name)==0 and profanityFilter.filter(id)==0:
-                data_base.edit.add_row(data_base='tools', new_row=[str(name),str(id)], split=False)
+                data_base.edit.add_row(data_base='tools', new_row=[str(toolType), str(name),str(id), str(modelNumber), str(purchaseDate), str(loandedTo)], split=False)
             clear()
             send()
         else:
@@ -421,7 +460,7 @@ class options:
         users.logout()
         clear()
         login()
-    def create_user(user_exists=False, unknownPermission=False, PasswordDoesNotMeetReq=False, NoUsernameEntered=False):
+    def create_user(user_exists=False, unknownPermission=False, PasswordDoesNotMeetReq=False, NoUsernameEntered=False, InvalidPassword=False):
         clear()
         global other, other1, other2
         e1 = Label(tk, text='New user', bg=button_color, foreground=text_color)
@@ -455,6 +494,9 @@ class options:
         if NoUsernameEntered==True:
             e9=Label(tk, text='Give the user a name', bg=button_color, foreground=text_color)
             e9.pack()
+        if InvalidPassword==True:
+            e10=Label(tk, text='Invalid Password', bg=button_color, foreground=text_color)
+            e10.pack()
         Tk.update_idletasks(tk)
     def create_user_next():
         global other, other1, other2
@@ -463,6 +505,8 @@ class options:
         permission=other2.get()
         if name in [None, '', ' ', '  ']:
             options.create_user(NoUsernameEntered=True)
+        elif password in [None, '', ' ', '  ']:
+            options.create_user(InvalidPassword=True)
         else:
             if profanityFilter.filter(name)==0 and profanityFilter.filter(password)==0 and profanityFilter.filter(permission)==0:
                 if users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())==False:
