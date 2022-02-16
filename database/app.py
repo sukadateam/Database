@@ -46,10 +46,14 @@ def version_note():
     e90=Label(tk, text='Program Version: '+program_version)
     e90.pack(side=BOTTOM, anchor=W)
 class buttons:
+    def show_users(y=100):
+        e21 = Button(tk, text='Show Users', command=options.show_users, bg=button_color, foreground=text_color, font=text_font)
+        e21.config(height=button_height, width=button_width)
+        e21.place(x=((int(x))/2)-side_tilt, y=y)
     def center_buttons(y=100):
-        e20 = Button(tk, text='Center Buttons', command=options.center_buttons, bg=button_color, foreground=text_color, font=text_font)
-        e20.config(height=button_height, width=button_width)
-        e20.place(x=((int(x))/2)-side_tilt, y=y)
+        e21 = Button(tk, text='Center Buttons', command=options.center_buttons, bg=button_color, foreground=text_color, font=text_font)
+        e21.config(height=button_height, width=button_width)
+        e21.place(x=((int(x))/2)-side_tilt, y=y)
     def credit(y=200):
         e20 = Button(tk, text='Credits', command=options.credits, bg=button_color, foreground=text_color, font=text_font)
         e20.config(height=button_height, width=button_width)
@@ -132,6 +136,19 @@ class buttons:
         e17.config(height=button_height, width=button_width)
         e17.place(x=((int(x))/2)-side_tilt, y=y)
 class options:
+    def show_users():
+        clear()
+        e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
+        e1.config(height=button_height, width=button_width+10)
+        e1.pack()
+        e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+        e2.config(height=button_height, width=button_width)
+        e2.pack()
+        save_in_txtFile.users()
+        if systemDetectedOperatingSystem=="windows":
+            os.system('notepad.exe users.txt')
+        if systemDetectedOperatingSystem=="macos":
+            subprocess.call(['open', '-a', 'TextEdit', 'users.txt'])
     def center_buttons(notInteger=False):
         global other2
         clear()
@@ -281,7 +298,7 @@ class options:
     def signout_item(no_name=False, no_barcode=False, already_signed=False):
         global other, other1
         clear()
-        e1 = Label(tk, text='Barcode', bg=button_color, foreground=text_color)
+        e1 = Label(tk, text='Barcode/Serial', bg=button_color, foreground=text_color)
         e1.config(height=button_height, width=button_width)
         e1.pack()
         other = Entry(tk)
@@ -301,7 +318,7 @@ class options:
             e6=Label(tk, text='Unknown Student', bg=button_color, foreground=text_color)
             e6.pack()
         if no_barcode==True:
-            e7=Label(tk, text='Unknown Barcode', bg=button_color, foreground=text_color)
+            e7=Label(tk, text='Unknown Barcode/Serial', bg=button_color, foreground=text_color)
             e7.pack()
         if already_signed==True:
             e8=Label(tk, text='Item already signed out', bg=button_color, foreground=text_color)
@@ -312,7 +329,7 @@ class options:
     def signout_item_next():
         global other, other1
         list1=[other.get(), other1.get()]
-        if check.barcode(list1[0])==False and check.signed_out_item(list1[0])==False:
+        if check.barcode(str(list1[0]))==False and check.signed_out_item(str(list1[0]), hide=logic.gate.not_gate(debug))==False:
             if list1[1] in students or OnlyAllowKnownStudents==False:
                 data_base.edit.add_item(data_base='logs', item_to_add=list1)
                 clear()
@@ -322,12 +339,12 @@ class options:
             name_no=False
             if list1[1] not in students and OnlyAllowKnownStudents==True:
                 name_no=True
-            options.signout_item(no_name=name_no, no_barcode=check.barcode(list1[0]), already_signed=check.signed_out_item(list1[0]))
+            options.signout_item(no_name=name_no, no_barcode=check.barcode(str(list1[0])), already_signed=check.signed_out_item(str(list1[0])))
     def signin_item(doesNotExist=False):
         global other
         clear()
         #Remove item by barcode Not name.
-        e1 = Label(tk, text='Barcode', bg=button_color, foreground=text_color)
+        e1 = Label(tk, text='Barcode/Serial', bg=button_color, foreground=text_color)
         e1.config(height=button_height, width=button_width)
         e1.pack()
         other = Entry(tk)
@@ -352,7 +369,7 @@ class options:
     def remove_tool(toolDoesNotExist=False):
         global other
         clear()
-        e1 = Label(tk, text='Barcode', bg=button_color, foreground=text_color)
+        e1 = Label(tk, text='Barcode/Serial', bg=button_color, foreground=text_color)
         e1.pack()
         other = Entry(tk)
         other.config(background=entry_background_color, fg=entry_text_color)
@@ -387,7 +404,7 @@ class options:
         other = Entry(tk)
         other.config(background=entry_background_color, fg=entry_text_color)
         other.pack()
-        e2 = Label(tk, text='Barcode', bg=button_color, foreground=text_color)
+        e2 = Label(tk, text='Barcode/Serial', bg=button_color, foreground=text_color)
         e2.pack()
         other1 = Entry(tk)
         other1.config(background=entry_background_color, fg=entry_text_color)
@@ -412,7 +429,7 @@ class options:
         e5 = Button(tk, text='Back', command=send)
         e5.pack()
         if id_exists==True:
-            e6=Label(tk, text='Barcode Exists', bg=button_color, foreground=text_color)
+            e6=Label(tk, text='Barcode/Serial Exists', bg=button_color, foreground=text_color)
             e6.pack()
         Tk.update_idletasks(tk)
     def add_tool_next():
@@ -704,9 +721,10 @@ def admin_page2():
     buttons.show_students(y=400)
     buttons.change_password(y1=500)
     buttons.center_buttons(y=600)
+    buttons.show_users(y=700)
     e25=Button(tk, text='Back', command=admin_screen, bg=button_color, foreground=text_color, font=text_font)
     e25.config(height=button_height, width=button_width)
-    e25.place(x=((int(x))/2)-side_tilt, y=700)
+    e25.place(x=((int(x))/2)-side_tilt, y=800)
 #Ask the database if the entered credentials are correct.
 def ask(command=send):
     global name, password, startup
