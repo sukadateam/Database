@@ -21,3 +21,6 @@ To start the program:
 4. Enter 7, 1, 1. Now create a user. Use permission (admin).
 
 5. Exit shell and open app.py and login. After login it will ask you to create a encrypt/decrypt password.
+
+
+<br>To get live version(s) check out github.com/sukadateam/live_build
