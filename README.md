@@ -34,3 +34,4 @@ To use print_instructions.createBarcode() may need to do the following:
 
   (For More Info On this Part please head to):
     https://edinburgh-genome-foundry.github.io/blabel/
+   https://sourceforge.net/projects/pygobjectwin32/
