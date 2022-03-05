@@ -1,5 +1,5 @@
 # Database
-<br>Current Stage: Create a class to print and create barcodes.
+<br>Current Stage: Testing Newly Added Functions
 
 To setup. Install all items in requirements.txt using pip and run custom_database.py. That's it!
 <br>pip install -r requirements.txt
@@ -16,22 +16,7 @@ To start the program:
 
 2. Recommended python 3.10.2. if else: change required_version to your version in settings.py
 
-3. Open Shell.py with python.
-
-4. Enter 7, 1, 1. Now create a user. Use permission (admin).
-
-5. Exit shell and open app.py and login. After login it will ask you to create a encrypt/decrypt password.
+3. Open app.py and login. After login it will ask you to create a encrypt/decrypt password.
 
 
 <br>To get live version(s) check out github.com/sukadateam/live_build
-
-To use print_instructions.createBarcode() may need to do the following:
-  (MacOS)
-  1. Install Brew
-  2. Run command "brew install pango"
-  (Debian)
-  1. Run command apt install libffi-dev
-
-  (For More Info On this Part please head to):
-    https://edinburgh-genome-foundry.github.io/blabel/
-   https://sourceforge.net/projects/pygobjectwin32/
