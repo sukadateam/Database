@@ -128,27 +128,35 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     def assignBarcodesToItemsWithout():
         for i in range(len(row)):
             if (row[i])[0] == "tools":
-                if ((row[i])[1])[2]==" ":
-                    while True:
+                if ((row[i])[1])[2]=='':
+                    a=True
+                    while a==True:
                         abc=''
-                        for i in range(8):
+                        for x in range(8):
                             abc+=random.choice('1234567890qwertyuiopasdfghjklzxcvbnm')
                         if check.barcode(abc)==True:
                             ((row[i])[1])[2]=abc
-                            print(((row[i])[1])[2])
+                            a=False
     class print_instructions:
         def print(file_name, rmFileAfterPrint=False):
+            if printer_debug==True:
+                print('Sending Print Command...')
             print_cmd = 'lpr -P %s %s'
-            os.system(print_cmd % ('iDPRT_SP310', file_name))
+            os.system(print_cmd % (printer_name, file_name))
             if rmFileAfterPrint==True:
+                if printer_debug==True:
+                    print("Removing Old File...")
                 os.remove(file_name)
         def printAllToolsBarcodes():
             #This Process will only go as fast as the printer.
             pass
         def createBarcode(barcode1, file_name='barcode', qr_code=False, barcode=False):
             #File is saved at png.
+            if os.path.exists(file_name+'.png')==True:
+                os.remove(file_name+'.png')
             if qr_code==True and barcode==True:
-                print("Please only select EITHER qr_code or barcode.")
+                if printer_debug==True:
+                    print("Please only select EITHER qr_code or barcode.")
             else:
                 if qr_code==True:
                     qr = qrcode.QRCode(
@@ -158,7 +166,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     qr.add_data(str(barcode))
                     qr.make(fit=True)
                     img = qr.make_image(fill='black', back_color='white')
-                    img.save(str(file_name)+'png')
+                    img.save(str(file_name)+'.png')
                 elif barcode==True:
                     if isinstance(barcode1, int)==True:
                         from barcode import EAN13
@@ -422,7 +430,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         def settings():
             history.create_history('Run', 'display.settings()', hide=debug)
             #Shows all settings on the screen.
-            settings1=['encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+            settings1=['printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
             for i in range(len(settings1)):
                 try:
                     print(settings1[i]+'='+str(globals()[settings1[i]]))
@@ -636,8 +644,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     def check_settingsImproved(hide=False):
         history.create_history('Run', 'check_settingsImproved()', hide=debug)
         found=False
-        settings1=['encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
-        types=[bool, bool, int, int, int, bool, list, bool, str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
+        settings1=['printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+        types=[str, bool, bool, bool, bool, int, int, int, bool, list, bool, str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
         for i in range(len(settings1)):
             skip=False
             if skip_missing_settings==True:
@@ -2427,6 +2435,10 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             backup_count=backup_startNumber
     if quiteStartup == False:
         print('Cleaning Up Junk Files...')
+    try:
+        os.remove('barcode.png')
+    except:
+        pass
     if os.path.exists('backups')==False:
         os.mkdir('backups')
     try:
@@ -2538,4 +2550,4 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     #To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
     #Test bench
     #<--Indent to here
-    assignBarcodesToItemsWithout()
+    save_in_txtFile.tools()
