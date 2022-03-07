@@ -18,6 +18,12 @@ from barcode import EAN13
 from barcode.writer import ImageWriter
 import time
 import qrcode
+try:
+    #Windows print
+    import win32api
+    import win32print
+except:
+    pass
 from io import BytesIO
 startupCount=time.time()
 memory_hash=''
@@ -125,6 +131,12 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     except:
         if quiteStartup == False:
             print("Couldn't import pyAesCrypt")
+    class installUpdate:
+        def run(terminalSet=False, visualSet=False):
+            if terminalSet==True:
+                pass
+            if visualSet==True:
+                pass
     def assignBarcodesToItemsWithout():
         for i in range(len(row)):
             if (row[i])[0] == "tools":
@@ -141,8 +153,18 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         def print(file_name, rmFileAfterPrint=False):
             if printer_debug==True:
                 print('Sending Print Command...')
-            print_cmd = 'lpr -P %s %s'
-            os.system(print_cmd % (printer_name, file_name))
+            if systemDetectedOperatingSystem !="windows":
+                print_cmd = 'lpr -P %s %s'
+                os.system(print_cmd % (printer_name, file_name))
+            if systemDetectedOperatingSystem == "windows":
+                win32api.ShellExecute(
+                    0,
+                    "print",
+                    file_name,
+                    '/d:"%s"' % win32print.GetDefaultPrinter(),
+                    ".",
+                    0
+                )
             if rmFileAfterPrint==True:
                 if printer_debug==True:
                     print("Removing Old File...")
@@ -306,17 +328,33 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         def students():
             history.create_history('Run', 'save_in_txtFile.students()', hide=debug)
             os.chdir('collections')
-            file=open('student.txt','w')
-            for i in range(len(students)):
-                file.write('Student: '+students[i])
-            file.close()
+            try:
+                os.remove('student.txt')
+            except:
+                pass
+            if OnlyAllowKnownStudents==False:
+                file=open('student.txt','w')
+                file.write("OnlyAllowKnownStudents is set to False.")
+                file.close()
+                os.chdir(path)
+            if OnlyAllowKnownStudents==True:
+                file=open('student.txt','w')
+                for i in range(len(students)):
+                    file.write('Student: '+students[i])
+                file.close()
             os.chdir(path)
         def logs():
             history.create_history('Run', 'save_in_txtFile.logs()', hide=debug)
             if OnlyAllowKnownStudents==False:
+                os.chdir('collections')
+                try:
+                    os.remove('student_logs.txt')
+                except:
+                    pass
                 file=open('student_logs.txt','w')
                 file.write("OnlyAllowKnownStudents is set to False.")
                 file.close()
+                os.chdir(path)
             if OnlyAllowKnownStudents==True:
                 os.chdir('collections')
                 #Save all logs of students that currently have items signed out.
@@ -336,6 +374,10 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         def users():
             history.create_history('Run', 'save_in_txtFile.users()', hide=debug)
             os.chdir('collections')
+            try:
+                os.remove('users.txt')
+            except:
+                pass
             if len(known_users)>0:
                 #Save all users in a text file. Do not write passwords.
                 file=open('users.txt','w')
@@ -349,6 +391,10 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             history.create_history('Run', 'save_in_txtFile.tools()', hide=debug)
             try:
                 os.chdir('collections')
+            except:
+                pass
+            try:
+                os.remove('tools.txt')
             except:
                 pass
             #Save all tools in a text file.
@@ -2527,7 +2573,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             print('GitHub: github.com/sukadateam')
             ex=True
         if "-reset" in n:
-            list2=['version.pyc','directory.pyc','history_desc.pyc','users.txt','tools.txt','count.py','data_save.py','version.py', 'directory.py','history.txt','hash_other.aes','hash.aes','hash_other.txt','hash.txt','settings.pyc','app.pyc','data.pyc']
+            list2=['version.pyc','directory.pyc','history_desc.pyc','count.py','data_save.py','version.py', 'directory.py','history.txt','hash_other.aes','hash.aes','hash_other.txt','hash.txt','settings.pyc','app.pyc','data.pyc']
             for i in range(len(list2)):
                 try:
                     os.remove(list2[i])
@@ -2543,6 +2589,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             ex=True
     except:
         pass
+    if "-help" in n:
+        print('Current Arguments:\n  -skipVersionCheck (Bypasses Application Version Check)\n  -v (Prints Progam Version)\n  -info (Prints Import Info)\n  -reset (Resets Application)\n  -skipPythonCheck (Ignore Python Version)')
     if dontCloseAfterEmptyStart==True:
         input('Hit enter to Continue: ')
     #You must set a Normal level password
@@ -2550,4 +2598,3 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     #To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
     #Test bench
     #<--Indent to here
-    save_in_txtFile.tools()
