@@ -4,4 +4,5 @@ pynput
 pandas
 pybind11 #Might remove
 cython
-blabel
+python-barcode
+pypiwin32
