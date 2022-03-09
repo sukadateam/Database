@@ -1,5 +1,5 @@
 # Database
-<br>Current Stage: Adding Help Functions.
+<br>Current Stage: Adding Help Functions. Fixing a save issue that only occurs on Windows.
 
 To setup. Install all items in requirements.txt using pip and run custom_database.py. That's it!
 <br>pip install -r requirements.txt
