@@ -370,7 +370,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     #Save Item name, Serial, And student name.
                     #Search tools with serial to find item name.
                 file.close()
-                os.chdir(path)
+            os.chdir(path)
         def users():
             history.create_history('Run', 'save_in_txtFile.users()', hide=debug)
             os.chdir('collections')
@@ -387,7 +387,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             else:
                 print('There are no users.')
             os.chdir(path)
-        def tools():
+        def tools(max_length=10):
             history.create_history('Run', 'save_in_txtFile.tools()', hide=debug)
             try:
                 os.chdir('collections')
@@ -402,19 +402,21 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             for i in range(len(row)):
                 if (row[i])[0]=="tools":
                     #Item Returned, True/False
-                    part, part1=display.space(str(((row[i])[1])[2]), hide=True, max_length=25, return_ShortenNotice=True)
+                    part, part1=display.space(str(((row[i])[1])[2]), hide=True, max_length=max_length, return_ShortenNotice=True)
                     try:
-                        part2, part3=display.space(str(((row[i])[1])[1]), hide=True, max_length=25, return_ShortenNotice=True)
+                        part2, part3=display.space(str(((row[i])[1])[1]), hide=True, max_length=max_length, return_ShortenNotice=True)
                     except:
-                        part2, part3=display.space('N/A', hide=True, max_length=25, return_ShortenNotice=True)
-                    part4, part5=display.space(str(((row[i])[1])[3]), hide=True, max_length=25, return_ShortenNotice=True)
-                    part6, part7=display.space(str(((row[i])[1])[4]), hide=True, max_length=25, return_ShortenNotice=True)
-                    part8, part9=display.space(str(((row[i])[1])[5]), hide=True, max_length=25, return_ShortenNotice=True)
-                    part10, part11=display.space(str(((row[i])[1])[0]), hide=True, max_length=25, return_ShortenNotice=True)
+                        part2, part3=display.space('N/A', hide=True, max_length=max_length, return_ShortenNotice=True)
+                    part4, part5=display.space(str(((row[i])[1])[3]), hide=True, max_length=max_length, return_ShortenNotice=True)
+                    part6, part7=display.space(str(((row[i])[1])[4]), hide=True, max_length=max_length, return_ShortenNotice=True)
+                    part8, part9=display.space(str(((row[i])[1])[5]), hide=True, max_length=max_length, return_ShortenNotice=True)
+                    part10, part11=display.space(str(((row[i])[1])[0]), hide=True, max_length=max_length, return_ShortenNotice=True)
+                    #Partn is just a placeholder and is not used. It handles the Return of return_ShortenNotice from display.space()
+                    part12, partn=display.space(str(check.signed_out_item(str(((row[i])[1])[2]))), hide=True, max_length=max_length, return_ShortenNotice=True)
                     if part3==True or part5==True or part7==True or part9==True or part11==True:
-                        part1=True
-                    file.write('Tool Type: '+str(part10)+'Item: '+str(part2)+'  Serial: '+str(part)+'Model Number: '+str(part4)+'Purchase Date: '+str(part6)+'Loaned To: '+str(part8)+'Shortened: '+str(part1)+'\n')
-            file.write('\n\n#'+str(25)+' character max length.')
+                        part1, part17=display.space(str(True), hide=True, max_length=max_length)
+                    file.write('Tool Type: '+str(part10)+'  Item: '+str(part2)+'  Serial: '+str(part)+'  Model Number: '+str(part4)+'  Purchase Date: '+str(part6)+'  Loaned To: '+str(part8)+'  Signed Out: '+str(part12)+'  Shortenend: '+str(part1)+'\n')
+            file.write('\n\n#'+str(max_length)+' character max length.')
             file.close()
             os.chdir(path)
     class display:
@@ -478,7 +480,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         def settings():
             history.create_history('Run', 'display.settings()', hide=debug)
             #Shows all settings on the screen.
-            settings1=['clearHistoryOnStartup', 'AskForEncryptionPassword','printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+            settings1=['clearHistoryOnStartup','clearHistoryOnStartup', 'AskForEncryptionPassword','printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
             for i in range(len(settings1)):
                 try:
                     print(settings1[i]+'='+str(globals()[settings1[i]]))
@@ -694,8 +696,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     def check_settingsImproved(hide=False):
         history.create_history('Run', 'check_settingsImproved()', hide=debug)
         found=False
-        settings1=['clearHistoryOnStartup', 'AskForEncryptionPassword', 'printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
-        types=[bool, bool, str, bool, bool, bool, bool, int, int, int, bool, list, bool, str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
+        settings1=['clearHistoryOnStartup','clearHistoryOnStartup', 'AskForEncryptionPassword', 'printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+        types=[bool, bool, bool, str, bool, bool, bool, bool, int, int, int, bool, list, bool, str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
         for i in range(len(settings1)):
             skip=False
             if skip_missing_settings==True:
@@ -2076,6 +2078,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                                 for x in range(len((lists[i])[1])):
                                     if (((lists[i])[1])[x])[0]==barcode:
                                         ((lists[i])[1]).pop(x)
+                                        return True
+                        return False
                     else:
                         print(errors.not_str())
                 def show_tools(data_base=None, database=None):
