@@ -10,6 +10,7 @@ from re import L
 import sys, os
 from os import stat
 from os import remove, walk
+from typing import Set
 from venv import create
 from xmlrpc.client import FastMarshaller
 import zipfile
@@ -113,7 +114,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 print('Please wait. Importing default file...')
             from data import *
             import_type='data'
-    except:
+    except Exception as ErrorMessage:
+        print(ErrorMessage)
         try:
             from data import *
             import_type='data'
@@ -207,9 +209,9 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 list3=[toolType[i], toolName[i], serialNumber[i], modelNumber[i], purchaseDate[i], loanedTo[i]]
                 for x in range(len(list3)):
                     if type(list3[x]) == float:
-                        list3[x]=""
+                        list3[x]=" "
                         print(list3[x])
-                data_base.edit.add_row(data_base='tools', new_row=[str(list3[0]), str(list3[1]),str(list3[2]), str(list3[3]), str(list3[4]), str(list3[5])], split=False)
+                data_base.edit.add_row(data_base='tools', new_row=[str(list3[0]).encode(encoding='UTF-8',errors='strict'), str(list3[1]).encode(encoding='UTF-8',errors='strict'),str(list3[2]).encode(encoding='UTF-8',errors='strict'), str(list3[3]).encode(encoding='UTF-8',errors='strict'), str(list3[4]).encode(encoding='UTF-8',errors='strict'), str(list3[5]).encode(encoding='UTF-8',errors='strict')], split=False)
         def getAll(hide=False):
             history.create_history('Run', 'setupDatabaseWithSpreadSheet.getAll()', hide=hide)
             data=read_csv("tools.csv")
@@ -387,7 +389,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             else:
                 print('There are no users.')
             os.chdir(path)
-        def tools(max_length=10):
+        def tools(max_length=20, showIfShort=False):
             history.create_history('Run', 'save_in_txtFile.tools()', hide=debug)
             try:
                 os.chdir('collections')
@@ -399,26 +401,50 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 pass
             #Save all tools in a text file.
             file=open('tools.txt','w')
-            for i in range(len(row)):
-                if (row[i])[0]=="tools":
-                    #Item Returned, True/False
-                    part, part1=display.space(str(((row[i])[1])[2]), hide=True, max_length=max_length, return_ShortenNotice=True)
-                    try:
+            DecodeMethod=True #Default is True
+            if DecodeMethod==True:
+                for i in range(len(row)):
+                    if (row[i])[0]=="tools":
+                        part, part1 = save_in_txtFile.decode(((row[i])[1])[2], max_length=20)
+                        part2, part3 = save_in_txtFile.decode(((row[i])[1])[1], max_length=20)
+                        part4, part5 = save_in_txtFile.decode(((row[i])[1])[3], max_length=20)
+                        part6, part7 = save_in_txtFile.decode(((row[i])[1])[4], max_length=20)
+                        part8, part9 = save_in_txtFile.decode(((row[i])[1])[5], max_length=20)
+                        part10, part11 = save_in_txtFile.decode(((row[i])[1])[0], max_length=20)
+                        part12, partn=display.space(str(check.signed_out_item(str(((row[i])[1])[2]))), hide=True, max_length=max_length, return_ShortenNotice=True)
+                        if part3==True or part5==True or part7==True or part9==True or part11==True:
+                            part1, part17=display.space(str(True), hide=True, max_length=max_length, return_ShortenNotice=True)
+                        if showIfShort==False:
+                            file.write('Tool Type: '+str(part10)+'  Item: '+str(part2)+'  Serial: '+str(part)+'  Model Number: '+str(part4)+'  Purchase Date: '+str(part6)+'  Loaned To: '+str(part8)+'  Signed Out: '+str(part12)+'\n\n')
+                        if showIfShort==True:
+                            file.write('Tool Type: '+str(part10)+'  Item: '+str(part2)+'  Serial: '+str(part)+'  Model Number: '+str(part4)+'  Purchase Date: '+str(part6)+'  Loaned To: '+str(part8)+'  Signed Out: '+str(part12)+'  Shortenend: '+str(part1)+'\n\n')
+            if DecodeMethod==False:
+                for i in range(len(row)):
+                    if (row[i])[0]=="tools":
+                        #Item Returned, True/False
+                        part, part1=display.space(str(((row[i])[1])[2]), hide=True, max_length=max_length, return_ShortenNotice=True)
                         part2, part3=display.space(str(((row[i])[1])[1]), hide=True, max_length=max_length, return_ShortenNotice=True)
-                    except:
-                        part2, part3=display.space('N/A', hide=True, max_length=max_length, return_ShortenNotice=True)
-                    part4, part5=display.space(str(((row[i])[1])[3]), hide=True, max_length=max_length, return_ShortenNotice=True)
-                    part6, part7=display.space(str(((row[i])[1])[4]), hide=True, max_length=max_length, return_ShortenNotice=True)
-                    part8, part9=display.space(str(((row[i])[1])[5]), hide=True, max_length=max_length, return_ShortenNotice=True)
-                    part10, part11=display.space(str(((row[i])[1])[0]), hide=True, max_length=max_length, return_ShortenNotice=True)
-                    #Partn is just a placeholder and is not used. It handles the Return of return_ShortenNotice from display.space()
-                    part12, partn=display.space(str(check.signed_out_item(str(((row[i])[1])[2]))), hide=True, max_length=max_length, return_ShortenNotice=True)
-                    if part3==True or part5==True or part7==True or part9==True or part11==True:
-                        part1, part17=display.space(str(True), hide=True, max_length=max_length)
-                    file.write('Tool Type: '+str(part10)+'  Item: '+str(part2)+'  Serial: '+str(part)+'  Model Number: '+str(part4)+'  Purchase Date: '+str(part6)+'  Loaned To: '+str(part8)+'  Signed Out: '+str(part12)+'  Shortenend: '+str(part1)+'\n')
+                        part4, part5=display.space(str(((row[i])[1])[3]), hide=True, max_length=max_length, return_ShortenNotice=True)
+                        part6, part7=display.space(str(((row[i])[1])[4]), hide=True, max_length=max_length, return_ShortenNotice=True)
+                        part8, part9=display.space(str(((row[i])[1])[5]), hide=True, max_length=max_length, return_ShortenNotice=True)
+                        part10, part11=display.space(str(((row[i])[1])[0]), hide=True, max_length=max_length, return_ShortenNotice=True)
+                        #Partn is just a placeholder and is not used. It handles the Return of return_ShortenNotice from display.space()
+                        part12, partn=display.space(str(check.signed_out_item(str(((row[i])[1])[2]))), hide=True, max_length=max_length, return_ShortenNotice=True)
+                        if part3==True or part5==True or part7==True or part9==True or part11==True:
+                            part1, part17=display.space(str(True), hide=True, max_length=max_length, return_ShortenNotice=True)
+                        if showIfShort==False:
+                            file.write('Tool Type: '+str(part10)+'  Item: '+str(part2)+'  Serial: '+str(part)+'  Model Number: '+str(part4)+'  Purchase Date: '+str(part6)+'  Loaned To: '+str(part8)+'  Signed Out: '+str(part12)+'\n\n')
+                        if showIfShort==True:
+                            file.write('Tool Type: '+str(part10)+'  Item: '+str(part2)+'  Serial: '+str(part)+'  Model Number: '+str(part4)+'  Purchase Date: '+str(part6)+'  Loaned To: '+str(part8)+'  Signed Out: '+str(part12)+'  Shortenend: '+str(part1)+'\n\n')
             file.write('\n\n#'+str(max_length)+' character max length.')
             file.close()
             os.chdir(path)
+        def decode(input, max_length=10):
+            if str(input)[0:2]=="b'":
+                part, part1 = display.space(str(input)[2:len(input)+2], hide=True, max_length=max_length, return_ShortenNotice=True)
+            else:
+                part, part1 = display.space(str(input), hide=True, max_length=max_length, return_ShortenNotice=True)
+            return part, part1
     class display:
         def help():
             print('Branches:\n  display.space()\n  display.database()\n  display.settings()')
@@ -444,7 +470,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     notice=True
                     if return_ShortenNotice==True:
                         return var, notice
-                return var
+                return var, False
             else:
                 if hide==False: print(errors.not_str())
         def database(data_base=None, database=None, hide=False):
@@ -1467,6 +1493,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 history.create_history(None, 'Save', hide=hide)
                 from vars_to_save import list
                 file=open('data_save.py','w')
+                file.write('# -*- coding: utf-8 -*-\n')
                 for i in range(len(list)):
                     file.write(list[i]+'='+str(globals()[list[i]])+'\n')
                 file.write('\n')
@@ -1501,12 +1528,9 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             for i in range(len(row)):
                 #Find the database tools
                 if (row[i])[0]=="tools":
-                    try:
-                        if ((row[i])[1])[2]==barcode:
-                            #If found
-                            return False
-                    except:
-                        pass
+                    if ((row[i])[1])[2]==str(barcode).encode(encoding='UTF-8',errors='strict'):
+                        #If found
+                        return False
             #If not found
             return True
         def encyption_password(password):
@@ -2582,6 +2606,9 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             else:
                 backup_name=version_in+' '+c
             list2=['app.py', 'count.py', 'custom_database.py','data.py','get_directory.py','files_to_backup.py','history_desc.py','patch_notes.txt','profanity.txt','requirements.txt','settings.py','shell.py','vars_to_save.py','version_config.py']
+            beta1=input('Would you like to compress the save file also: ')
+            if beta1=="yes" or beta1=='y':
+                list2.append('data_save.py')
             #Backup Certian Files
             zipObject= ZipFile(backup_name+'.zip', 'w')
             for i in range(len(list2)):
@@ -2624,3 +2651,4 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     #To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
     #Test bench
     #<--Indent to here
+    save_in_txtFile.tools()
