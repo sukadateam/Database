@@ -1,5 +1,5 @@
 #Things to do next:
-#Nothin'!!!
+#Work On Encoding/Decoding Issues!
 from ast import Bytes
 from dis import show_code
 from email.encoders import encode_7or8bit
@@ -14,6 +14,7 @@ from typing import Set
 from venv import create
 from xmlrpc.client import FastMarshaller
 import zipfile
+from html5lib import serialize
 from pandas import *
 from barcode import EAN13
 from barcode.writer import ImageWriter
@@ -72,7 +73,8 @@ except:
         print('Could not find the required file: history_desc.py You may experience problems.')
 if quiteStartup == False:
     print('This Project is hosted on github. github.com/sukadateam')
-    print('If problems occur, try to check if a new version exists.\n\n')
+    print('If problems occur, try to check if a new version exists.')
+    print('-or- Create An Issue On GitHub!\n\n')
 if sys.version[0:len(required_version)] != required_version and "-skipPythonCheck" not in n and skip_pythonCheck==False:
     print('Required python version:', required_version)
     print('Current python version:', sys.version[0:len(required_version)])
@@ -148,6 +150,15 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         if check.barcode(abc)==True:
                             ((row[i])[1])[2]=abc
                             a=False
+    def BrokenTool(input):
+        for i in range(len(row)):
+            if (row[i])[0]=="tools":
+                if save_in_txtFile.decode(((row[i])[1])[2], displaySpace=False)==input:
+                    try:
+                        ((row[i])[1])[6]=True
+                    except Exception as ErrorHandle:
+                        if debug==True:
+                            print(ErrorHandle)
     class print_instructions:
         def help():
             print('Branches:\n  print_instructions.print()\n  print_instructions.createBarcode()')
@@ -155,9 +166,11 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             history.create_history('Run', 'print_instructions.print()', hide=debug)
             if printer_debug==True:
                 print('Sending Print Command...')
+            #For Linux and macOS
             if systemDetectedOperatingSystem !="windows":
                 print_cmd = 'lpr -P %s %s'
                 os.system(print_cmd % (printer_name, file_name))
+            #For Windows :)
             if systemDetectedOperatingSystem == "windows":
                 win32api.ShellExecute(
                     0,
@@ -167,13 +180,17 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     ".",
                     0
                 )
+            #Remove File So It doesn't mess things up when trying to create one.
             if rmFileAfterPrint==True:
                 if printer_debug==True:
                     print("Removing Old File...")
                 os.remove(file_name)
         def printAllToolsBarcodes():
             #This Process will only go as fast as the printer.
-            pass
+            for i in range(len(row)):
+                if (row[i])[0]=="tools":
+                    print_instructions.createBarcode(str(((row[i])[1])[2]), qr_code=True)
+                    print_instructions.print(file_name="barcode.png")
         def createBarcode(barcode1, file_name='barcode', qr_code=False, barcode=False):
             history.create_history('Run', 'print_instructions.createBarcode()', hide=debug)
             #File is saved at png.
@@ -211,7 +228,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     if type(list3[x]) == float:
                         list3[x]=" "
                         print(list3[x])
-                data_base.edit.add_row(data_base='tools', new_row=[str(list3[0]).encode(encoding='UTF-8',errors='strict'), str(list3[1]).encode(encoding='UTF-8',errors='strict'),str(list3[2]).encode(encoding='UTF-8',errors='strict'), str(list3[3]).encode(encoding='UTF-8',errors='strict'), str(list3[4]).encode(encoding='UTF-8',errors='strict'), str(list3[5]).encode(encoding='UTF-8',errors='strict')], split=False)
+                data_base.edit.add_row(data_base='tools', new_row=[str(list3[0]).encode(encoding='UTF-8',errors='strict'), str(list3[1]).encode(encoding='UTF-8',errors='strict'),str(list3[2]).encode(encoding='UTF-8',errors='strict'), str(list3[3]).encode(encoding='UTF-8',errors='strict'), str(list3[4]).encode(encoding='UTF-8',errors='strict'), str(list3[5]).encode(encoding='UTF-8',errors='strict'), False], split=False)
+            assignBarcodesToItemsWithout()
         def getAll(hide=False):
             history.create_history('Run', 'setupDatabaseWithSpreadSheet.getAll()', hide=hide)
             data=read_csv("tools.csv")
@@ -364,9 +382,10 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             for i in range(len(lists)):
                 if (lists[i])[0]=="logs":
                     for x in range(len((lists[i])[1])):
-                        serial=(((lists[i])[1])[x])[0]
-                        student=(((lists[i])[1])[x])[1]
-                        tool_name=get.tool_name(serial)
+                        serial_Temp=serial= save_in_txtFile.decode((((lists[i])[1])[x])[0], displaySpace=False)
+                        serial = save_in_txtFile.decode((((lists[i])[1])[x])[0], displaySpace=False)
+                        student = save_in_txtFile.decode((((lists[i])[1])[x])[1], displaySpace=False)
+                        tool_name=get.tool_name(serial_Temp)
                         file.write('Item: '+display.space(str(tool_name), max_length=35, hide=True)+' Serial: '+display.space(serial, max_length=35, hide=True)+' Student: '+display.space(student, max_length=35, hide=True)+'\n')
                 file.write('\n\n#'+str(35)+' character max length.')
                     #Save Item name, Serial, And student name.
@@ -384,7 +403,9 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 #Save all users in a text file. Do not write passwords.
                 file=open('users.txt','w')
                 for i in range(len(known_users)):
-                    file.write(known_users[i]+': '+permissions[i]+'\n')
+                    a, b = save_in_txtFile.decode(known_users[i], max_length=25)
+                    c, d = save_in_txtFile.decode(permissions[i], max_length=25)
+                    file.write(str(a)+': '+str(c)+'\n')
                 file.close()
             else:
                 print('There are no users.')
@@ -412,12 +433,14 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         part8, part9 = save_in_txtFile.decode(((row[i])[1])[5], max_length=20)
                         part10, part11 = save_in_txtFile.decode(((row[i])[1])[0], max_length=20)
                         part12, partn=display.space(str(check.signed_out_item(str(((row[i])[1])[2]))), hide=True, max_length=max_length, return_ShortenNotice=True)
+                        part13, partn =display.space(str(((row[i])[1])[6]), hide=True, max_length=max_length, return_ShortenNotice=True)
                         if part3==True or part5==True or part7==True or part9==True or part11==True:
                             part1, part17=display.space(str(True), hide=True, max_length=max_length, return_ShortenNotice=True)
                         if showIfShort==False:
-                            file.write('Tool Type: '+str(part10)+'  Item: '+str(part2)+'  Serial: '+str(part)+'  Model Number: '+str(part4)+'  Purchase Date: '+str(part6)+'  Loaned To: '+str(part8)+'  Signed Out: '+str(part12)+'\n\n')
+                            file.write('Tool Type: '+str(part10)+'  Item: '+str(part2)+'  Serial: '+str(part)+'  Model Number: '+str(part4)+'  Purchase Date: '+str(part6)+'  Loaned To: '+str(part8)+'  Signed Out: '+str(part12)+'Broken: '+str(part13)+'\n\n')
                         if showIfShort==True:
-                            file.write('Tool Type: '+str(part10)+'  Item: '+str(part2)+'  Serial: '+str(part)+'  Model Number: '+str(part4)+'  Purchase Date: '+str(part6)+'  Loaned To: '+str(part8)+'  Signed Out: '+str(part12)+'  Shortenend: '+str(part1)+'\n\n')
+                            file.write('Tool Type: '+str(part10)+'  Item: '+str(part2)+'  Serial: '+str(part)+'  Model Number: '+str(part4)+'  Purchase Date: '+str(part6)+'  Loaned To: '+str(part8)+'  Signed Out: '+str(part12)+'Broken: '+str(part13)+'  Shortenend: '+str(part1)+'\n\n')
+            #Depreciated
             if DecodeMethod==False:
                 for i in range(len(row)):
                     if (row[i])[0]=="tools":
@@ -439,12 +462,22 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             file.write('\n\n#'+str(max_length)+' character max length.')
             file.close()
             os.chdir(path)
-        def decode(input, max_length=10):
-            if str(input)[0:2]=="b'":
-                part, part1 = display.space(str(input)[2:len(input)+2], hide=True, max_length=max_length, return_ShortenNotice=True)
+        def decode(input, max_length=10, displaySpace=True):
+            if displaySpace==True:
+                if str(input)[0:2]=="b'":
+                    part, part1 = display.space(str(input)[2:len(input)+2], hide=True, max_length=max_length, return_ShortenNotice=True)
+                else:
+                    part, part1 = display.space(str(input), hide=True, max_length=max_length, return_ShortenNotice=True)
+                return part, part1
+            elif displaySpace==False:
+                if str(input)[0:2]=="b'":
+                    part = str(input)[2:len(input)+2]
+                else:
+                    part = str(input)
+                return part
             else:
-                part, part1 = display.space(str(input), hide=True, max_length=max_length, return_ShortenNotice=True)
-            return part, part1
+                if debug==True:
+                    print('displaySpace is a bool. It can only be assined True or False.')
     class display:
         def help():
             print('Branches:\n  display.space()\n  display.database()\n  display.settings()')
@@ -463,6 +496,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     if hide==False: print('Final Length:',len(var))
                     if return_ShortenNotice==True:
                         return var, notice
+                    else:
+                        var
                 if length>max_length:
                     #Shorten to fit
                     var=var[0:max_length]
@@ -470,7 +505,12 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     notice=True
                     if return_ShortenNotice==True:
                         return var, notice
-                return var, False
+                    else:
+                        return var
+                if return_ShortenNotice==True:
+                    return var, False
+                else:
+                    return var
             else:
                 if hide==False: print(errors.not_str())
         def database(data_base=None, database=None, hide=False):
@@ -1235,8 +1275,12 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             #NO NOT ADD history.create_history() HERE. PERFORMANCE WILL DRAMATICALLY DECREASE!
             for i in range(len(row)):
                 if (row[i])[0]=="tools":
-                    if ((row[i])[1])[2]==serial:
-                        return ((row[i])[1])[1]
+                    a = save_in_txtFile.decode(((row[i])[1])[2], displaySpace=False)
+                    c = save_in_txtFile.decode(serial, displaySpace=False)
+                    if a==c:
+                        a = save_in_txtFile.decode(((row[i])[1])[1], displaySpace=False)
+                        return a
+            return "CouldNotReturn"
         def try_password(password):
             history.create_history('Run', 'get.try_password()', hide=debug)
             if system=='windows':
@@ -2651,4 +2695,5 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     #To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
     #Test bench
     #<--Indent to here
-    save_in_txtFile.tools()
+    BrokenTool("*0017792")
+    save.all()
