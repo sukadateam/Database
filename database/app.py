@@ -48,11 +48,11 @@ def version_note():
     e90.pack(side=BOTTOM, anchor=W)
 class buttons:
     def edit_data(y=100):
-        e25 = Button(tk, text='Edit Inventory', command=options.edit_data)
+        e25 = Button(tk, text='Edit Inventory', command=options.edit_data, bg=button_color, foreground=text_color, font=text_font)
         e25.config(height=button_height, width=button_width)
         e25.place(x=((int(x))/2)-side_tilt, y=y)
     def print_allBarcodes(y=100):
-        e24 = Button(tk, text='Print All Barcode(s)', command=options.print_allBarcodes)
+        e24 = Button(tk, text='Print All Barcode(s)', command=options.print_allBarcodes, bg=button_color, foreground=text_color, font=text_font)
         e24.config(height=button_height, width=button_width)
         e24.place(x=((int(x))/2)-side_tilt, y=y)
     def test_print(y=100):
@@ -151,7 +151,7 @@ class buttons:
 class options:
     def edit_data():
         clear()
-        la=Label(tk, text='Select One')
+        la=Label(tk, text='Select One\n(THIS PAGE IS EXPERIMENTAL)')
         la.pack()
         e1 = Button(tk, text='Broken Tool', command=options.broken_tool)
         e1.config(height=button_height, width=button_width)
@@ -159,6 +159,9 @@ class options:
         e2 = Button(tk, text='Update Tool Info', command=options.UpdateToolInfo)
         e2.config(height=button_height, width=button_width)
         e2.pack()
+        e4 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+        e4.config(height=button_height, width=button_width)
+        e4.pack()
         Tk.update_idletasks(tk)
     def broken_tool():
         clear()
@@ -177,7 +180,7 @@ class options:
         serial=other1.get()
         BrokenTool(serial)
         send()
-    def UpdateToolInfo(NoBarcodeGiven=False, IncorrectBarcode=False, BarcodeExists=False):
+    def UpdateToolInfo(NoBarcodeGiven=False, IncorrectBarcode=False, BarcodeExists=False, NoChanges=False):
         history.create_history('Run', 'UpdateToolInfo()', hide=debug)
         clear()
         global other, other1, other4, other5, other6, other7, other8
@@ -230,36 +233,52 @@ class options:
             e25.pack()
         if BarcodeExists==True:
             e25=Label(tk, text='Another tool with the same Barcode/Serial already exists.')
+            e25.pack()
+        if NoChanges==True:
+            e25=Label(tk, text='Nothing was changed. Try changing something.')
+            e25.pack()
         Tk.update_idletasks(tk)
     def UpdateToolInfoNext():
         history.create_history('Run', 'UpdateToolInfoNext()', hide=debug)
         global other7, other, other4, other5, other6, other8, other1
         serial=other1.get()
-        print(':'+serial+':')
-        if other1.get() == None or other1.get() == "":
-            print('Looping Detected!')
+        if serial == None or serial == "":
             options.UpdateToolInfo(NoBarcodeGiven=True)
         else:
+            found=False
             for i in range(len(row)):
                 if (row[i])[0]=="tools":
                     if save_in_txtFile.decode(((row[i])[1])[2], displaySpace=False)==str(serial):
-                        if other8.get()!=None:
+                        found=True
+                        change=False
+                        if other8.get()!=None and other8.get()!="":
                             if check.barcode(other8.get()) == True:
                                 ((row[i])[1])[2]=other8.get()
+                                change=True
                             else:
                                 options.UpdateToolInfo(BarcodeExists=True)
-                        if other7.get()!=None:
+                                break
+                        if other7.get()!=None and other7.get()!="":
+                            change=True
                             ((row[i])[1])[0]=other7.get()
-                        if other.get()!=None:
+                        if other.get()!=None and other.get()!="":
+                            change=True
                             ((row[i])[1])[1]=other.get()
-                        if other4.get()!=None:
+                        if other4.get()!=None and other4.get()!="":
+                            change=True
                             ((row[i])[1])[3]=other4.get()
-                        if other5.get()!=None:
+                        if other5.get()!=None and other5.get()!="":
+                            change=True
                             ((row[i])[1])[4]=other5.get()
-                        if other6.get()!=None:
+                        if other6.get()!=None and other6.get()!="":
+                            change=True
                             ((row[i])[1])[5]=other6.get()
-                        send()
-            options.UpdateToolInfo(IncorrectBarcode=True)
+                        if change==False:
+                            options.UpdateToolInfo(NoChanges=True)
+                        if change==True:
+                            send()
+            if found==False:
+                options.UpdateToolInfo(IncorrectBarcode=True)
     def print_allBarcodes():
         print_instructions.printAllToolsBarcodes()
         send()
