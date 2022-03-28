@@ -1,5 +1,5 @@
 #Things to do next:
-#Work On Encoding/Decoding Issues!
+#Nothin'!!!
 from ast import Bytes
 from dis import show_code
 from email.encoders import encode_7or8bit
@@ -15,11 +15,14 @@ from venv import create
 from xmlrpc.client import FastMarshaller
 import zipfile
 from html5lib import serialize
+from numpy import True_
 from pandas import *
 from barcode import EAN13
 from barcode.writer import ImageWriter
 import time
 import qrcode
+import ctypes #Expermintal
+#ctypes.CDLL('libfoo.so').your_function(arguemnts)
 try:
     #Windows print
     import win32api
@@ -247,52 +250,78 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 print('Branches:\n  logic.gate.not_gate()\n  logic.gate.and_gate()\n  logic.gate.or_gate()')
             def xor_gate(input1, input2):
                 history.create_history('Run', 'logic.gate.xor_gate()', hide=debug)
-                if input1 == 0 and input2 == 0:
-                    return 0
-                elif input1 == 1 and input2 == 1:
-                    return 0
-                elif input1 == 0 and input2 == 1:
-                    return 1
-                elif input1 == 1 and input2 == 0:
-                    return 1
-                elif input1 == False and input2 == False:
-                    return False
-                elif input1 == True and input2 == True:
-                    return False
-                elif input1 == False and input2 == True:
-                    return True
-                elif input1 == True and input2 == False:
-                    return True
+                if UtilizeCPPCode==True:
+                    return ctypes.CDLL('libfoo.so').xor_gate(input1, input2)
                 else:
-                    return "None"
+                    if input1 == 0 and input2 == 0:
+                        return 0
+                    elif input1 == 1 and input2 == 1:
+                        return 0
+                    elif input1 == 0 and input2 == 1:
+                        return 1
+                    elif input1 == 1 and input2 == 0:
+                        return 1
+                    elif input1 == False and input2 == False:
+                        return False
+                    elif input1 == True and input2 == True:
+                        return False
+                    elif input1 == False and input2 == True:
+                        return True
+                    elif input1 == True and input2 == False:
+                        return True
+                    else:
+                        return "None"
             def not_gate(input1):
-                history.create_history('Run', 'logic.gate.not_gate()', hide=debug)
-                if input1==1:
-                    return 0
-                if input1==0:
-                    return 1
-                if input1==True:
-                    return False
-                if input1==False:
-                    return True
+                if UtilizeCPPCode==True:
+                    if (type(input1)) == int:
+                        return ctypes.CDLL('libfoo.so').not_gate(input1)
+                    if (type(input1)) == bool:
+                        if input1==True:
+                            return False
+                        if input1==False:
+                            return True
+                if UtilizeCPPCode==False:
+                    history.create_history('Run', 'logic.gate.not_gate()', hide=debug)
+                    if input1==1:
+                        return 0
+                    if input1==0:
+                        return 1
+                    if input1==True:
+                        return False
+                    if input1==False:
+                        return True
             def and_gate(input1, input2):
                 history.create_history('Run', 'logic.gate.and_gate()', hide=debug)
-                if input1 == 0 and input2 == 0:
-                    return 0
-                if input1 == 1 and input2 == 1:
-                    return 1
-                if input1 == 1 and input2 == 0:
-                    return 0
-                if input1 == 0 and input2 == 1:
-                    return 0
-                if input1 == False and input2 == False:
-                    return False
-                if input1 == True and input2 == True:
-                    return True
-                if input1 == True and input2 == False:
-                    return False
-                if input1 == False and input2 == True:
-                    return False
+                if UtilizeCPPCode==True:
+                    if type(input1) == int and type(input2) == int:
+                        return ctypes.CDLL('libfoo.so').and_gate(input1, input2)
+                    else:
+                        #If input(s) are not integers :)
+                        if input1 == False and input2 == False:
+                            return False
+                        if input1 == True and input2 == True:
+                            return True
+                        if input1 == True and input2 == False:
+                            return False
+                        if input1 == False and input2 == True:
+                            return False
+                if UtilizeCPPCode==False:
+                    if input1 == 0 and input2 == 0:
+                        return 0
+                    if input1 == 1 and input2 == 1:
+                        return 1
+                    if input1 == 1 and input2 == 0:
+                        return 0
+                    if input1 == 0 and input2 == 1:
+                        return 0
+                    if input1 == False and input2 == False:
+                        return False
+                    if input1 == True and input2 == True:
+                        return True
+                    if input1 == True and input2 == False:
+                        return False
+                    if input1 == False and input2 == True:
+                        return False
             def or_gate(input1, input2):
                 history.create_history('Run', 'logic.or_gate()', hide=debug)
                 if input1 == 0 and input2 == 0:
@@ -894,10 +923,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                             return 1
                     return 0
                 else:
-                    for i in range(90):
-                        print()
                     if hide == False:
-                        print('(Error) Unknown Class. This will not be recorded. Input must be a string.')
+                        print('(Error) . This will not be recorded. Input must be a string.')
             if auto_filter_profanity==False:
                 if debug==True:
                     if hide==False:
@@ -1572,7 +1599,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             for i in range(len(row)):
                 #Find the database tools
                 if (row[i])[0]=="tools":
-                    if ((row[i])[1])[2]==str(barcode).encode(encoding='UTF-8',errors='strict'):
+                    if save_in_txtFile.decode(((row[i])[1])[2], displaySpace=False)==barcode:
                         #If found
                         return False
             #If not found
@@ -1666,6 +1693,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     print(errors.profanityDetected(new_password, user=user_logged))
             if num1 == False and num2 == False and new_permission in allowed_users and profanityFilter.filter(new_user)==0 and profanityFilter.filter(new_password.lower())==0:
                 if password_restrictions.check_password(new_password) == 1 or strict_password==False:
+                    #Implement into c++
+                    ctypes.CDLL('libfoo.so').create_user(known_users=known_users)
                     skip=False
                     for i in range(len(known_users)):
                         if known_users[i]==new_user:
@@ -2210,7 +2239,6 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     for x in range(len(row)):
                         if (row[x])[0]==data_base:
                             print((row[x])[1])
-                print('Complete')
                 if num == True:
                     print(errors.cannot_call_func('data_base.show.show_row()'))
             def show_lists(data_base=None, database=None):
@@ -2695,5 +2723,3 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     #To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
     #Test bench
     #<--Indent to here
-    BrokenTool("*0017792")
-    save.all()
