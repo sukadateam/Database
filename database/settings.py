@@ -3,14 +3,14 @@
 #Required python version to run program.
 required_version='3.10.2'
 #Application version. Just for show.
-program_version='0.5.8'
+program_version='0.6.2'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only. Setting is not required to be changed.
 drive_name='Computer'
 #Operating System or OS. Can be macos, windows or linux. Must be lowercase.
 system='macos'
-#Filters bad words that people should not be using. Not currently active.
+#Filters bad words that people should not be using.
 profanity_filter=True
 #A backup password in case the other is forgotten.
 global_password=True
@@ -24,7 +24,7 @@ allow_windows_version='10'
 min_length=5 #Cannot be smaller than 5
 max_length=25 #Cannot be bigger than 99
 allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890*()# '
-#What is the name of your printer? For macOS.
+#What is the name of your printer? For macOS. Windows uses default.
 printer_name='iDPRT_SP310'
 
 
@@ -136,7 +136,11 @@ printer_debug=False
 
 #Settings coming soon. Do not change unless your a dare devil.
 #Clears history file after each startup.
-clearHistoryOnStartup=True
+clearHistoryOnStartup=False
+#DarkMode For app.py.
+darkModeApp=False
+#Speeds up computation.
+UtilizeCPPCode=True
 
 
 #Remove if you aren't using my custom application.
@@ -144,7 +148,7 @@ clearHistoryOnStartup=True
 show_background=True
 button_color='white'
 bg_color='#80a8e8'
-text_color='#494b4d'
+text_color='#000000'
 button_height=2
 button_width=15
 text_font=30
@@ -152,5 +156,8 @@ entry_background_color='White'
 entry_text_color='Black'
 OnlyAllowKnownStudents=False
 secretsAllowed=False
-side_tilt=200
+side_tilt=75
 AskForEncryptionPassword=False
+if darkModeApp==True:
+    bg_color='#231F20'
+    text_color='#000000'
