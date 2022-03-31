@@ -13,6 +13,7 @@ To setup. Install all items in requirements.txt using pip and run custom_databas
 <br>Latest Notes/New Features:
 <br>1. Working On a Method to print automatically with Windows. Instead of giving a prompt.
 <br>2. Have "Print All Barcode(s)" allow user to click next to print the next barcode. Instead of going by timer.
+<br>3. Add a function to remove broken tools. Place button in "Edit Inventory".
 
 To start the program:
 1. pip install -r requirements.txt (Universal) or python3 -m pip install -r requirements.txt (MacOS/UnAssigned)
