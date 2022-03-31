@@ -77,7 +77,7 @@ except:
 if quiteStartup == False:
     print('This Project is hosted on github. github.com/sukadateam')
     print('If problems occur, try to check if a new version exists.')
-    print('-or- Create An Issue On GitHub!\n\n')
+    print('-or- Create/Mark An Issue On GitHub!\n\n')
 if sys.version[0:len(required_version)] != required_version and "-skipPythonCheck" not in n and skip_pythonCheck==False:
     print('Required python version:', required_version)
     print('Current python version:', sys.version[0:len(required_version)])
@@ -272,16 +272,13 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     else:
                         return "None"
             def not_gate(input1):
+                history.create_history('Run', 'logic.gate.not_gate()', hide=debug)
                 if UtilizeCPPCode==True:
                     if (type(input1)) == int:
                         return ctypes.CDLL('libfoo.so').not_gate(input1)
                     if (type(input1)) == bool:
-                        if input1==True:
-                            return False
-                        if input1==False:
-                            return True
+                        return ctypes.CDLL('libfoo.so').not_gateBool(str(input1))
                 if UtilizeCPPCode==False:
-                    history.create_history('Run', 'logic.gate.not_gate()', hide=debug)
                     if input1==1:
                         return 0
                     if input1==0:
@@ -462,7 +459,10 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         part8, part9 = save_in_txtFile.decode(((row[i])[1])[5], max_length=20)
                         part10, part11 = save_in_txtFile.decode(((row[i])[1])[0], max_length=20)
                         part12, partn=display.space(str(check.signed_out_item(str(((row[i])[1])[2]))), hide=True, max_length=max_length, return_ShortenNotice=True)
-                        part13, partn =display.space(str(((row[i])[1])[6]), hide=True, max_length=max_length, return_ShortenNotice=True)
+                        try:
+                            part13, partn =display.space(str(((row[i])[1])[6]), hide=True, max_length=max_length, return_ShortenNotice=True)
+                        except:
+                            part13 = False
                         if part3==True or part5==True or part7==True or part9==True or part11==True:
                             part1, part17=display.space(str(True), hide=True, max_length=max_length, return_ShortenNotice=True)
                         if showIfShort==False:
@@ -665,12 +665,14 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 except:
                     print('Wrong Password.')
                     return 'WrongPassword'
+            #Don't encrypt.
             elif encryptBackups==False and ForceEncryption==False:
                 #Backup Certian Files
                 list2=['custom_database.py','history_desc.py','vars_to_save.py','data_save.py','history.py', 'settings.py','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
                 try: os.chdir('backups')
                 except: pass
                 zipObject= ZipFile(backup_name+'.zip', 'w')
+                #Move to main folder to copy files
                 try: os.chdir(path)
                 except: pass
                 for i in range(len(list2)):
@@ -678,11 +680,15 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         zipObject.write(list2[i])
                     except:
                         pass
+                #Move to backup folder to zip the files
                 try: os.chdir('backups')
                 except: pass
+                #Put the zip in the folder
                 zipObject.close()
+                #Move back to main folder
                 try: os.chdir(path)
                 except: pass
+            #Remove encrypted files from main folder
             if os.path.exists('data_save.py')==True and os.path.exists('data_save.aes')==True:
                 os.remove('data_save.aes')
             if os.path.exists('history.txt')==True and os.path.exists('history.aes')==True:
@@ -1693,8 +1699,6 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     print(errors.profanityDetected(new_password, user=user_logged))
             if num1 == False and num2 == False and new_permission in allowed_users and profanityFilter.filter(new_user)==0 and profanityFilter.filter(new_password.lower())==0:
                 if password_restrictions.check_password(new_password) == 1 or strict_password==False:
-                    #Implement into c++
-                    ctypes.CDLL('libfoo.so').create_user(known_users=known_users)
                     skip=False
                     for i in range(len(known_users)):
                         if known_users[i]==new_user:
