@@ -2,7 +2,9 @@
 <br>Current Stage: Adding Help Functions. Fixing a save issue that only occurs on Windows.
 
 To setup. Install all items in requirements.txt using pip and run custom_database.py. That's it!
+<br> So run:
 <br>pip install -r requirements.txt
+<br> -- OR --
 <br>python3 -m pip install -r requirements.txt
 
 <br>Please note: Windows And MacOS are currently be used for application testing.
@@ -19,3 +21,9 @@ To start the program:
 
 
 <br>To get live version(s) check out github.com/sukadateam/live_build
+
+<br> Credits!
+<br> Brandon Robinson(Programmer)
+<br> Adbullahi Adbullahi(Tester)
+<br> Albert Plummer(Tester)
+<br> Cameron Landry(Tester)
