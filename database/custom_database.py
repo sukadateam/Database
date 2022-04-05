@@ -15,13 +15,14 @@ from venv import create
 from xmlrpc.client import FastMarshaller
 import zipfile
 from html5lib import serialize
-from numpy import True_
+from numpy import True_, int32
 from pandas import *
 from barcode import EAN13
 from barcode.writer import ImageWriter
 import time
 import qrcode
 import ctypes #Expermintal
+from screeninfo import get_monitors
 #ctypes.CDLL('libfoo.so').your_function(arguemnts)
 try:
     #Windows print
@@ -140,7 +141,22 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     except:
         if quiteStartup == False:
             print("Couldn't import pyAesCrypt")
+    if os.path.exists('libfoo.so')==False:
+        print('\nTo compile a shared .so file from hello.cpp run:\ng++ -c -o library.o hello.cpp\ng++ -shared -o libfoo.so library.o\n')
+    def GetScreenHeight():
+        for m in get_monitors():
+            return int(m.height)
+        if debug==True:
+            print("Could not retrieve screen Height")
+        return False
+    def GetScreenWidth():
+        for m in get_monitors():
+            return int(m.width)
+        if debug==True:
+            print("Could not retrieve screen Width")
+        return False
     def assignBarcodesToItemsWithout():
+        #Adds called function to history.
         history.create_history('Run', 'assignBarcodesToItemsWithout()', hide=debug)
         for i in range(len(row)):
             if (row[i])[0] == "tools":
@@ -148,19 +164,25 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     a=True
                     while a==True:
                         abc=''
+                        #Generates the new Barcode/Serial
                         for x in range(8):
                             abc+=random.choice('1234567890qwertyuiopasdfghjklzxcvbnm')
+                        #Checks to see if new Barcode/Serial exists. If so repeat, if not assign it.
                         if check.barcode(abc)==True:
+                            #Assigns the new Barcode/Serial
                             ((row[i])[1])[2]=abc
                             a=False
     def BrokenTool(input):
+        #Marks a tool as broken.
         for i in range(len(row)):
             if (row[i])[0]=="tools":
                 if save_in_txtFile.decode(((row[i])[1])[2], displaySpace=False)==input:
                     try:
+                        #Changes a Value to True
                         ((row[i])[1])[6]=True
                     except Exception as ErrorHandle:
                         if debug==True:
+                            #Prints the error if one occurs.
                             print(ErrorHandle)
     class print_instructions:
         def help():
@@ -218,11 +240,13 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         my_code = EAN13(barcode)
                         my_code.save(str(file_name))
                     else:
-                        print('Barcodes must be numbers.')
+                        if printer_debug==True:
+                            print('Barcodes must be numbers.')
     class setupDatabaseWithSpreadSheet:
         def help():
             print('Branches:\n  setupDatabaseWithSpreadSheet.run()\n  setupDatabaseWithSpreadSheet.getAll()')
         def run(hide=False):
+            #Imports a compatible spread sheet and imports it into the database.
             history.create_history('Run', 'setupDatabaseWithSpreadSheet.run()', hide=hide)
             toolType, toolName, serialNumber, modelNumber, purchaseDate, loanedTo = setupDatabaseWithSpreadSheet.getAll()
             for i in range(len(toolType)):
@@ -231,9 +255,11 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                     if type(list3[x]) == float:
                         list3[x]=" "
                         print(list3[x])
+                #Adds the new data to the database.
                 data_base.edit.add_row(data_base='tools', new_row=[str(list3[0]).encode(encoding='UTF-8',errors='strict'), str(list3[1]).encode(encoding='UTF-8',errors='strict'),str(list3[2]).encode(encoding='UTF-8',errors='strict'), str(list3[3]).encode(encoding='UTF-8',errors='strict'), str(list3[4]).encode(encoding='UTF-8',errors='strict'), str(list3[5]).encode(encoding='UTF-8',errors='strict'), False], split=False)
             assignBarcodesToItemsWithout()
         def getAll(hide=False):
+            #Grabs all the data from the spread sheet.
             history.create_history('Run', 'setupDatabaseWithSpreadSheet.getAll()', hide=hide)
             data=read_csv("tools.csv")
             toolType=data['Tool Type'].tolist()
@@ -251,7 +277,10 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             def xor_gate(input1, input2):
                 history.create_history('Run', 'logic.gate.xor_gate()', hide=debug)
                 if UtilizeCPPCode==True:
-                    return ctypes.CDLL('libfoo.so').xor_gate(input1, input2)
+                    try:
+                        return ctypes.CDLL('libfoo.so').xor_gate(input1, input2)
+                    except:
+                        print(errors.MissingCPP())
                 else:
                     if input1 == 0 and input2 == 0:
                         return 0
@@ -275,9 +304,15 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 history.create_history('Run', 'logic.gate.not_gate()', hide=debug)
                 if UtilizeCPPCode==True:
                     if (type(input1)) == int:
-                        return ctypes.CDLL('libfoo.so').not_gate(input1)
+                        try:
+                            return ctypes.CDLL('libfoo.so').not_gate(input1)
+                        except:
+                            print(errors.MissingCPP())
                     if (type(input1)) == bool:
-                        return ctypes.CDLL('libfoo.so').not_gateBool(str(input1))
+                        try:
+                            return ctypes.CDLL('libfoo.so').not_gateBool(str(input1))
+                        except:
+                            print(errors.MissingCPP())
                 if UtilizeCPPCode==False:
                     if input1==1:
                         return 0
@@ -291,7 +326,10 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 history.create_history('Run', 'logic.gate.and_gate()', hide=debug)
                 if UtilizeCPPCode==True:
                     if type(input1) == int and type(input2) == int:
-                        return ctypes.CDLL('libfoo.so').and_gate(input1, input2)
+                        try:
+                            return ctypes.CDLL('libfoo.so').and_gate(input1, input2)
+                        except:
+                            print(errors.MissingCPP())
                     else:
                         #If input(s) are not integers :)
                         if input1 == False and input2 == False:
@@ -575,7 +613,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         def settings():
             history.create_history('Run', 'display.settings()', hide=debug)
             #Shows all settings on the screen.
-            settings1=['clearHistoryOnStartup','clearHistoryOnStartup', 'AskForEncryptionPassword','printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+            settings1=['UtilizeCPPCode','darkModeApp','clearHistoryOnStartup','clearHistoryOnStartup','clearHistoryOnStartup', 'AskForEncryptionPassword','printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
             for i in range(len(settings1)):
                 try:
                     print(settings1[i]+'='+str(globals()[settings1[i]]))
@@ -643,7 +681,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 try:
                     if encrypt.all(password) != 1:
                         #Backup Certian Files
-                        list2=['custom_database.py','history_desc.py','vars_to_save.py','data_save.aes','history.aes', 'settings.py','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
+                        list2=['hello.cpp','libfoo.so','custom_database.py','history_desc.py','vars_to_save.py','data_save.aes','history.aes', 'settings.py','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
                         try: os.chdir('backups')
                         except: pass
                         zipObject= ZipFile(backup_name+'.zip', 'w')
@@ -797,8 +835,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     def check_settingsImproved(hide=False):
         history.create_history('Run', 'check_settingsImproved()', hide=debug)
         found=False
-        settings1=['clearHistoryOnStartup','clearHistoryOnStartup', 'AskForEncryptionPassword', 'printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
-        types=[bool, bool, bool, str, bool, bool, bool, bool, int, int, int, bool, list, bool, str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
+        settings1=['UtilizeCPPCode','clearHistoryOnStartup','clearHistoryOnStartup','clearHistoryOnStartup', 'AskForEncryptionPassword', 'printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+        types=[bool, bool, bool, bool, bool, str, bool, bool, bool, bool, int, int, int, bool, list, bool, str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
         for i in range(len(settings1)):
             skip=False
             if skip_missing_settings==True:
@@ -1612,8 +1650,10 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             return True
         def encyption_password(password):
             if decrypt.hash(password=password)==False:
+                #Returns 1 if password does not match
                 return 1
             else:
+                #Returns 0 if password Matches
                 return 0
         def data_format(data_base=None):
             #Returns database type.
@@ -2153,6 +2193,17 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 #Must be column_row
             #Used for my carpentry app.
             class app:
+                def rmBrokenTools():
+                    a=0
+                    for i in range(len(row)):
+                        if (row[i-a])[0]=="tools":
+                            try:
+                                if ((row[i-a])[1])[6]==True:
+                                    ((row[i-a])[1]).pop()
+                                    a+=1
+                            except:
+                                pass
+                    return "DONE"
                 def remove_row(data_base=None, name=None, database=None, hide=False):
                     if data_base == None:
                         data_base=database
@@ -2479,7 +2530,11 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 print(errors.cannot_call_func('password_restrictions.set_max_length()'))
     class errors:
         def help():
-            print('Branches:\n  errors.FileDoesNotExist()\n  errors.NotSignedIn()\n  errors.BackupNameExists()\n  errors.profanityDetected()\n  errors.doesNotObeyRestrictions()\n  errors.database_does_not_exist()\n  errors.cannot_call_func()\n  errors.incorrect_perm()\n  errors.user_exists()\n  errors.user_not_found()\n  errors.not_list()\n  errors.not_str()\n  errors.not_bool()\n  errors.not_int()')
+            print('Branches:\n  errors.MissingCPP()\n  errors.FileDoesNotExist()\n  errors.NotSignedIn()\n  errors.BackupNameExists()\n  errors.profanityDetected()\n  errors.doesNotObeyRestrictions()\n  errors.database_does_not_exist()\n  errors.cannot_call_func()\n  errors.incorrect_perm()\n  errors.user_exists()\n  errors.user_not_found()\n  errors.not_list()\n  errors.not_str()\n  errors.not_bool()\n  errors.not_int()')
+        def MissingCPP():
+            global UtilizeCPPCode
+            UtilizeCPPCode=False
+            return ("Missing CPP File. Compile the file 'hello.cpp' as a shared library or import the libfoo.so file to the app root folder.") 
         def FileDoesNotExist(var):
             history.create_history(var, 'FileDoesNotExist', manual_record=auto_error_record, hide=debug)
             print('(Error) File does not exist.')
@@ -2656,10 +2711,10 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         print('\nSystem Started Correctly!')
     if time.time()-startupCount<.01:
         if quiteStartup == False:
-            print('Est Time:', str(round(time.time()-startupCount, 2))+'<')
+            print('Est StartUp Time:', str(round(time.time()-startupCount, 2))+'<')
     else:
         if quiteStartup == False:
-            print('Est Time:', round(time.time()-startupCount, 2))
+            print('Est StartUp Time:', round(time.time()-startupCount, 2))
     try:
         if "-release" in n:
             c=''
@@ -2681,7 +2736,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 backup_name=version_in+' '+c+' '+beta
             else:
                 backup_name=version_in+' '+c
-            list2=['app.py', 'count.py', 'custom_database.py','data.py','get_directory.py','files_to_backup.py','history_desc.py','patch_notes.txt','profanity.txt','requirements.txt','settings.py','shell.py','vars_to_save.py','version_config.py']
+            list2=['quid.jpeg','app.py', 'count.py', 'custom_database.py','data.py','get_directory.py','files_to_backup.py','history_desc.py','patch_notes.txt','profanity.txt','requirements.txt','settings.py','shell.py','vars_to_save.py','version_config.py']
             beta1=input('Would you like to compress the save file also: ')
             if beta1=="yes" or beta1=='y':
                 list2.append('data_save.py')
@@ -2722,7 +2777,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         print('Current Arguments:\n  -skipVersionCheck (Bypasses Application Version Check)\n  -v (Prints Progam Version)\n  -info (Prints Import Info)\n  -reset (Resets Application)\n  -skipPythonCheck (Ignore Python Version)')
     if dontCloseAfterEmptyStart==True:
         input('Hit enter to Continue: ')
-    #You must set a Normal level password
+    #You may set a Normal level password
     #You can set a global password if need be. Basically a backup.
     #To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
     #Test bench
