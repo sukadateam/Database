@@ -3,7 +3,7 @@
 #Required python version to run program.
 required_version='3.10.2'
 #Application version. Just for show.
-program_version='0.6.2'
+program_version='0.6.4'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only. Setting is not required to be changed.
@@ -132,7 +132,7 @@ encryptBackups=False
 #Keep the terminal hush hush on startup. Only major errors will show.
 quiteStartup=False
 #Print in the terminal if prints fail and what printer it is using.
-printer_debug=False
+printer_debug=True #Default True
 
 #Settings coming soon. Do not change unless your a dare devil.
 #Clears history file after each startup.
@@ -156,7 +156,7 @@ entry_background_color='White'
 entry_text_color='Black'
 OnlyAllowKnownStudents=False
 secretsAllowed=False
-side_tilt=75
+side_tilt=200
 AskForEncryptionPassword=False
 if darkModeApp==True:
     bg_color='#231F20'
