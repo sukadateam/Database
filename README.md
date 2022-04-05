@@ -1,5 +1,5 @@
 # Database
-<br>This application is intended to serve on a Windows 10 Laptop with a 1k screen. Other resolutions/Devices may require tweaking.
+<br>Scaling Is in the works.
 
 To setup. Install all items in requirements.txt using pip and run custom_database.py. That's it!
 <br> So run:
