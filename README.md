@@ -1,6 +1,4 @@
 # Database
-<br>Scaling Is in the works.
-
 To setup. Install all items in requirements.txt using pip and run custom_database.py. That's it!
 <br> So run:
 <br>pip install -r requirements.txt
