@@ -1,4 +1,5 @@
 # Database
+This Project is Finished, but please report any bugs you find. I will fix them.
 To setup. Install all items in requirements.txt using pip and run custom_database.py. That's it!
 <br> So run:
 <br>pip install -r requirements.txt
@@ -15,7 +16,7 @@ To setup. Install all items in requirements.txt using pip and run custom_databas
 To start the program:
 1. pip install -r requirements.txt (Universal) or python3 -m pip install -r requirements.txt (MacOS/UnAssigned)
 
-2. Recommended python 3.10.2. if else: change required_version to your version in settings.py
+2. Recommended python 3.10.?. if else: change required_version to your version in settings.py
 
 3. Open app.py and login. After login it may ask you to create a encrypt/decrypt password.
 
@@ -23,7 +24,7 @@ To start the program:
 <br>To get live version(s) check out github.com/sukadateam/live_build
 
 <br> Credits!
-<br> Brandon Robinson(Programmer)
+<br> Brandon Robinson(Programmer/Designer/Tester)
 <br> Adbullahi Adbullahi(Tester)
 <br> Albert Plummer(Tester)
 <br> Cameron Landry(Tester)
