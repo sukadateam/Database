@@ -28,3 +28,6 @@ To start the program:
 <br> Adbullahi Adbullahi(Tester)
 <br> Albert Plummer(Tester)
 <br> Cameron Landry(Tester)
+
+
+Rare/Occasional Update may/will occur. Check back every few weeks for new versions. 0.6.7 is currently in the works :)
