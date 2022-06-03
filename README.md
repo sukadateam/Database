@@ -31,3 +31,7 @@ To start the program:
 
 
 Rare/Occasional Update may/will occur. Check back every few weeks for new versions. 0.6.7 is currently in the works :)
+
+
+Things to do:
+  1. Tweak dark mode to seem more appealling
