@@ -1,9 +1,9 @@
 #User Settings --(FOR USERS)--
 
 #Required python version to run program.
-required_version='3.10.2'
+required_version=['3.10.0','3.10.1','3.10.2','3.10.3','3.10.4']
 #Application version. Just for show.
-program_version='0.6.4'
+program_version='0.6.7'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only. Setting is not required to be changed.
@@ -15,7 +15,7 @@ profanity_filter=True
 #A backup password in case the other is forgotten.
 global_password=True
 #App version control --(Disable if needed)--
-app_version_control=True
+app_version_control=False
 #Only allow set operating system. Change system variable to your choice.
 set_operating_system=False
 #Allowed windows versions. You can choose 7, 8, 10, 11. Only works if system setting is set to windows.
@@ -133,14 +133,16 @@ encryptBackups=False
 quiteStartup=False
 #Print in the terminal if prints fail and what printer it is using.
 printer_debug=True #Default True
-
-#Settings coming soon. Do not change unless your a dare devil.
 #Clears history file after each startup.
 clearHistoryOnStartup=False
+
+#Settings coming soon. Do not change unless your a dare devil.
 #DarkMode For app.py.
-darkModeApp=False
-#Speeds up computation.
+darkModeApp=True
+#Speeds up computation. May Not ever be fully functional :(
 UtilizeCPPCode=True
+#Limits the amount of characters in a given string when writen to a text file.
+Output_file_MaxLength=35
 
 
 #Remove if you aren't using my custom application.
