@@ -35,3 +35,4 @@ Rare/Occasional Update may/will occur. Check back every few weeks for new versio
 
 Things to do:
   1. Tweak dark mode to seem more appealling
+  2. Develope an update.py file to make updating easier and less complicated.
