@@ -1,5 +1,6 @@
 #Things to do next:
 #Nothin'!!!
+from platform import python_version
 from ast import Bytes
 from dis import show_code
 from email.encoders import encode_7or8bit
@@ -79,13 +80,13 @@ if quiteStartup == False:
     print('This Project is hosted on github. github.com/sukadateam')
     print('If problems occur, try to check if a new version exists.')
     print('-or- Create/Mark An Issue On GitHub!\n\n')
-if sys.version[0:len(required_version)] != required_version and "-skipPythonCheck" not in n and skip_pythonCheck==False:
+if python_version() not in required_version and "-skipPythonCheck" not in n and skip_pythonCheck==False:
     print('Required python version:', required_version)
-    print('Current python version:', sys.version[0:len(required_version)])
+    print('Current python version:', python_version)
     sys.exit()
 if skip_pythonCheck==True:
     n.append('-skipPythonCheck')
-if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck" in n:
+if python_version() in required_version or "-skipPythonCheck" in n:
     from pyAesCrypt import decryptFile, encryptFile
     if "resetCollections" not in locals() or "resetCollections" not in globals():
         resetCollections=False
@@ -109,6 +110,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             print('custom_database is not setup. Please setup with .bat or .sh file to enable this program.')
         exit()
     import_type='None'
+    if quiteStartup == False:
+        print('Python Version:', python_version())
     try:
         if dont_load_save==False:
             if quiteStartup == False:
@@ -184,6 +187,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         if debug==True:
                             #Prints the error if one occurs.
                             print(ErrorHandle)
+        return False
     class print_instructions:
         def help():
             print('Branches:\n  print_instructions.print()\n  print_instructions.createBarcode()')
@@ -435,6 +439,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 file.close()
             os.chdir(path)
         def logs():
+            global path, Output_file_MaxLength
             history.create_history('Run', 'save_in_txtFile.logs()', hide=debug)
             os.chdir('collections')
             try:
@@ -443,6 +448,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 pass
             #Save all logs of students that currently have items signed out.
             file=open('student_logs.txt','w')
+            fileWrite=False #Used to determine if anything was exported to the text file.
             for i in range(len(lists)):
                 if (lists[i])[0]=="logs":
                     for x in range(len((lists[i])[1])):
@@ -450,11 +456,14 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                         serial = save_in_txtFile.decode((((lists[i])[1])[x])[0], displaySpace=False)
                         student = save_in_txtFile.decode((((lists[i])[1])[x])[1], displaySpace=False)
                         tool_name=get.tool_name(serial_Temp)
-                        file.write('Item: '+display.space(str(tool_name), max_length=35, hide=True)+' Serial: '+display.space(serial, max_length=35, hide=True)+' Student: '+display.space(student, max_length=35, hide=True)+'\n')
-                file.write('\n\n#'+str(35)+' character max length.')
-                    #Save Item name, Serial, And student name.
-                    #Search tools with serial to find item name.
-                file.close()
+                        file.write('Item: '+display.space(str(tool_name), max_length=Output_file_MaxLength, hide=True)+' Serial: '+display.space(serial, max_length=35, hide=True)+' Student: '+display.space(student, max_length=35, hide=True)+'\n')
+                        fileWrite=True
+            if fileWrite==False: #If nothing was writen to the log file. Make a not.
+                file.write('There doesn\'t seem to be anything here. If you feel that this is incorrect or data loss has occured. Please mark and issue on GitHub and attempt to do a restore from a backup file. Backups are stored in the backup folder: '+str(path))
+            file.write('\n\n#'+str(Output_file_MaxLength)+' character max length.')
+                #Save Item name, Serial, And student name.
+                #Search tools with serial to find item name.
+            file.close()
             os.chdir(path)
         def users():
             history.create_history('Run', 'save_in_txtFile.users()', hide=debug)
@@ -475,6 +484,8 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 print('There are no users.')
             os.chdir(path)
         def tools(max_length=20, showIfShort=False):
+            #max_length argument is now outdated. To use var, set DecodeMethod to False.
+            global Output_file_MaxLength
             history.create_history('Run', 'save_in_txtFile.tools()', hide=debug)
             try:
                 os.chdir('collections')
@@ -490,19 +501,19 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             if DecodeMethod==True:
                 for i in range(len(row)):
                     if (row[i])[0]=="tools":
-                        part, part1 = save_in_txtFile.decode(((row[i])[1])[2], max_length=20)
-                        part2, part3 = save_in_txtFile.decode(((row[i])[1])[1], max_length=20)
-                        part4, part5 = save_in_txtFile.decode(((row[i])[1])[3], max_length=20)
-                        part6, part7 = save_in_txtFile.decode(((row[i])[1])[4], max_length=20)
-                        part8, part9 = save_in_txtFile.decode(((row[i])[1])[5], max_length=20)
-                        part10, part11 = save_in_txtFile.decode(((row[i])[1])[0], max_length=20)
-                        part12, partn=display.space(str(check.signed_out_item(str(((row[i])[1])[2]))), hide=True, max_length=max_length, return_ShortenNotice=True)
+                        part, part1 = save_in_txtFile.decode(((row[i])[1])[2], max_length=Output_file_MaxLength)
+                        part2, part3 = save_in_txtFile.decode(((row[i])[1])[1], max_length=Output_file_MaxLength)
+                        part4, part5 = save_in_txtFile.decode(((row[i])[1])[3], max_length=Output_file_MaxLength)
+                        part6, part7 = save_in_txtFile.decode(((row[i])[1])[4], max_length=Output_file_MaxLength)
+                        part8, part9 = save_in_txtFile.decode(((row[i])[1])[5], max_length=Output_file_MaxLength)
+                        part10, part11 = save_in_txtFile.decode(((row[i])[1])[0], max_length=Output_file_MaxLength)
+                        part12, partn=display.space(str(check.signed_out_item(str(((row[i])[1])[2]))), hide=True, max_length=Output_file_MaxLength, return_ShortenNotice=True)
                         try:
-                            part13, partn =display.space(str(((row[i])[1])[6]), hide=True, max_length=max_length, return_ShortenNotice=True)
+                            part13, partn =display.space(str(((row[i])[1])[6]), hide=True, max_length=Output_file_MaxLength, return_ShortenNotice=True)
                         except:
                             part13 = False
                         if part3==True or part5==True or part7==True or part9==True or part11==True:
-                            part1, part17=display.space(str(True), hide=True, max_length=max_length, return_ShortenNotice=True)
+                            part1, part17=display.space(str(True), hide=True, max_length=Output_file_MaxLength, return_ShortenNotice=True)
                         if showIfShort==False:
                             file.write('Tool Type: '+str(part10)+'  Item: '+str(part2)+'  Serial: '+str(part)+'  Model Number: '+str(part4)+'  Purchase Date: '+str(part6)+'  Loaned To: '+str(part8)+'  Signed Out: '+str(part12)+'Broken: '+str(part13)+'\n\n')
                         if showIfShort==True:
@@ -549,6 +560,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
         def help():
             print('Branches:\n  display.space()\n  display.database()\n  display.settings()')
         def space(var, max_length=10, hide=False, return_ShortenNotice=False):
+            #return ctypes.CDLL('yes.so').xor_gate(input1, input2)
             history.create_history('Run', 'display.space()', hide=debug)
             #Works with display.database to create a nice table to display.
             if isinstance(var, str)==True:
@@ -1220,6 +1232,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             return False
     def exit():
         history.create_history('Run', 'exit()', hide=debug)
+        safe_exit.close()
         print('Application Closed')
         sys.exit()
     class restore:
@@ -1404,10 +1417,10 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 global global_password
                 if global_password==True:
                     get.get_other_hash(password)
-        def new_hash(passw=None, normal=False, memory_float=False):
+        def new_hash(passw=None, normal=False, memory_float=False, other=False):
             history.create_history('Run', 'get.new_hash()', hide=debug)
             get.random_hash(single=normal, memory_float=memory_float)
-            get.encrypt_hash(passw)
+            get.encrypt_hash(passw, other=other)
             password=None
         def encrypt_hash(passw=None, other=False):
             history.create_history('Run', 'get.encrypt_hash()', hide=debug)
@@ -1415,7 +1428,10 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
             if passw != None:
                 password=passw
             if passw == None:
-                password=get.password()
+                try:
+                    password=get.password()
+                except:
+                    password=passw
             if other == False:
                 if system=='windows':
                     pyAesCrypt.encryptFile(drive_letter+':/hash.txt', drive_letter+':/hash.aes', password)
@@ -1622,8 +1638,7 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
                 history.create_history(user='True', usage='Skip Save', manual_record=auto_error_record, hide=hide)
     class clear:
         def normal():
-            for i in range(100):
-                print('')
+            os.system('clear')
     class check:
         def signed_out_item(barcode, hide=False):
             #Check to see if item has been signed out already.
@@ -2673,6 +2688,10 @@ if sys.version[0:len(required_version)] == required_version or "-skipPythonCheck
     except:
         pass
     if os.path.exists('history_desc.py')==False:
+        history.clear()
+    try:
+        from history_desc import history_id, history_description, count
+    except:
         history.clear()
     if os.path.exists('data_save.py')==True:
         try:
