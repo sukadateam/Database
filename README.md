@@ -9,6 +9,8 @@ To setup. Install all items in requirements.txt using pip and run custom_databas
 <br>Please note: Windows And MacOS are currently be used for application testing.
 <br><br>Nerdy Stuff:<br>For the absolute latest version download the source code. Not in releases. May cause issues. It won't always be tested before updated. Do not do this if you are looking for a stable version.
 
+<br> To Install updates via the UpdatePrgram.py file. Just download "UpdateCommands.py" from the new release tab, and place it in the same directory; within the current install, within the same folder as UpdateProgram.py
+
 <br>Latest Notes/New Features:
 <br>1. Working On a Method to print automatically with Windows. Instead of giving a prompt.
 <br>2. Shell is not able to allow login. A fix is coming soon!
