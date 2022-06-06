@@ -10,6 +10,15 @@ import subprocess
 import webbrowser
 import count
 import time
+cont=False
+try:
+    import sys
+    ah=list(sys.argv)
+    print(ah[1])
+    if ah[1]=="--test":
+        pass
+except:
+    cont=True
 tk=Tk()
 tk.title('Carpetentry Application')
 x=GetScreenWidth() #Used for calculations on the horizontal axis.
@@ -28,15 +37,6 @@ other1=None
 other2=None
 other3=None #Encrypt/Decrypt Password
 force=None
-cont=False
-try:
-    import sys
-    ah=list(sys.argv)
-    print(ah[1])
-    if ah[1]=="--test":
-        pass
-except:
-    cont=True
 if cont==True:
     try:
         abdsdfugvyub=debug
