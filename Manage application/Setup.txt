@@ -1,3 +1,6 @@
+File is outdated. Please revert to writen documentation.
+
+
 pip install -r requirements.txt (Universal) or python3 -m pip install -r requirements.txt (MacOS/UnAssigned)
 
 Edit settings.py and scroll to the bottom and set side_tilt=330 to side_tilt=80 #MacOS and Windows has a different ratio port so this is needed.
