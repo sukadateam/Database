@@ -32,7 +32,7 @@ To start the program:
 <br> Cameron Landry(Tester)
 
 
-Rare/Occasional Update may/will occur. Check back every few weeks for new versions. 0.6.8 is comming in a few weeks.
+Rare/Occasional Update may/will occur. Check back every few weeks for new versions. 0.6.8 is comming eventually.
 
 
 Things to do:
