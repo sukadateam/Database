@@ -39,3 +39,4 @@ Things to do:
   1. Tweak dark mode to seem more appealling
   2. Develope an update.py file to make updating easier and less complicated.
   3. Allow the option to have update file to update using the live build repo, instead of the stable database repo.
+  4. Finish the mods to allow for the settings to be updated without changing any keys
