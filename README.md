@@ -18,10 +18,12 @@ To setup. Install all items in requirements.txt using pip and run custom_databas
 To start the program:
 1. pip install -r requirements.txt (Universal) or python3 -m pip install -r requirements.txt (MacOS/UnAssigned)
 
-2. Recommended python 3.10.?. if else: change required_version to your version in settings.py
+3. Recommended python 3.10.?. if else: change required_version to your version in settings.py
 
 3. Open app.py and login. After login it may ask you to create a encrypt/decrypt password.
 
+If NumPy is giving erros try: (Termux)
+<br>   MATHLIB="m" pip install -r requirements.txt
 
 <br>To get live version(s) check out github.com/sukadateam/live_build
 
