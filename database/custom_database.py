@@ -1,4 +1,4 @@
-#0.6.7
+#0.6.8
 from platform import python_version
 from ast import Bytes
 from dis import show_code
@@ -55,10 +55,13 @@ except:
     sys.exit()
 password=None
 try:
-    from settings import *
+    from PresetSettingsForDevelopement import *
 except:
-    print('Cannot Find settings.py File. File is required for startup.')
-    sys.exit()
+    try:
+        from settings import *
+    except:
+        print('Cannot Find settings.py File. File is required for startup.')
+        sys.exit()
 try:
     import get_directory
 except:
@@ -98,7 +101,6 @@ if python_version() in required_version or "-skipPythonCheck" in n:
     d1 = today.strftime("%m/%d/%Y")
     #The Alphabet
     alphabet='abcdefghijklmnopqrstuvwxyz'
-    from settings import *
     import random, shutil
     try:
         from directory import path
@@ -190,9 +192,9 @@ if python_version() in required_version or "-skipPythonCheck" in n:
         return False
     class print_instructions:
         def help():
-            print('Branches:\n  print_instructions.print()\n  print_instructions.createBarcode()')
-        def print(file_name, rmFileAfterPrint=False):
-            history.create_history('Run', 'print_instructions.print()', hide=debug)
+            print('Branches:\n  print_instructions.printf()\n  print_instructions.createBarcode()')
+        def printf(file_name, rmFileAfterPrint=False):
+            history.create_history('Run', 'print_instructions.printf()', hide=debug)
             if printer_debug==True:
                 print('Sending Print Command...')
             #For Linux and macOS
@@ -219,7 +221,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
             for i in range(len(row)):
                 if (row[i])[0]=="tools":
                     print_instructions.createBarcode(str(((row[i])[1])[2]), qr_code=True)
-                    print_instructions.print(file_name="barcode.png")
+                    print_instructions.printf(file_name="barcode.png")
         def createBarcode(barcode1, file_name='barcode', qr_code=False, barcode=False):
             history.create_history('Run', 'print_instructions.createBarcode()', hide=debug)
             #File is saved at png.
@@ -273,6 +275,11 @@ if python_version() in required_version or "-skipPythonCheck" in n:
             purchaseDate=data['Purchase Date'].tolist()
             loandedTo=data['Loaned out to'].tolist()
             return toolType, toolName, serialNumber, modelNumber, purchaseDate, loandedTo
+    class returns:
+        def debug():
+            #Allows for debug variable to operations out side of global decleration.
+            global debug
+            return debug
     class logic:
         class gate:
             def help():
@@ -559,6 +566,14 @@ if python_version() in required_version or "-skipPythonCheck" in n:
     class display:
         def help():
             print('Branches:\n  display.space()\n  display.database()\n  display.settings()')
+        def sentMessages():
+            '''Used with messaging server.'''
+            for i in range(len(row)):
+                if (row[i])[0] == "userlogging":
+                    print('Time Stats Not Avaliable.',
+                        '\n  Message Sent From: '+str(((row[i])[1])[0]),
+                        "\n    With Query: "+str(((row[i])[1])[1])
+                        )
         def space(var, max_length=10, hide=False, return_ShortenNotice=False):
             #return ctypes.CDLL('yes.so').xor_gate(input1, input2)
             history.create_history('Run', 'display.space()', hide=debug)
@@ -625,7 +640,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
         def settings():
             history.create_history('Run', 'display.settings()', hide=debug)
             #Shows all settings on the screen.
-            settings1=['UtilizeCPPCode','darkModeApp','clearHistoryOnStartup','clearHistoryOnStartup','clearHistoryOnStartup', 'AskForEncryptionPassword','printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+            settings1=['UtilizeCPPCode','darkModeApp','clearHistoryOnStartup','clearHistoryOnStartup','clearHistoryOnStartup', 'AskForEncryptionPassword','printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digits_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
             for i in range(len(settings1)):
                 try:
                     print(settings1[i]+'='+str(globals()[settings1[i]]))
@@ -847,7 +862,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
     def check_settingsImproved(hide=False):
         history.create_history('Run', 'check_settingsImproved()', hide=debug)
         found=False
-        settings1=['UtilizeCPPCode','clearHistoryOnStartup','clearHistoryOnStartup','clearHistoryOnStartup', 'AskForEncryptionPassword', 'printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+        settings1=['UtilizeCPPCode','clearHistoryOnStartup','clearHistoryOnStartup','clearHistoryOnStartup', 'AskForEncryptionPassword', 'printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digits_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
         types=[bool, bool, bool, bool, bool, str, bool, bool, bool, bool, int, int, int, bool, list, bool, str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
         for i in range(len(settings1)):
             skip=False
@@ -902,11 +917,11 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                 if hide==False:
                     print('  drive_letter must be 1 character')
             error_found1=True
-        if isinstance(allowed_digists_forHistory, int):
-            if allowed_digists_forHistory>30 or allowed_digists_forHistory<1:
+        if isinstance(allowed_digits_forHistory, int):
+            if allowed_digits_forHistory>30 or allowed_digits_forHistory<1:
                 if show_incorrect_settings==True:
                     if hide==False:
-                        print('  allowed_digists_forHistory can only be upto 30 and no less than 1.')
+                        print('  allowed_digits_forHistory can only be upto 30 and no less than 1.')
                 error_found1=True
         if isinstance(min_length, int)==True:
             if min_length<5 or min_length+1>max_length:
@@ -1039,10 +1054,10 @@ if python_version() in required_version or "-skipPythonCheck" in n:
         def assign_letter(count, hide=False):
             #DO NOT ADD history.create_history IN THIS FUNCTION. IT WILL CAUSE A LOOP.
             #Not in use yet.
-            global allowed_digists_forHistory
+            global allowed_digits_forHistory
             count=int(count)
             a=''
-            for i in range(allowed_digists_forHistory-len(str(count))):
+            for i in range(allowed_digits_forHistory-len(str(count))):
                 a+='0'
             a+=str(count)
             count+=1
@@ -1623,21 +1638,106 @@ if python_version() in required_version or "-skipPythonCheck" in n:
             if disable_save==False:
                 history.create_history(None, 'Save', hide=hide)
                 from vars_to_save import list
-                file=open('data_save.py','w')
-                file.write('# -*- coding: utf-8 -*-\n')
+                file=open('data_save.py','w') #Creates a save file
+                file.write('# -*- coding: utf-8 -*-\n') #Writes "declare encoding"
                 for i in range(len(list)):
-                    file.write(list[i]+'='+str(globals()[list[i]])+'\n')
+                    file.write(list[i]+'='+str(globals()[list[i]])+'\n') #Writing each var with it's value. var = value
                 file.write('\n')
-                file.close()
-                if advanced_history==True:
+                file.close() #Close file
+                if advanced_history==True: #Writing a history file. Used mainly with the bundled app.py
                     file=open('history_desc.py', 'w')
                     file.write('history_id='+str(history_id))
                     file.write('\nhistory_description='+str(history_description))
                     file.write('\ncount='+str(count))
+                save.settings() #Calls a function to save current settings.
             if disable_save==True:
                 history.create_history(user='True', usage='Skip Save', manual_record=auto_error_record, hide=hide)
-    class clear:
+        def write(file, text):
+            file.write(text)
+        def settings(run=False, showTags=False, showLineWriten=True):
+            '''Set run to True to run this. This function is in developement. It may not be stable.
+            \nshowTags = Show additional data about each line
+            \nshowLineWriten= Show which line was writen. Helps troubleshoot.'''
+            file=open('settings_test.py', 'w')
+            read=open('settings.py', 'r')
+            exceptionLines=['26', '112', '113', '130', '131'] #For lines with complex structures. Or with a # within' the var itself
+            dontAlterLines=[[136, 139, True], [141, 144, True]] #Don't alter lines within range values. Ex: Lines 1-12. Also adds an indentation if set to True.
+            firstLine=True #Prevents indent on first write. Prevent file from corrupting.
+            #Skips if statements and dual equals(==)
+            #tag = #Notes at end
+            #rip = Whole line
+            count=0
+            while True:
+                count+=1
+                line=read.readline() #Each call moves read line down 1
+                varName=''
+                tag=''
+                if not line: #Break when End Of File(eof)
+                    break
+                passStage=True #Prevent further processing if line is handled by next line
+                for x in range(len(dontAlterLines)):
+                    if count > (dontAlterLines[x])[0]-1:
+                        if count < (dontAlterLines[x])[1]+1:
+                            if firstLine == False:
+                                save.write(file, '\n') #Create an new line
+                            firstLine=False
+                            if (dontAlterLines[x])[2]==True:
+                                save.write(file, str('  '+str(line.strip()))) #Write line as is; with added indent
+                            if (dontAlterLines[x])[2]==False:
+                                save.write(file, str(''+str(line.strip()))) #Write line as is; without added indent
+                            if showLineWriten==True:
+                                print('dontAlterLines Exception')
+                                print('Written Line{}'.format(count))
+                            passStage=False
+                if passStage==True:
+                    if "=" not in str(line.strip()) or "==" in str(line.strip()): #Doesn't alter line
+                        if firstLine == False:
+                            save.write(file, '\n') #Create an indent
+                        firstLine=False
+                        save.write(file, str(line.strip())) #Write line as is
+                        if showLineWriten==True:
+                            print('Written Line{}'.format(count))
+                    if "=" in str(line.strip()): #Alters current line
+                        if "==" not in str(line.strip()): #Don't run if, if statement found
+                            if showTags==True:
+                                print('Equals: Detected on line{}'.format(count))
+                            rip=str(line.strip()) #Returns line in a string
+                            ripCount=len(rip) #Character per line
+                            for i in range(ripCount):
+                                if rip[i] == "=":
+                                    varName=rip[0:i]
+                                    if showTags==True:
+                                        print(varName)
+                            if str(count) not in exceptionLines:
+                                if "#" in str(line.strip()):
+                                    for i in range(ripCount): #For each character
+                                        if rip[i] != "#": #Looking for Notes at end of line
+                                            pass
+                                        else:
+                                            #Notes at end on code line(s)
+                                            tag=rip[i:ripCount]
+                                            if showTags==True:
+                                                print(tag)
+                                            break
+                            save.write(file, '\n') #Create an new line
+                            if showLineWriten==True:
+                                print('Written Line{}'.format(count))
+                            if type(globals()[varName]) == str:
+                                save.write(file, (str(varName+'= \''+str(globals()[varName])+'\' '+str(tag))))
+                            else:
+                                save.write(file, (str(varName+'='+str(globals()[varName])+' '+str(tag))))
+                        
+                        else:
+                            if showTags==True:
+                                print('Double Equals: Detected on line{}'.format(count))
+            file.close() #Close file
+            read.close() #Close file
+            print("DO NOT STOP THE PROGRAM!!\nDeleting settings.py...")
+            os.remove('settings.py') #Remove current settings file
+            os.rename('settings_test.py', 'settings.py') #Rename temp settings file
+            print("Settings updated!!")
         def normal():
+            '''Clears terminal of text.'''
             os.system('clear')
     class check:
         def signed_out_item(barcode, hide=False):
@@ -2285,6 +2385,12 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                                 a+=1
                     if num1 == True:
                         print(errors.cannot_call_func('data_base.empty.one()'))
+        class retrieve:
+            def databases():
+                list = []
+                for i in range(len(data_bases)):
+                    list.append((data_bases[i])[0])
+                return list
         class show:
             def help():
                 print('Branches:\n  data_base.show.show_column()\n  data_base.show.show_row()\n  data_base.show.show_lists()\n  data_base.show.all_in_database()\n  data_base.show.all_data_bases()\n  data_base.show.info()')
@@ -2755,7 +2861,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                 backup_name=version_in+' '+c+' '+beta
             else:
                 backup_name=version_in+' '+c
-            list2=['UpdateProgram.py','quid.jpeg','app.py', 'count.py', 'custom_database.py','data.py','get_directory.py','files_to_backup.py','history_desc.py','patch_notes.txt','profanity.txt','requirements.txt','settings.py','shell.py','vars_to_save.py','version_config.py']
+            list2=['UpdateCommands.py','UpdateProgram.py','quid.jpeg','app.py', 'count.py', 'custom_database.py','data.py','get_directory.py','files_to_backup.py','history_desc.py','patch_notes.txt','profanity.txt','requirements.txt','settings.py','shell.py','vars_to_save.py','version_config.py']
             beta1=input('Would you like to compress the save file also: ')
             if beta1=="yes" or beta1=='y':
                 list2.append('data_save.py')
