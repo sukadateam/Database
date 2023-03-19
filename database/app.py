@@ -57,6 +57,10 @@ if cont==True:
         e90=Label(tk, text='Program Version: '+program_version)
         e90.pack(side=BOTTOM, anchor=W)
     class buttons:
+        def CustomizeApp(y=100):
+            e26 = Button(tk, text='Customize App', command=options.CustomizeApp, bg=button_color, foreground=text_color, font=text_font)
+            e26.config(height=button_height, width=button_width)
+            e26.place(x=((int(x))/2)-(button_width*6), y=y)
         def update_now(y=100):
             e25 = Button(tk, text='Update Now', command=options.update_now, bg=button_color, foreground=text_color, font=text_font)
             e25.config(height=button_height, width=button_width)
@@ -167,13 +171,72 @@ if cont==True:
             e12.config(height=button_height, width=button_width)
             e12.place(x=((int(x))/2)-(button_width*6), y=y)
     class options:
-        def update_now():
+        def setDarkMode():
+            global colorMode, darkModeApp, dark_bg_color, dark_text_color, dark_button_color, dark_option_color, bg_color, text_color, button_color, option_color
+            colorMode=False
+            darkModeApp=True
+            bg_color=dark_bg_color
+            text_color=dark_text_color
+            button_color=dark_button_color
+            option_color=dark_option_color
+            send()
+        def setColorMode():
+            global colorMode, darkModeApp, color_bg_color, color_text_color, color_button_color, color_option_color, bg_color, text_color, button_color, option_color
+            colorMode=True
+            darkModeApp=False
+            bg_color=color_bg_color
+            text_color=color_text_color
+            button_color=color_button_color
+            option_color=color_option_color
+            send()
+        def CustomizeApp():
             clear()
-            e1=Label(tk, text='!Function is still under development!')
+            e1 = Button(tk, text='Dark Mode', command=options.setDarkMode, bg=button_color, foreground=text_color)
+            e1.config(height=button_height, width=button_width)
             e1.pack()
-            e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e2 = Button(tk, text='Color Mode', command=options.setColorMode, bg=button_color, foreground=text_color)
             e2.config(height=button_height, width=button_width)
             e2.pack()
+            e3 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e3.config(height=button_height, width=button_width)
+            e3.pack()
+        def update_now():
+            clear()
+            e1=Label(tk, text='!Function is still under development!\nUsing this function while unfinished can lead to crashes and errors.')
+            e1.pack()
+            e2 = Button(tk, text='Continue', command=options.update_now1, bg=button_color, foreground=text_color)
+            e2.config(height=button_height, width=button_width)
+            e2.pack()
+            e3 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e3.config(height=button_height, width=button_width)
+            e3.pack()
+        def update_now1():
+            clear()
+            e1=Label(tk, text='Updating will force close the app. If you don\'t wish to close, please click back.\nPlease select a mode!')
+            e1.pack()
+            e2 = Button(tk, text='Beta Install', command=options.betaInstall, bg=button_color, foreground=text_color)
+            e2.config(height=button_height, width=button_width)
+            e2.pack()
+            e3 = Button(tk, text='Normal Install', command=options.normalInstall, bg=button_color, foreground=text_color)
+            e3.config(height=button_height, width=button_width)
+            e3.pack()
+            e4 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e4.config(height=button_height, width=button_width)
+            e4.pack()
+        def normalInstall():
+            pythonSlot=sys.executable
+            run_arg=str(os.getcwd())
+            run_arg+='/UpdateProgram.py'
+            os.system(pythonSlot+' "'+str(run_arg)+'" -normal')
+            print(pythonSlot+' "'+str(run_arg)+'" -normal')
+            send()
+        def betaInstall():
+            pythonSlot=sys.executable
+            run_arg=str(os.getcwd())
+            run_arg+='/UpdateProgram.py'
+            os.system(pythonSlot+' "'+str(run_arg)+'" -beta')
+            print(pythonSlot+' "'+str(run_arg)+'" -beta')
+            send()
         def print_Squidward():
             print_instructions.print('quid.jpeg')
             send()
@@ -941,7 +1004,8 @@ if cont==True:
         version_note()
         buttons.show_logged_items(y=0)
         buttons.edit_data(y=100)
-        buttons.logout(y=200)
+        buttons.CustomizeApp(y=200)
+        buttons.logout(y=400)
         e25=Button(tk, text='Back', command=teacher_screen, bg=button_color, foreground=text_color, font=text_font)
         e25.config(height=button_height, width=button_width)
         e25.place(x=((int(x))/2)-(button_width*6), y=300)
@@ -990,6 +1054,7 @@ if cont==True:
         buttons.print_allBarcodes(y=200)
         buttons.edit_data(y=300)
         buttons.update_now(y=400)
+        buttons.CustomizeApp(y=500)
         e25=Button(tk, text='Back', command=admin_page2, bg=button_color, foreground=text_color, font=text_font)
         e25.config(height=button_height, width=button_width)
         e25.place(x=((int(x))/2)-(button_width*6), y=700)
