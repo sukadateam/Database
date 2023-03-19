@@ -24,9 +24,9 @@ allowed_types=['column_row', 'list']
 allowed_users=['admin', 'student', 'teacher', 'secret'] #Allowed Permissions
 denied_inputs=['',' ',None]
 denied_names=[]
-debug=True
+debug=False
 students=[]
 opto_data=[]
 opto_row=[]
 opto_lists=[]
-v
+side_tilt=200
