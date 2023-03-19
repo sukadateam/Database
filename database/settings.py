@@ -1,9 +1,9 @@
 #User Settings --(FOR USERS)--
 
 #Required python version to run program.
-required_version=['3.10.0','3.10.1','3.10.2','3.10.3','3.10.4']
+required_version=['3.10.0','3.10.1','3.10.2','3.10.3','3.10.4', '3.10.5'] #All tested versions!
 #Application version. Just for show.
-program_version='0.6.7'
+program_version='0.6.8'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only. Setting is not required to be changed.
@@ -26,51 +26,6 @@ max_length=25 #Cannot be bigger than 99
 allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890*()# '
 #What is the name of your printer? For macOS. Windows uses default.
 printer_name='iDPRT_SP310'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #Developer Settings --(NOT USER SETTINGS!)-- Developer Settings
 
@@ -99,7 +54,7 @@ multi_process=False
 #Assign Digit number to history item for a more depth look into the item. And create a database to handle all the data for each assigned item.
 assign_digit_forHistory=True
 #How many digits are allowed to be used to store history. Max 30.
-allowed_digists_forHistory=8
+allowed_digits_forHistory=8
 #Will still check for incorrect settings if quit_ifIncorrect is True, but won't display anything.
 show_incorrect_settings=False
 #Will deny the program from saving. No matter what. Will cause problems for long term.
@@ -138,12 +93,14 @@ clearHistoryOnStartup=False
 
 #Settings coming soon. Do not change unless your a dare devil.
 #DarkMode For app.py.
-darkModeApp=False
+darkModeApp=True
 #Gives the app some color. darkModeApp and colorMode cannot be set to True at the same time.
-colorMode=True
+colorMode=False
 #Speeds up computation. May Not ever be fully functional :(
+'''I'm currently not well known for good c++ code :( Hopfully it will change in the future :)'''
 UtilizeCPPCode=True
 #Limits the amount of characters in a given string when writen to a text file.
+#Mainly used for user logs and inventory logs
 Output_file_MaxLength=35
 
 
@@ -163,13 +120,25 @@ OnlyAllowKnownStudents=False
 secretsAllowed=False
 side_tilt=200
 AskForEncryptionPassword=False
+#-Presets-
+#Colored
+color_bg_color='red'
+color_text_color='blue'
+color_button_color="orange"
+color_option_color='green'
+#Dark
+dark_bg_color='#231F20'
+dark_text_color='#000000'
+dark_button_color="grey"
+dark_option_color='white'
+
 if colorMode==True:
-    bg_color='red'
-    text_color='blue'
-    button_color="orange"
-    option_color='green'
+    bg_color=color_bg_color
+    text_color=color_text_color
+    button_color=color_button_color
+    option_color=color_option_color
 if darkModeApp==True:
-    bg_color='#231F20'
-    text_color='#000000'
-    button_color="grey"
-    option_color='white'
+    bg_color=dark_bg_color
+    text_color=dark_text_color
+    button_color=dark_button_color
+    option_color=dark_option_color
