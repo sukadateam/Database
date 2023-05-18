@@ -34,7 +34,7 @@ If NumPy is giving erros try: (Termux)
 <br> Cameron Landry(Tester)
 
 
-Rare/Occasional Update may/will occur. Check back every few weeks for new versions. 0.6.8 is comming eventually.
+Rare/Occasional Update may/will occur. Check back every few weeks for new versions.
 
 
 Things to do:
