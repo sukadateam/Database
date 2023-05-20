@@ -1,4 +1,4 @@
-#0.6.8
+#0.9.1
 from platform import python_version
 from ast import Bytes
 from dis import show_code
@@ -692,85 +692,92 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                 password=password.get()
             except:
                 pass
-            #Allow backwards compadibilty.
-            backup_name=None
-            random_name=None
-            global backup_count
-            #Display new backup name.
-            if hide==False:
-                print('Current #:', backup_count)
-            #Get a name
-            backup_name=str(backup_count)
-            #Create the backup.
-            save.all(hide=hide)
-            if encryptBackups==True or ForceEncryption==True:
-                #Encrypt Files
-                try:
-                    if encrypt.all(password) != 1:
-                        #Backup Certian Files
-                        list2=['hello.cpp','libfoo.so','custom_database.py','history_desc.py','vars_to_save.py','data_save.aes','history.aes', 'settings.py','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
-                        try: os.chdir('backups')
-                        except: pass
-                        zipObject= ZipFile(backup_name+'.zip', 'w')
-                        try: os.chdir(path)
-                        except: pass
-                        for i in range(len(list2)):
-                            try:
-                                zipObject.write(list2[i])
-                            except:
-                                pass
-                        try: os.chdir('backups')
-                        except: pass
-                        zipObject.close()
-                        try: os.chdir(path)
-                        except: pass
-                        decrypt.all(password)
-                    else:
-                        pass
-                except:
-                    print('Wrong Password.')
-                    return 'WrongPassword'
-            #Don't encrypt.
-            elif encryptBackups==False and ForceEncryption==False:
-                #Backup Certian Files
-                list2=['custom_database.py','history_desc.py','vars_to_save.py','data_save.py','history.py', 'settings.py','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
-                try: os.chdir('backups')
-                except: pass
-                zipObject= ZipFile(backup_name+'.zip', 'w')
-                #Move to main folder to copy files
-                try: os.chdir(path)
-                except: pass
-                for i in range(len(list2)):
+            #Check password before running....
+            if check.encyption_password(password) == 0:
+                #Allow backwards compadibilty.
+                backup_name=None
+                random_name=None
+                global backup_count
+                #Display new backup name.
+                if hide==False:
+                    print('Current #:', backup_count)
+                #Get a name
+                backup_name=str(backup_count)
+                #Create the backup.
+                save.all(hide=hide)
+                if encryptBackups==True or ForceEncryption==True:
+                    #Encrypt Files
                     try:
-                        zipObject.write(list2[i])
+                        if encrypt.all(password) != 1:
+                            #Backup Certian Files
+                            list2=['hello.cpp','libfoo.so','custom_database.py','history_desc.py','vars_to_save.py','data_save.aes','history.aes', 'settings.py','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
+                            try: os.chdir('backups')
+                            except: pass
+                            zipObject= ZipFile(backup_name+'.zip', 'w')
+                            try: os.chdir(path)
+                            except: pass
+                            for i in range(len(list2)):
+                                try:
+                                    zipObject.write(list2[i])
+                                except:
+                                    pass
+                            try: os.chdir('backups')
+                            except: pass
+                            zipObject.close()
+                            try: os.chdir(path)
+                            except: pass
+                            decrypt.all(password)
+                        else:
+                            print('Wrong Password.')
+                            return 'WrongPassword'
                     except:
-                        pass
-                #Move to backup folder to zip the files
-                try: os.chdir('backups')
+                        print('Wrong Password.')
+                        return 'WrongPassword'
+                #Don't encrypt.
+                elif encryptBackups==False and ForceEncryption==False:
+                    #Backup Certian Files
+                    list2=['custom_database.py','history_desc.py','vars_to_save.py','data_save.py','history.py', 'settings.py','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
+                    try: os.chdir('backups')
+                    except: pass
+                    zipObject= ZipFile(backup_name+'.zip', 'w')
+                    #Move to main folder to copy files
+                    try: os.chdir(path)
+                    except: pass
+                    for i in range(len(list2)):
+                        try:
+                            zipObject.write(list2[i])
+                        except:
+                            pass
+                    #Move to backup folder to zip the files
+                    try: os.chdir('backups')
+                    except: pass
+                    #Put the zip in the folder
+                    zipObject.close()
+                    #Move back to main folder
+                    try: os.chdir(path)
+                    except: pass
+                #Remove encrypted files from main folder
+                if os.path.exists('data_save.py')==True and os.path.exists('data_save.aes')==True:
+                    os.remove('data_save.aes')
+                if os.path.exists('history.txt')==True and os.path.exists('history.aes')==True:
+                    os.remove('history.aes')
+                #Update count.py file.
+                backup_count+=1
+                try: os.remove('count.py')
                 except: pass
-                #Put the zip in the folder
-                zipObject.close()
-                #Move back to main folder
-                try: os.chdir(path)
+                file=open('count.py','w')
+                file.write('backup_count='+str(backup_count))
+                file.close()
+                #Remove shown hashes
+                try: os.remove('hash_other.txt')
                 except: pass
-            #Remove encrypted files from main folder
-            if os.path.exists('data_save.py')==True and os.path.exists('data_save.aes')==True:
-                os.remove('data_save.aes')
-            if os.path.exists('history.txt')==True and os.path.exists('history.aes')==True:
-                os.remove('history.aes')
-            #Update count.py file.
-            backup_count+=1
-            try: os.remove('count.py')
-            except: pass
-            file=open('count.py','w')
-            file.write('backup_count='+str(backup_count))
-            file.close()
-            #Remove shown hashes
-            try: os.remove('hash_other.txt')
-            except: pass
-            try: os.remove('hash.txt')
-            except: pass
+                try: os.remove('hash.txt')
+                except: pass
+            else:
+                if hide==False:
+                    print('Incorrect Password')
     class backup_older:
+        '''This class is no longer being updated! Please use the modern backup model.'''
         def clear_all():
             history.create_history('Run', 'backup_older.clear_all()', hide=debug)
             try:
@@ -1371,7 +1378,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
             return program_version
     class get:
         def tool_name(serial):
-            #NO NOT ADD history.create_history() HERE. PERFORMANCE WILL DRAMATICALLY DECREASE!
+            #NO NOT ADD history.create_history() HERE. PERFORMANCE WILL DRAMATICALLY DECREASE! :D
             for i in range(len(row)):
                 if (row[i])[0]=="tools":
                     a = save_in_txtFile.decode(((row[i])[1])[2], displaySpace=False)
@@ -1381,6 +1388,10 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                         return a
             return "CouldNotReturn"
         def try_password(password):
+            '''Returns 1 or 0
+            \n1 = Passed/Password Correct
+            \n0 = Failed/Password Incorrect
+            \npassword=(str) Encryption Password'''
             history.create_history('Run', 'get.try_password()', hide=debug)
             if system=='windows':
                 global drive_letter
@@ -1398,6 +1409,8 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                 except:
                     return 0
         def get_other_hash(password):
+            '''Reads the seconds hashed password. It requires at least one of the encryption passwords to decrypt and read it.
+            \npassword=(str) An encryption password'''
             history.create_history('Run', 'get.get_other_hash()', hide=debug)
             if system=="windows":
                 try:
@@ -1433,11 +1446,18 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                 if global_password==True:
                     get.get_other_hash(password)
         def new_hash(passw=None, normal=False, memory_float=False, other=False):
+            '''passw=(str) New password
+            \nnormal=(bool) Undefined (Recommeneded to not change)
+            \nmemory_float=(boot) #Sets password as variables contents from var memory_hash.
+            \nother=(bool) Calls setting global_password. Allows you to create/set a second password. Made to be used as a password for all users(optional)'''
             history.create_history('Run', 'get.new_hash()', hide=debug)
             get.random_hash(single=normal, memory_float=memory_float)
             get.encrypt_hash(passw, other=other)
             password=None
         def encrypt_hash(passw=None, other=False):
+            '''passw=(str) New password
+            \nother=(bool) Calls setting global_password. Allows you to create/set a second password. Made to be used as a password for all users(optional)
+            '''
             history.create_history('Run', 'get.encrypt_hash()', hide=debug)
             global drive_letter, global_password
             if passw != None:
@@ -1463,6 +1483,10 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                         pyAesCrypt.encryptFile('hash_other.txt', 'hash_other.aes', password)
                         os.remove('hash_other.txt')
         def random_hash(length=100, normal=True, single=False, memory_float=False):
+            '''length=(int) Random hash length
+            \nnormal=(bool) Undefined (Recommeneded to not change)
+            \nmemory_float=(boot) #Sets password as variables contents from var memory_hash.
+            \singe=(bool) Set to True if this is your second password. Otherwise it will override original.'''
             history.create_history('Run', 'get.random_hash()', hide=debug)
             if isinstance(length, int) == False:
                 print(errors.not_int())
@@ -1470,7 +1494,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                 ah=''
                 for i in range(length): 
                     ah+=random.choice('ajfygweuoichwgbuieucr73rwecb638781417983b 623v9923 r t72344y 23uc3u2b4n9832 4b2c794y 237bc2423nc482b3c427 rfgshdfuw38263872guihfef86w4t878whryfeg48tg34hf7w')
-                if memory_float==True:
+                if memory_float==True: #Sets password as variables contents from var memory_hash.
                     global memory_hash
                     memory_hash=ah
                 if normal==True: 
@@ -1487,7 +1511,23 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                 if normal==False:
                     return ah
     class decrypt:
+        def ForgotPassword(other=False):
+            global debug
+            '''Call if password has been forggoten. Deletes all encrypted file, and resets the hash file.\n After calling, please call get.new_hash() to create a new hash file containting a new password.'''
+            fileRemove=['hash.aes', 'history_desc.aes', 'data_save.aes']
+            for i in range(len(fileRemove)):
+                try:
+                    os.remove(str(fileRemove[i]))
+                except:
+                    pass
+            if other==True:
+                try:
+                    os.remove('hash_other.aes')
+                except:
+                    if debug==True:
+                        print('Debug: hash_other.aes not detected.')
         def hash(password):
+            '''Returns False if encrypt/decrypt password is incorrect.\n Returns memory_hash if password is correct and runs function.'''
             global drive_letter
             try:
                 if system=='windows':
@@ -1554,6 +1594,9 @@ if python_version() in required_version or "-skipPythonCheck" in n:
             else:
                 print('Cannot decrypt. Encrypted files do not exist.')
     class encrypt:
+        def ForgotPassword(other=False):
+            '''Call if password has been forggoten. Deletes all encrypted file, and resets the hash file.\n After calling, please call get.new_hash() to create a new hash file containting a new password.'''
+            decrypt.ForgotPassword(other=other)
         def history(password):
             global fail_safe
             failed=False
@@ -1608,29 +1651,33 @@ if python_version() in required_version or "-skipPythonCheck" in n:
             if do_not_remove==True:
                 os.remove('history_desc.py')
         def all(password):
+            '''Returns 1 if an error with the given password is incorrect.'''
             try:
-                d_password=decrypt.hash(password)
-                #encrypt.custom_database(password, True) Do not encrypt main file. This file is needed to decrypt!
-                encrypt.data(d_password)
-                encrypt.history(d_password)
-                encrypt.history_desc(d_password)
-                #encrypt.cache(d_password)
-                #encrypt.opt(d_password)
-                global drive_letter
-                try:
-                    if system=="windows":
-                        os.remove(drive_letter+':/hash.txt')
-                    else:
-                        os.remove('hash.txt')
-                except:
-                    pass
-                try:
-                    if system=="windows":
-                        os.remove(drive_letter+':/hash_other.txt')
-                    else:
-                        os.remove('hash_other.txt')
-                except:
-                    pass
+                if decrypt.hash(password) != False:
+                    d_password=decrypt.hash(password)
+                    #encrypt.custom_database(password, True) Do not encrypt main file. This file is needed to decrypt!
+                    encrypt.data(d_password)
+                    encrypt.history(d_password)
+                    encrypt.history_desc(d_password)
+                    #encrypt.cache(d_password)
+                    #encrypt.opt(d_password)
+                    global drive_letter
+                    try:
+                        if system=="windows":
+                            os.remove(drive_letter+':/hash.txt')
+                        else:
+                            os.remove('hash.txt')
+                    except:
+                        pass
+                    try:
+                        if system=="windows":
+                            os.remove(drive_letter+':/hash_other.txt')
+                        else:
+                            os.remove('hash_other.txt')
+                    except:
+                        return 1
+                else:
+                    return 1
             except ValueError:
                 return 1
     class save:
@@ -1764,11 +1811,10 @@ if python_version() in required_version or "-skipPythonCheck" in n:
             #If not found
             return True
         def encyption_password(password):
+            '''#Returns 1 if password does not match\n#Returns 0 if password Matches'''
             if decrypt.hash(password=password)==False:
-                #Returns 1 if password does not match
                 return 1
             else:
-                #Returns 0 if password Matches
                 return 0
         def data_format(data_base=None):
             #Returns database type.
