@@ -36,7 +36,7 @@ if cont==True:
     other=None
     other1=None
     other2=None
-    other3=None #Encrypt/Decrypt Password
+    other3=None #Encrypt/Decrypt Password -- RESERVED!!!
     force=None
     try:
         abdsdfugvyub=debug
@@ -57,6 +57,10 @@ if cont==True:
         e90=Label(tk, text='Program Version: '+program_version)
         e90.pack(side=BOTTOM, anchor=W)
     class buttons:
+        def TestEncryptionPasswords(y=100):
+            e27 = Button(tk, text='Test Encrypt/d Password', command=options.TestEncryptionPasswords, bg=button_color, foreground=text_color, font=text_font)
+            e27.config(height=button_height, width=button_width)
+            e27.place(x=((int(x))/2)-(button_width*6), y=y)
         def CustomizeApp(y=100):
             e26 = Button(tk, text='Customize App', command=options.CustomizeApp, bg=button_color, foreground=text_color, font=text_font)
             e26.config(height=button_height, width=button_width)
@@ -171,6 +175,39 @@ if cont==True:
             e12.config(height=button_height, width=button_width)
             e12.place(x=((int(x))/2)-(button_width*6), y=y)
     class options:
+        def TestEncryptionPasswords():
+            global other1
+            '''First Phase'''
+            clear()
+            e1 = Label(tk, text='Please enter a(n) Encryption/Decryption password to test')
+            e1.pack()
+            other1 = Entry(tk)
+            other1.pack()
+            e2 = Button(tk, text='Check', command=options.TestEncryptionPasswords1, bg=button_color, foreground=text_color)
+            e2.config(height=button_height, width=button_width)
+            e2.pack()
+            e3 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
+            e3.config(height=button_height, width=button_width)
+            e3.pack()
+            Tk.update_idletasks(tk)
+        def TestEncryptionPasswords1():
+            global other1
+            clear()
+            '''Seconds Phase'''
+            password=other1.get()
+            if check.encyption_password(password) == 0:
+                e1=Label(tk, text='Password was a match!')
+                print("Match")
+                e1.pack()
+            else:
+                e1=Label(tk, text='Password was not a match.')
+                print('Uhm')
+                e1.pack()
+                #Failed
+            e2 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
+            e2.config(height=button_height, width=button_width)
+            e2.pack()
+            Tk.update_idletasks(tk)
         def setDarkMode():
             global colorMode, darkModeApp, dark_bg_color, dark_text_color, dark_button_color, dark_option_color, bg_color, text_color, button_color, option_color
             colorMode=False
@@ -197,7 +234,7 @@ if cont==True:
             e2 = Button(tk, text='Color Mode', command=options.setColorMode, bg=button_color, foreground=text_color)
             e2.config(height=button_height, width=button_width)
             e2.pack()
-            e3 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e3 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
             e3.config(height=button_height, width=button_width)
             e3.pack()
         def update_now():
@@ -207,7 +244,7 @@ if cont==True:
             e2 = Button(tk, text='Continue', command=options.update_now1, bg=button_color, foreground=text_color)
             e2.config(height=button_height, width=button_width)
             e2.pack()
-            e3 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e3 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
             e3.config(height=button_height, width=button_width)
             e3.pack()
         def update_now1():
@@ -220,7 +257,7 @@ if cont==True:
             e3 = Button(tk, text='Normal Install', command=options.normalInstall, bg=button_color, foreground=text_color)
             e3.config(height=button_height, width=button_width)
             e3.pack()
-            e4 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e4 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
             e4.config(height=button_height, width=button_width)
             e4.pack()
         def normalInstall():
@@ -253,7 +290,7 @@ if cont==True:
             e3 = Button(tk, text='Remove Broken Tools', command=options.rmBrokenTools)
             e3.config(height=button_height, width=button_width)
             e3.pack()
-            e4 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e4 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
             e4.config(height=button_height, width=button_width)
             e4.pack()
             Tk.update_idletasks(tk)
@@ -281,7 +318,7 @@ if cont==True:
             other1.pack()
             e3=Button(tk, text='Submit', command=options.broken_tool_next)
             e3.pack()
-            e4 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e4 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
             e4.pack()
             if NoInput==True:
                 e5=Label(tk, text='Tool Does Not Exist')
@@ -338,7 +375,7 @@ if cont==True:
             other6.pack()
             e3 = Button(tk, text='Submit', command=options.UpdateToolInfoNext)
             e3.pack()
-            e5 = Button(tk, text='Back', command=send)
+            e5 = Button(tk, text='Go Back', command=send)
             e5.pack()
             if NoBarcodeGiven==True:
                 e25=Label(tk, text='I need a Barcode Or Serial to know what tool\n I\'m going to edit.')
@@ -415,7 +452,7 @@ if cont==True:
             other2.pack()
             e3=Button(tk, text='Submit', command=options.test_print_next)
             e3.pack()
-            e4=Button(tk, text='Back', command=send)
+            e4=Button(tk, text='Go Back', command=send)
             e4.pack()
             Tk.update_idletasks(tk)
         def test_print_next():
@@ -429,7 +466,7 @@ if cont==True:
             e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
             e1.config(height=button_height, width=button_width+10)
             e1.pack()
-            e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e2 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
             e2.config(height=button_height, width=button_width)
             e2.pack()
             save_in_txtFile.users()
@@ -449,7 +486,7 @@ if cont==True:
             other2.pack()
             e3=Button(tk, text='Submit', command=options.center_buttons_next)
             e3.pack()
-            e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e2 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
             e2.config(height=button_height, width=button_width)
             e2.pack()
             if notInteger==True:
@@ -468,7 +505,7 @@ if cont==True:
             clear()
             e1 = Label(tk, text='Created and Designed By Brandon Robinson\nPartial credit goes to Albert Plummer and Abdullahi Abdullahi\nGithub Page: github.com/sukadateam/database\nProgram Version: '+program_version, bg=button_color, foreground=text_color)
             e1.pack()
-            e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e2 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
             e2.config(height=button_height, width=button_width)
             e2.pack()
             save_in_txtFile.students()
@@ -486,7 +523,7 @@ if cont==True:
             e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
             e1.config(height=button_height, width=button_width+10)
             e1.pack()
-            e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e2 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
             e2.config(height=button_height, width=button_width)
             e2.pack()
             save_in_txtFile.students()
@@ -502,7 +539,7 @@ if cont==True:
             e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
             e1.config(height=button_height, width=button_width+10)
             e1.pack()
-            e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e2 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
             e2.config(height=button_height, width=button_width)
             e2.pack()
             save_in_txtFile.logs()
@@ -526,7 +563,7 @@ if cont==True:
             other.pack()
             e3=Button(tk, text='Submit', command=options.remove_student_next)
             e3.pack()
-            e4=Button(tk, text='Back', command=send)
+            e4=Button(tk, text='Go Back', command=send)
             e4.pack()
             if notFound==True:
                 e2=Label(tk, text='Student could not be found.')
@@ -549,7 +586,7 @@ if cont==True:
             e1=Button(tk, text='Submit', command=options.add_student_next)
             e1.config(height=button_height, width=button_width)
             e1.pack()
-            e5 = Button(tk, text='Back', command=send)
+            e5 = Button(tk, text='Go Back', command=send)
             e5.config(height=button_height, width=button_width)
             e5.pack()
             if student_found==True:
@@ -578,7 +615,7 @@ if cont==True:
             e1 = Label(tk, text='Check Collections Folder For Info', bg=button_color, foreground=text_color)
             e1.config(height=button_height, width=button_width+10)
             e1.pack()
-            e2 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e2 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
             e2.config(height=button_height, width=button_width)
             e2.pack()
             save_in_txtFile.tools(max_length=25)
@@ -606,7 +643,7 @@ if cont==True:
             other1.pack()
             e3 = Button(tk, text='Submit', command=options.signout_item_next, bg=button_color, foreground=text_color)
             e3.pack()
-            e5 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e5 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
             e5.pack()
             if no_name==True:
                 e6=Label(tk, text='Unknown Student', bg=button_color, foreground=text_color)
@@ -646,7 +683,7 @@ if cont==True:
             other.pack()
             e2 = Button(tk, text='Submit', command=options.signin_item_next, bg=button_color, foreground=text_color)
             e2.pack()
-            e5 = Button(tk, text='Back', command=send, bg=button_color, foreground=text_color)
+            e5 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
             e5.pack()
             if doesNotExist==True:
                 e4=Label(tk, text='Item was not signed out\nAnd/Or Item does not exist', bg=button_color, foreground=text_color)
@@ -670,7 +707,7 @@ if cont==True:
             other.pack()
             e2 = Button(tk, text='Submit', command=options.remove_tool_next)
             e2.pack()
-            e5 = Button(tk, text='Back', command=send)
+            e5 = Button(tk, text='Go Back', command=send)
             e5.pack()
             if toolDoesNotExist==True:
                 e4=Label(tk, text='Tool Does Not Exist', bg=button_color, foreground=text_color)
@@ -720,7 +757,7 @@ if cont==True:
             other6.pack()
             e3 = Button(tk, text='Submit', command=options.add_tool_next)
             e3.pack()
-            e5 = Button(tk, text='Back', command=send)
+            e5 = Button(tk, text='Go Back', command=send)
             e5.pack()
             if NoEntry==True:
                 e6=Label(tk, text='Please Give it a Barcode/Serial', bg=button_color, foreground=text_color)
@@ -779,7 +816,7 @@ if cont==True:
             other.pack()
             e3 = Button(tk, text='Submit',command=options.create_password_next)
             e3.pack()
-            e5 = Button(tk, text='Back', command=send)
+            e5 = Button(tk, text='Go Back', command=send)
             e5.pack()
             Tk.update_idletasks(tk)
         def create_password_next():
@@ -811,7 +848,7 @@ if cont==True:
             other2.pack()
             e4 = Button(tk, text='Submit', command=options.create_user_next)
             e4.pack()
-            e5 = Button(tk, text='Back', command=send)
+            e5 = Button(tk, text='Go Back', command=send)
             e5.pack()
             if user_exists==True:
                 e6=Label(tk, text='User Exists', bg=button_color, foreground=text_color)
@@ -867,7 +904,7 @@ if cont==True:
             other.pack()
             e2 = Button(tk, text='Submit', command=options.remove_user_next)
             e2.pack()
-            e5 = Button(tk, text='Back', command=send)
+            e5 = Button(tk, text='Go Back', command=send)
             e5.pack()
             if ThatsYou==True:
                 e7=Label(tk, text='Wait! That was you. I cannot get rid of you.\nI need you here.', bg=button_color, foreground=text_color)
@@ -1006,7 +1043,7 @@ if cont==True:
         buttons.edit_data(y=100)
         buttons.CustomizeApp(y=200)
         buttons.logout(y=400)
-        e25=Button(tk, text='Back', command=teacher_screen, bg=button_color, foreground=text_color, font=text_font)
+        e25=Button(tk, text='Go Back', command=teacher_screen, bg=button_color, foreground=text_color, font=text_font)
         e25.config(height=button_height, width=button_width)
         e25.place(x=((int(x))/2)-(button_width*6), y=300)
     #If permission is admin. First page.
@@ -1040,7 +1077,7 @@ if cont==True:
         buttons.show_students(y=400)
         buttons.change_password(y1=500)
         buttons.center_buttons(y=600)
-        e25=Button(tk, text='Back', command=admin_screen, bg=button_color, foreground=text_color, font=text_font)
+        e25=Button(tk, text='Go Back', command=admin_screen, bg=button_color, foreground=text_color, font=text_font)
         e25.config(height=button_height, width=button_width)
         e25.place(x=((int(x))/2)-(button_width*6), y=700)
         e26=Button(tk, text='Next', command=admin_page3, bg=button_color, foreground=text_color, font=text_font)
@@ -1055,7 +1092,8 @@ if cont==True:
         buttons.edit_data(y=300)
         buttons.update_now(y=400)
         buttons.CustomizeApp(y=500)
-        e25=Button(tk, text='Back', command=admin_page2, bg=button_color, foreground=text_color, font=text_font)
+        buttons.TestEncryptionPasswords(y=600)
+        e25=Button(tk, text='Go Back', command=admin_page2, bg=button_color, foreground=text_color, font=text_font)
         e25.config(height=button_height, width=button_width)
         e25.place(x=((int(x))/2)-(button_width*6), y=700)
     #Ask the database if the entered credentials are correct.
@@ -1074,7 +1112,7 @@ if cont==True:
                     clear()
                     e1=Label(tk, text='Congrats you found (a) secret page. Try and find more! (2/5)\nHint: A button is not what it seems.')
                     e1.pack()
-                    e2=Button(tk, text='Back', command=login)
+                    e2=Button(tk, text='Go Back', command=login)
                     e2.pack()
                     s=False
             if user=="<secret>":
@@ -1082,7 +1120,7 @@ if cont==True:
                     clear()
                     e1=Label(tk, text='Congrats you found (a) secret page. Try and find more! (1/5)\n<turtles> should live forever')
                     e1.pack()
-                    e2=Button(tk, text='Back', command=login)
+                    e2=Button(tk, text='Go Back', command=login)
                     e2.pack()
                     s=False
         if s==True:
@@ -1118,7 +1156,7 @@ if cont==True:
                 other3.pack()
                 e3=Button(tk, text='Submit', command=ask_encrypt_password_next)
                 e3.pack()
-                e5=Button(tk, text='Back', command=options.logout)
+                e5=Button(tk, text='Go Back', command=options.logout)
                 e5.pack()
                 if wrong==True:
                     e4=Label(tk, text='Incorrect Password', width=20)
@@ -1191,7 +1229,7 @@ if cont==True:
         other.pack()
         e3 = Button(tk, text='Submit',command=exit_app_next)
         e3.pack()
-        e4 = Button(tk, text='Back', command=login)
+        e4 = Button(tk, text='Go Back', command=login)
         e4.pack()
         Tk.update_idletasks(tk)
     def exit_app_next():
