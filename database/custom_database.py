@@ -1,4 +1,4 @@
-#0.9.1
+#0.6.7
 from platform import python_version
 from ast import Bytes
 from dis import show_code
@@ -14,11 +14,13 @@ from typing import Set
 from venv import create
 from xmlrpc.client import FastMarshaller
 import zipfile
-from html5lib import serialize
 from numpy import True_, int32
 from pandas import *
-from barcode import EAN13
-from barcode.writer import ImageWriter
+try:
+    from barcode import EAN13
+    from barcode.writer import ImageWriter
+except:
+    print('System: Error with Barcode EAN13 or barcode.writer. Try a different python version. This happens alot.')
 import time
 import qrcode
 import ctypes #Expermintal
@@ -51,17 +53,14 @@ if quiteStartup == False:
 try:
     from pyAesCrypt import decryptFile, encryptFile
 except:
-    print('Please manually install all required items in requirements.txt.')
+    print('Please manually install all required items in requirements.txt. pyAesCrypt is not installed correctly or at all.')
     sys.exit()
 password=None
 try:
-    from PresetSettingsForDevelopement import *
+    from settings import *
 except:
-    try:
-        from settings import *
-    except:
-        print('Cannot Find settings.py File. File is required for startup.')
-        sys.exit()
+    print('Cannot Find settings.py File. File is required for startup.')
+    sys.exit()
 try:
     import get_directory
 except:
@@ -101,6 +100,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
     d1 = today.strftime("%m/%d/%Y")
     #The Alphabet
     alphabet='abcdefghijklmnopqrstuvwxyz'
+    from settings import *
     import random, shutil
     try:
         from directory import path
@@ -141,6 +141,9 @@ if python_version() in required_version or "-skipPythonCheck" in n:
         if quiteStartup == False:
             print('Import type: Save file')
     #On some devices this import line may say could not import, but it will if the package is installed on a compatible python version.
+    def clearDisplay():
+        '''Clears screen and removes all text'''
+        os.system('cls' if os.name == 'nt' else 'clear')
     try:
         import pyAesCrypt
     except:
@@ -160,6 +163,50 @@ if python_version() in required_version or "-skipPythonCheck" in n:
         if debug==True:
             print("Could not retrieve screen Width")
         return False
+    #Returns vars, and other needed stuff.
+    def get_variables(node):
+        #Source. Will make my own version soon.
+        #https://stackoverflow.com/questions/51118006/viewing-variables-of-another-python-file-without-importing-running
+        variables = set()
+        if hasattr(node, 'body'):
+            for subnode in node.body:
+                variables |= get_variables(subnode)
+        elif isinstance(node, _ast.Assign):
+            for name in node.targets:
+                if isinstance(name, _ast.Name):
+                    variables.add(name.id)
+        return variables
+    def StringModifier(input, MustBeExactLength=True, CannotBeLongerThanMax=False, Chars_in_line=25):
+        '''MustBeExactLength and CannotBeLongerThanMax cannot both be true. Function will return None.
+            Constricts Inputs to a given length. Headers are as follows...
+        1. input. Must be used for each call and must be a string. This is what will be altered and returned at the end of the function.
+        2. MustBeExactLength. Default True. As reference to chars_in_line. Adds Empty Spaces to force length. Works well for large sets on terminal screens.
+        3. CannotBeLongerThanMax. Default False. Input cannot be longer than chars_in_line, string will be cut to length if to long. Doesn't add spaces.
+        4. Chars_in_line. Default 25. Limits the length an input can be. Must be integer.
+        
+        Returns 2 variables. ModifiedInput, Modified. \n
+            1. ModifiedInput = Your New String.\n
+            2. Modified = True/False. True = Modified, False = Not Modified.'''
+        inputLength=len(input)
+        modifiedInput=input
+        if MustBeExactLength==True and CannotBeLongerThanMax == False:
+            if inputLength < Chars_in_line: #If Input is not long enough
+                spacesNeeded = Chars_in_line - inputLength
+                for i in range(spacesNeeded): #Adds spaces for int of spacesNeeded
+                    modifiedInput+=' '
+                if len(modifiedInput)==Chars_in_line:
+                    return modifiedInput, True
+        if inputLength == Chars_in_line: #If Input is exact Length and can be returned.
+            return modifiedInput, False
+        if CannotBeLongerThanMax==True and MustBeExactLength == False:
+            if inputLength > Chars_in_line: #If input is to long. Cut it to size.
+                modifiedInput = input[0:Chars_in_line]
+                return modifiedInput, True
+    class returns:
+        def debug():
+            #Allows for debug variable to operations out side of global decleration.
+            global debug
+            return debug
     def assignBarcodesToItemsWithout():
         #Adds called function to history.
         history.create_history('Run', 'assignBarcodesToItemsWithout()', hide=debug)
@@ -192,9 +239,9 @@ if python_version() in required_version or "-skipPythonCheck" in n:
         return False
     class print_instructions:
         def help():
-            print('Branches:\n  print_instructions.printf()\n  print_instructions.createBarcode()')
-        def printf(file_name, rmFileAfterPrint=False):
-            history.create_history('Run', 'print_instructions.printf()', hide=debug)
+            print('Branches:\n  print_instructions.print()\n  print_instructions.createBarcode()')
+        def print(file_name, rmFileAfterPrint=False):
+            history.create_history('Run', 'print_instructions.print()', hide=debug)
             if printer_debug==True:
                 print('Sending Print Command...')
             #For Linux and macOS
@@ -221,7 +268,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
             for i in range(len(row)):
                 if (row[i])[0]=="tools":
                     print_instructions.createBarcode(str(((row[i])[1])[2]), qr_code=True)
-                    print_instructions.printf(file_name="barcode.png")
+                    print_instructions.print(file_name="barcode.png")
         def createBarcode(barcode1, file_name='barcode', qr_code=False, barcode=False):
             history.create_history('Run', 'print_instructions.createBarcode()', hide=debug)
             #File is saved at png.
@@ -275,11 +322,6 @@ if python_version() in required_version or "-skipPythonCheck" in n:
             purchaseDate=data['Purchase Date'].tolist()
             loandedTo=data['Loaned out to'].tolist()
             return toolType, toolName, serialNumber, modelNumber, purchaseDate, loandedTo
-    class returns:
-        def debug():
-            #Allows for debug variable to operations out side of global decleration.
-            global debug
-            return debug
     class logic:
         class gate:
             def help():
@@ -640,7 +682,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
         def settings():
             history.create_history('Run', 'display.settings()', hide=debug)
             #Shows all settings on the screen.
-            settings1=['UtilizeCPPCode','darkModeApp','clearHistoryOnStartup','clearHistoryOnStartup','clearHistoryOnStartup', 'AskForEncryptionPassword','printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digits_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+            settings1=['UtilizeCPPCode','darkModeApp','clearHistoryOnStartup','clearHistoryOnStartup','clearHistoryOnStartup', 'AskForEncryptionPassword','printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
             for i in range(len(settings1)):
                 try:
                     print(settings1[i]+'='+str(globals()[settings1[i]]))
@@ -692,92 +734,85 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                 password=password.get()
             except:
                 pass
-            #Check password before running....
-            if check.encyption_password(password) == 0:
-                #Allow backwards compadibilty.
-                backup_name=None
-                random_name=None
-                global backup_count
-                #Display new backup name.
-                if hide==False:
-                    print('Current #:', backup_count)
-                #Get a name
-                backup_name=str(backup_count)
-                #Create the backup.
-                save.all(hide=hide)
-                if encryptBackups==True or ForceEncryption==True:
-                    #Encrypt Files
+            #Allow backwards compadibilty.
+            backup_name=None
+            random_name=None
+            global backup_count
+            #Display new backup name.
+            if hide==False:
+                print('Current #:', backup_count)
+            #Get a name
+            backup_name=str(backup_count)
+            #Create the backup.
+            save.all(hide=hide)
+            if encryptBackups==True or ForceEncryption==True:
+                #Encrypt Files
+                try:
+                    if encrypt.all(password) != 1:
+                        #Backup Certian Files
+                        list2=['hello.cpp','libfoo.so','custom_database.py','history_desc.py','vars_to_save.py','data_save.aes','history.aes', 'settings.py','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
+                        try: os.chdir('backups')
+                        except: pass
+                        zipObject= ZipFile(backup_name+'.zip', 'w')
+                        try: os.chdir(path)
+                        except: pass
+                        for i in range(len(list2)):
+                            try:
+                                zipObject.write(list2[i])
+                            except:
+                                pass
+                        try: os.chdir('backups')
+                        except: pass
+                        zipObject.close()
+                        try: os.chdir(path)
+                        except: pass
+                        decrypt.all(password)
+                    else:
+                        pass
+                except:
+                    print('Wrong Password.')
+                    return 'WrongPassword'
+            #Don't encrypt.
+            elif encryptBackups==False and ForceEncryption==False:
+                #Backup Certian Files
+                list2=['custom_database.py','history_desc.py','vars_to_save.py','data_save.py','history.py', 'settings.py','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
+                try: os.chdir('backups')
+                except: pass
+                zipObject= ZipFile(backup_name+'.zip', 'w')
+                #Move to main folder to copy files
+                try: os.chdir(path)
+                except: pass
+                for i in range(len(list2)):
                     try:
-                        if encrypt.all(password) != 1:
-                            #Backup Certian Files
-                            list2=['hello.cpp','libfoo.so','custom_database.py','history_desc.py','vars_to_save.py','data_save.aes','history.aes', 'settings.py','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
-                            try: os.chdir('backups')
-                            except: pass
-                            zipObject= ZipFile(backup_name+'.zip', 'w')
-                            try: os.chdir(path)
-                            except: pass
-                            for i in range(len(list2)):
-                                try:
-                                    zipObject.write(list2[i])
-                                except:
-                                    pass
-                            try: os.chdir('backups')
-                            except: pass
-                            zipObject.close()
-                            try: os.chdir(path)
-                            except: pass
-                            decrypt.all(password)
-                        else:
-                            print('Wrong Password.')
-                            return 'WrongPassword'
+                        zipObject.write(list2[i])
                     except:
-                        print('Wrong Password.')
-                        return 'WrongPassword'
-                #Don't encrypt.
-                elif encryptBackups==False and ForceEncryption==False:
-                    #Backup Certian Files
-                    list2=['custom_database.py','history_desc.py','vars_to_save.py','data_save.py','history.py', 'settings.py','app.py','hash.aes','profanity.txt','shorter_profanity.txt','hash_other.aes','get_directory.py','version_config.py','shell.py']
-                    try: os.chdir('backups')
-                    except: pass
-                    zipObject= ZipFile(backup_name+'.zip', 'w')
-                    #Move to main folder to copy files
-                    try: os.chdir(path)
-                    except: pass
-                    for i in range(len(list2)):
-                        try:
-                            zipObject.write(list2[i])
-                        except:
-                            pass
-                    #Move to backup folder to zip the files
-                    try: os.chdir('backups')
-                    except: pass
-                    #Put the zip in the folder
-                    zipObject.close()
-                    #Move back to main folder
-                    try: os.chdir(path)
-                    except: pass
-                #Remove encrypted files from main folder
-                if os.path.exists('data_save.py')==True and os.path.exists('data_save.aes')==True:
-                    os.remove('data_save.aes')
-                if os.path.exists('history.txt')==True and os.path.exists('history.aes')==True:
-                    os.remove('history.aes')
-                #Update count.py file.
-                backup_count+=1
-                try: os.remove('count.py')
+                        pass
+                #Move to backup folder to zip the files
+                try: os.chdir('backups')
                 except: pass
-                file=open('count.py','w')
-                file.write('backup_count='+str(backup_count))
-                file.close()
-                #Remove shown hashes
-                try: os.remove('hash_other.txt')
+                #Put the zip in the folder
+                zipObject.close()
+                #Move back to main folder
+                try: os.chdir(path)
                 except: pass
-                try: os.remove('hash.txt')
-                except: pass
-            else:
-                if hide==False:
-                    print('Incorrect Password')
+            #Remove encrypted files from main folder
+            if os.path.exists('data_save.py')==True and os.path.exists('data_save.aes')==True:
+                os.remove('data_save.aes')
+            if os.path.exists('history.txt')==True and os.path.exists('history.aes')==True:
+                os.remove('history.aes')
+            #Update count.py file.
+            backup_count+=1
+            try: os.remove('count.py')
+            except: pass
+            file=open('count.py','w')
+            file.write('backup_count='+str(backup_count))
+            file.close()
+            #Remove shown hashes
+            try: os.remove('hash_other.txt')
+            except: pass
+            try: os.remove('hash.txt')
+            except: pass
     class backup_older:
-        '''This class is no longer being updated! Please use the modern backup model.'''
         def clear_all():
             history.create_history('Run', 'backup_older.clear_all()', hide=debug)
             try:
@@ -869,7 +904,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
     def check_settingsImproved(hide=False):
         history.create_history('Run', 'check_settingsImproved()', hide=debug)
         found=False
-        settings1=['UtilizeCPPCode','clearHistoryOnStartup','clearHistoryOnStartup','clearHistoryOnStartup', 'AskForEncryptionPassword', 'printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digits_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
+        settings1=['UtilizeCPPCode','clearHistoryOnStartup','clearHistoryOnStartup','clearHistoryOnStartup', 'AskForEncryptionPassword', 'printer_name', 'printer_debug','quiteStartup','encryptBackups','resetCollections','retain_backup_time','backup_startNumber','retain_backup_time','setup_backup_response','allowed_backupPermissions', 'skip_missing_settings','allowedPassword_chars', 'min_length', 'max_length','strict_password','auto_filter_profanity_speedBoost', 'quit_ifIncorrect', 'allowed_digists_forHistory', 'multi_process', 'auto_filter_profanity', 'skip_history_copy', 'auto_error_record', 'assign_digit_forHistory', 'app_version_control', 'set_operating_system', 'allow_windows_version', 'auto_history_record', 'show_incorrect_settings', 'do_not_remove', 'fail_safe', 'required_version', 'program_version', 'drive_letter', 'drive_name', 'system', 'profanity_filter', 'disable_filter_admin', 'global_password', 'dont_load_save', 'optimize_on_startup']
         types=[bool, bool, bool, bool, bool, str, bool, bool, bool, bool, int, int, int, bool, list, bool, str, int, int, bool, bool, bool, int, bool, bool, bool, bool, bool, bool, bool, str, bool, bool, bool, bool, str, str, str, str, str, bool, bool, bool, bool, bool]
         for i in range(len(settings1)):
             skip=False
@@ -924,11 +959,11 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                 if hide==False:
                     print('  drive_letter must be 1 character')
             error_found1=True
-        if isinstance(allowed_digits_forHistory, int):
-            if allowed_digits_forHistory>30 or allowed_digits_forHistory<1:
+        if isinstance(allowed_digists_forHistory, int):
+            if allowed_digists_forHistory>30 or allowed_digists_forHistory<1:
                 if show_incorrect_settings==True:
                     if hide==False:
-                        print('  allowed_digits_forHistory can only be upto 30 and no less than 1.')
+                        print('  allowed_digists_forHistory can only be upto 30 and no less than 1.')
                 error_found1=True
         if isinstance(min_length, int)==True:
             if min_length<5 or min_length+1>max_length:
@@ -1061,10 +1096,10 @@ if python_version() in required_version or "-skipPythonCheck" in n:
         def assign_letter(count, hide=False):
             #DO NOT ADD history.create_history IN THIS FUNCTION. IT WILL CAUSE A LOOP.
             #Not in use yet.
-            global allowed_digits_forHistory
+            global allowed_digists_forHistory
             count=int(count)
             a=''
-            for i in range(allowed_digits_forHistory-len(str(count))):
+            for i in range(allowed_digists_forHistory-len(str(count))):
                 a+='0'
             a+=str(count)
             count+=1
@@ -1378,7 +1413,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
             return program_version
     class get:
         def tool_name(serial):
-            #NO NOT ADD history.create_history() HERE. PERFORMANCE WILL DRAMATICALLY DECREASE! :D
+            #NO NOT ADD history.create_history() HERE. PERFORMANCE WILL DRAMATICALLY DECREASE!
             for i in range(len(row)):
                 if (row[i])[0]=="tools":
                     a = save_in_txtFile.decode(((row[i])[1])[2], displaySpace=False)
@@ -1388,10 +1423,6 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                         return a
             return "CouldNotReturn"
         def try_password(password):
-            '''Returns 1 or 0
-            \n1 = Passed/Password Correct
-            \n0 = Failed/Password Incorrect
-            \npassword=(str) Encryption Password'''
             history.create_history('Run', 'get.try_password()', hide=debug)
             if system=='windows':
                 global drive_letter
@@ -1409,8 +1440,6 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                 except:
                     return 0
         def get_other_hash(password):
-            '''Reads the seconds hashed password. It requires at least one of the encryption passwords to decrypt and read it.
-            \npassword=(str) An encryption password'''
             history.create_history('Run', 'get.get_other_hash()', hide=debug)
             if system=="windows":
                 try:
@@ -1446,18 +1475,11 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                 if global_password==True:
                     get.get_other_hash(password)
         def new_hash(passw=None, normal=False, memory_float=False, other=False):
-            '''passw=(str) New password
-            \nnormal=(bool) Undefined (Recommeneded to not change)
-            \nmemory_float=(boot) #Sets password as variables contents from var memory_hash.
-            \nother=(bool) Calls setting global_password. Allows you to create/set a second password. Made to be used as a password for all users(optional)'''
             history.create_history('Run', 'get.new_hash()', hide=debug)
             get.random_hash(single=normal, memory_float=memory_float)
             get.encrypt_hash(passw, other=other)
             password=None
         def encrypt_hash(passw=None, other=False):
-            '''passw=(str) New password
-            \nother=(bool) Calls setting global_password. Allows you to create/set a second password. Made to be used as a password for all users(optional)
-            '''
             history.create_history('Run', 'get.encrypt_hash()', hide=debug)
             global drive_letter, global_password
             if passw != None:
@@ -1483,10 +1505,6 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                         pyAesCrypt.encryptFile('hash_other.txt', 'hash_other.aes', password)
                         os.remove('hash_other.txt')
         def random_hash(length=100, normal=True, single=False, memory_float=False):
-            '''length=(int) Random hash length
-            \nnormal=(bool) Undefined (Recommeneded to not change)
-            \nmemory_float=(boot) #Sets password as variables contents from var memory_hash.
-            \singe=(bool) Set to True if this is your second password. Otherwise it will override original.'''
             history.create_history('Run', 'get.random_hash()', hide=debug)
             if isinstance(length, int) == False:
                 print(errors.not_int())
@@ -1494,7 +1512,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                 ah=''
                 for i in range(length): 
                     ah+=random.choice('ajfygweuoichwgbuieucr73rwecb638781417983b 623v9923 r t72344y 23uc3u2b4n9832 4b2c794y 237bc2423nc482b3c427 rfgshdfuw38263872guihfef86w4t878whryfeg48tg34hf7w')
-                if memory_float==True: #Sets password as variables contents from var memory_hash.
+                if memory_float==True:
                     global memory_hash
                     memory_hash=ah
                 if normal==True: 
@@ -1511,23 +1529,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                 if normal==False:
                     return ah
     class decrypt:
-        def ForgotPassword(other=False):
-            global debug
-            '''Call if password has been forggoten. Deletes all encrypted file, and resets the hash file.\n After calling, please call get.new_hash() to create a new hash file containting a new password.'''
-            fileRemove=['hash.aes', 'history_desc.aes', 'data_save.aes']
-            for i in range(len(fileRemove)):
-                try:
-                    os.remove(str(fileRemove[i]))
-                except:
-                    pass
-            if other==True:
-                try:
-                    os.remove('hash_other.aes')
-                except:
-                    if debug==True:
-                        print('Debug: hash_other.aes not detected.')
         def hash(password):
-            '''Returns False if encrypt/decrypt password is incorrect.\n Returns memory_hash if password is correct and runs function.'''
             global drive_letter
             try:
                 if system=='windows':
@@ -1594,9 +1596,6 @@ if python_version() in required_version or "-skipPythonCheck" in n:
             else:
                 print('Cannot decrypt. Encrypted files do not exist.')
     class encrypt:
-        def ForgotPassword(other=False):
-            '''Call if password has been forggoten. Deletes all encrypted file, and resets the hash file.\n After calling, please call get.new_hash() to create a new hash file containting a new password.'''
-            decrypt.ForgotPassword(other=other)
         def history(password):
             global fail_safe
             failed=False
@@ -1651,56 +1650,90 @@ if python_version() in required_version or "-skipPythonCheck" in n:
             if do_not_remove==True:
                 os.remove('history_desc.py')
         def all(password):
-            '''Returns 1 if an error with the given password is incorrect.'''
             try:
-                if decrypt.hash(password) != False:
-                    d_password=decrypt.hash(password)
-                    #encrypt.custom_database(password, True) Do not encrypt main file. This file is needed to decrypt!
-                    encrypt.data(d_password)
-                    encrypt.history(d_password)
-                    encrypt.history_desc(d_password)
-                    #encrypt.cache(d_password)
-                    #encrypt.opt(d_password)
-                    global drive_letter
-                    try:
-                        if system=="windows":
-                            os.remove(drive_letter+':/hash.txt')
-                        else:
-                            os.remove('hash.txt')
-                    except:
-                        pass
-                    try:
-                        if system=="windows":
-                            os.remove(drive_letter+':/hash_other.txt')
-                        else:
-                            os.remove('hash_other.txt')
-                    except:
-                        return 1
-                else:
-                    return 1
+                d_password=decrypt.hash(password)
+                #encrypt.custom_database(password, True) Do not encrypt main file. This file is needed to decrypt!
+                encrypt.data(d_password)
+                encrypt.history(d_password)
+                encrypt.history_desc(d_password)
+                #encrypt.cache(d_password)
+                #encrypt.opt(d_password)
+                global drive_letter
+                try:
+                    if system=="windows":
+                        os.remove(drive_letter+':/hash.txt')
+                    else:
+                        os.remove('hash.txt')
+                except:
+                    pass
+                try:
+                    if system=="windows":
+                        os.remove(drive_letter+':/hash_other.txt')
+                    else:
+                        os.remove('hash_other.txt')
+                except:
+                    pass
             except ValueError:
                 return 1
     class save:
+        def SettingsNotImplementedInSave():
+            '''Function Is Currently In Dev'''
+            if testExpermintalFeatures==True:
+                list1 = (get_variables(ast.parse(open('settings.py').read())))
+                from vars_to_save import list as KnownSaveableSettings
+                ListAllSettings = list(list1)
+                settingsCount= len(ListAllSettings)
+                SavedCount = len(KnownSaveableSettings)
+                print('Settings Count:', settingsCount)
+                UnsavedVars=[]
+                SavedVars=[]
+                for i in range(settingsCount):
+                    for x in range(SavedCount):
+                        if ListAllSettings[i].lower() == KnownSaveableSettings[x].lower():
+                            SavedVars.append(ListAllSettings[i]) #Item Found
+                            break
+                        if ListAllSettings[i] != KnownSaveableSettings[x].lower():
+                            if x == SavedCount - 1:
+                                UnsavedVars.append(ListAllSettings[i]) #Item Not Found
+                print('Saved To Unsaved Ratio -- '+str(len(SavedVars))+":"+str(len(UnsavedVars)))
+                Unsaved1=len(UnsavedVars)
+                Saved1=len(SavedVars)
+                count=None
+                #chooses the highest list size so all vars are displayed. 
+                if Unsaved1 == Saved1:
+                    count = Unsaved1
+                elif Unsaved1 > Saved1:
+                    count = Unsaved1
+                elif Saved1 > Unsaved1:
+                    count = Saved1
+                print('\nSaved Vars               UnSaved Vars')
+                for i in range(count):
+                    try:
+                        OutputFirst, ModifiedFirst = StringModifier(SavedVars[i])
+                    except IndexError: #Out Of Lines Exception
+                        OutputFirst = "                         "
+                    try:
+                        OutputSecond, ModifiedSecond = StringModifier(UnsavedVars[i])
+                    except IndexError and TypeError: #Out Of Lines Exception
+                        OutputSecond = "                         "
+                    print(str(OutputFirst)+str(OutputSecond))
         def all(hide=False, side_tiltForce=None):
             if disable_save==False:
                 history.create_history(None, 'Save', hide=hide)
                 from vars_to_save import list
-                file=open('data_save.py','w') #Creates a save file
-                file.write('# -*- coding: utf-8 -*-\n') #Writes "declare encoding"
+                file=open('data_save.py','w')
+                file.write('# -*- coding: utf-8 -*-\n')
                 for i in range(len(list)):
-                    file.write(list[i]+'='+str(globals()[list[i]])+'\n') #Writing each var with it's value. var = value
+                    file.write(list[i]+'='+str(globals()[list[i]])+'\n') #Writes all of memory into readable python
                 file.write('\n')
-                file.close() #Close file
-                if advanced_history==True: #Writing a history file. Used mainly with the bundled app.py
+                file.close()
+                if advanced_history==True:
                     file=open('history_desc.py', 'w')
                     file.write('history_id='+str(history_id))
                     file.write('\nhistory_description='+str(history_description))
                     file.write('\ncount='+str(count))
-                save.settings() #Calls a function to save current settings.
             if disable_save==True:
                 history.create_history(user='True', usage='Skip Save', manual_record=auto_error_record, hide=hide)
-        def write(file, text):
-            file.write(text)
         def settings(run=False, showTags=False, showLineWriten=True):
             '''Set run to True to run this. This function is in developement. It may not be stable.
             \nshowTags = Show additional data about each line
@@ -1773,7 +1806,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                                 save.write(file, (str(varName+'= \''+str(globals()[varName])+'\' '+str(tag))))
                             else:
                                 save.write(file, (str(varName+'='+str(globals()[varName])+' '+str(tag))))
-                        
+
                         else:
                             if showTags==True:
                                 print('Double Equals: Detected on line{}'.format(count))
@@ -1783,8 +1816,8 @@ if python_version() in required_version or "-skipPythonCheck" in n:
             os.remove('settings.py') #Remove current settings file
             os.rename('settings_test.py', 'settings.py') #Rename temp settings file
             print("Settings updated!!")
+    class clearScreen:
         def normal():
-            '''Clears terminal of text.'''
             os.system('clear')
     class check:
         def signed_out_item(barcode, hide=False):
@@ -1811,10 +1844,11 @@ if python_version() in required_version or "-skipPythonCheck" in n:
             #If not found
             return True
         def encyption_password(password):
-            '''#Returns 1 if password does not match\n#Returns 0 if password Matches'''
             if decrypt.hash(password=password)==False:
+                #Returns 1 if password does not match
                 return 1
             else:
+                #Returns 0 if password Matches
                 return 0
         def data_format(data_base=None):
             #Returns database type.
@@ -2379,7 +2413,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                                     break
                     else:
                         if hide==False:
-                            print(errors.not_str())
+                            print(errors.not_st())
                     return found
                 def remove_item(data_base=None, barcode=None, database=None):
                     if data_base == None:
@@ -2907,7 +2941,7 @@ if python_version() in required_version or "-skipPythonCheck" in n:
                 backup_name=version_in+' '+c+' '+beta
             else:
                 backup_name=version_in+' '+c
-            list2=['UpdateCommands.py','UpdateProgram.py','quid.jpeg','app.py', 'count.py', 'custom_database.py','data.py','get_directory.py','files_to_backup.py','history_desc.py','patch_notes.txt','profanity.txt','requirements.txt','settings.py','shell.py','vars_to_save.py','version_config.py']
+            list2=['DestroyClient.py', 'client.py', 'termination.py', 'encrypt.py', 'UpdateProgram.py', 'count.py', 'custom_database.py','data.py','get_directory.py','files_to_backup.py','history_desc.py','patch_notes.txt','profanity.txt','requirements.txt','settings.py','shell.py','vars_to_save.py','version_config.py']
             beta1=input('Would you like to compress the save file also: ')
             if beta1=="yes" or beta1=='y':
                 list2.append('data_save.py')
