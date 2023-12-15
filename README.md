@@ -36,12 +36,5 @@ If NumPy is giving erros try: (Termux)
 
 Rare/Occasional Update may/will occur. Check back every few weeks for new versions.
 
-
-Things to do:
-  1. Tweak dark mode to seem more appealling(suggest some ideas, i got nothing)
-  2. Updates to shell.py to be compadible with latest version(currently outdated/untested)
-  
-  For more, go to live_build and read the latest patch notes. Future version notes are listed at the bottom.
-  
-known Issues:
-  1. Termux for android doesn't seem to like numpy it refuses/errors out when attempted. Currently trying to find a fix, please be patient.
+For Update Information please look for the patch_notes.txt file.
+*BIG UPDATE COMING SOON*
