@@ -1,5 +1,5 @@
 # Database
-This Project is Finished, but please report any bugs you find. I will fix them.
+This project is currently being fully rebuilt for optimizations and reliability reasons! Please not this before developing apps for it. A new repository will be created soon.
 To setup. Install all items in requirements.txt using pip and run custom_database.py. That's it!
 <br> So run:
 <br>pip install -r requirements.txt
@@ -11,10 +11,6 @@ To setup. Install all items in requirements.txt using pip and run custom_databas
 
 <br> To Install updates via the UpdatePrgram.py file. Just download "UpdateCommands.py" from the new release tab, and place it in the same directory; within the current install, within the same folder as UpdateProgram.py
 
-<br>Latest Notes/New Features:
-<br>1. Working On a Method to print automatically with Windows. Instead of giving a prompt.
-<br>2. Shell is not able to allow login. A fix is coming soon!
-
 To start the program:
 1. pip install -r requirements.txt (Universal) or python3 -m pip install -r requirements.txt (MacOS/UnAssigned)
 
@@ -22,7 +18,7 @@ To start the program:
 
 3. Open app.py and login. After login it may ask you to create a encrypt/decrypt password.
 
-If NumPy is giving erros try: (Termux)
+If NumPy is giving erros try: (Termux Only)
 <br>   MATHLIB="m" pip install -r requirements.txt
 
 <br>To get live version(s) check out github.com/sukadateam/live_build
@@ -32,9 +28,3 @@ If NumPy is giving erros try: (Termux)
 <br> Adbullahi Adbullahi(Tester)
 <br> Albert Plummer(Tester)
 <br> Cameron Landry(Tester)
-
-
-Rare/Occasional Update may/will occur. Check back every few weeks for new versions.
-
-For Update Information please look for the patch_notes.txt file.
-*BIG UPDATE COMING SOON*
