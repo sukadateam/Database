@@ -1,9 +1,46 @@
+'''Used for custom_database.py. This file contains all the settings needed to run the program.
+\nCurrently only the user can modify this file, as custom_database has not yet been programmed how to.
+\nFeature Will be coming in the future. Experimental functions have been written to try and edit this file but leads to curruption or file deletion as of now.'''
+#END **
+
+
+#    ------------------------------------------------------------------------------------------------
+# --| ( New Settings. These settings haven't been fully implemented for it's specific function(s)  ) |--
+#    ------------------------------------------------------------------------------------------------
+testExpermintalFeatures=False #Runs parts of the program that have issues and are in developement
+
+ShowCredentials=False #Shows Credentials when failed. Only to be used to debug issues with encryption. Security Issue if left True. 
+#ShowCrendtials may be removed from this file if you want. I would recommend if your big on security.
+
+ShowDebugInfo=False #Similar to ShowCredentials but limits it to not showing important security passwords unless above is set True.
+                   #--Show debugging data for newly build functions. May be removed in the future.
+
+DdosPreventionTimerEnabler=True # Enables ddos Prevention
+DdosPreventionTimer=2 # The amount of time that must pass before another hash check can be done. If done to frequently then curroption will occur.
+
+#Instead of loading the normal save file(s), you can now import any other Compadaible save file. Checks will be done to ensure working save file(comes at a later version. Not yet implemented.)
+modifiedSafeFile=False
+
+#Used to set max password lengths for student accounts. Default is 10
+studentPasswordLength=10
+
+#used for StudentManager.AllowedPermissions() - Users with these permissions are allowed to modify student accounts.
+studentModifierPermissions=['admin', 'teacher']
+
+# Currently testing encryption methods. Info related to tests will be released soon!
+pyAesCryptMethod=False
+ChaCha20Method=False
+
+'''Values: \n - admin\n - teacher'''
+# -- END OF NEW SETTINGS
+
+
 #User Settings --(FOR USERS)--
 
-#Required python version to run program.
-required_version=['3.10.0','3.10.1','3.10.2','3.10.3','3.10.4', '3.10.5'] #All tested versions!
+#Required python version to run program/Tested versions. You can try others if u want.
+required_version=['3.10.0','3.10.1','3.10.2','3.10.3','3.10.4', "3.11.7"]
 #Application version. Just for show.
-program_version='0.6.8'
+program_version='0.9.2'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only. Setting is not required to be changed.
@@ -15,7 +52,7 @@ profanity_filter=True
 #A backup password in case the other is forgotten.
 global_password=True
 #App version control --(Disable if needed)--
-app_version_control=False
+app_version_control=True
 #Only allow set operating system. Change system variable to your choice.
 set_operating_system=False
 #Allowed windows versions. You can choose 7, 8, 10, 11. Only works if system setting is set to windows.
@@ -25,12 +62,14 @@ min_length=5 #Cannot be smaller than 5
 max_length=25 #Cannot be bigger than 99
 allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890*()# '
 #What is the name of your printer? For macOS. Windows uses default.
-printer_name='iDPRT_SP310'
+printer_name='iDPRT_SP310' #My prefered printer for labels and printing squidwards.
+
 
 #Developer Settings --(NOT USER SETTINGS!)-- Developer Settings
 
+
 #Skip python check.
-skip_pythonCheck=True
+skip_pythonCheck=False
 #Enable automated history_file for functions
 auto_history_record=True
 #Don't load save file. True: Skip save file -- False: Load defualt file not save file.
@@ -54,9 +93,9 @@ multi_process=False
 #Assign Digit number to history item for a more depth look into the item. And create a database to handle all the data for each assigned item.
 assign_digit_forHistory=True
 #How many digits are allowed to be used to store history. Max 30.
-allowed_digits_forHistory=8
+allowed_digists_forHistory=8
 #Will still check for incorrect settings if quit_ifIncorrect is True, but won't display anything.
-show_incorrect_settings=False
+show_incorrect_settings=True
 #Will deny the program from saving. No matter what. Will cause problems for long term.
 disable_save=False
 #Passwords have to meet the requirments set above.
@@ -90,18 +129,17 @@ quiteStartup=False
 printer_debug=True #Default True
 #Clears history file after each startup.
 clearHistoryOnStartup=False
-
 #Settings coming soon. Do not change unless your a dare devil.
 #DarkMode For app.py.
 darkModeApp=True
 #Gives the app some color. darkModeApp and colorMode cannot be set to True at the same time.
 colorMode=False
 #Speeds up computation. May Not ever be fully functional :(
-'''I'm currently not well known for good c++ code :( Hopfully it will change in the future :)'''
-UtilizeCPPCode=True
+UtilizeCPPCode=False # Default False. Not in use yet, or maybe ever.
 #Limits the amount of characters in a given string when writen to a text file.
-#Mainly used for user logs and inventory logs
 Output_file_MaxLength=35
+#IDk
+allowed_digits_forHistory = 15 # Max 30, Min 1, Default 15.
 
 
 #Remove if you aren't using my custom application.
@@ -120,25 +158,13 @@ OnlyAllowKnownStudents=False
 secretsAllowed=False
 side_tilt=200
 AskForEncryptionPassword=False
-#-Presets-
-#Colored
-color_bg_color='red'
-color_text_color='blue'
-color_button_color="orange"
-color_option_color='green'
-#Dark
-dark_bg_color='#231F20'
-dark_text_color='#000000'
-dark_button_color="grey"
-dark_option_color='white'
-
 if colorMode==True:
-    bg_color=color_bg_color
-    text_color=color_text_color
-    button_color=color_button_color
-    option_color=color_option_color
+    bg_color='red'
+    text_color='blue'
+    button_color="orange"
+    option_color='green'
 if darkModeApp==True:
-    bg_color=dark_bg_color
-    text_color=dark_text_color
-    button_color=dark_button_color
-    option_color=dark_option_color
+    bg_color='#231F20'
+    text_color='#000000'
+    button_color="grey"
+    option_color='white'
