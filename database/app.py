@@ -1,3 +1,5 @@
+#Code Notes will not be offered to this app.
+#Comeplete Redesign coming in the future so notes are pointless as of now. This was a trial and error kinda thing. Never done it before.
 from email.utils import parseaddr
 from operator import truediv
 from pickle import EXT4
@@ -21,7 +23,7 @@ except:
     cont=True
 if cont==True:
     tk=Tk()
-    tk.title('Carpetentry Application')
+    tk.title('I like Turtles')
     x=GetScreenWidth() #Used for calculations on the horizontal axis.
     y=GetScreenHeight() #Used for calculations on the verticle axis.
     tk.geometry(str(x)+"x"+str(y)+"+10+20")
@@ -209,22 +211,22 @@ if cont==True:
             e2.pack()
             Tk.update_idletasks(tk)
         def setDarkMode():
-            global colorMode, darkModeApp, dark_bg_color, dark_text_color, dark_button_color, dark_option_color, bg_color, text_color, button_color, option_color
+            global colorMode, darkModeApp, bg_color, text_color, button_color, option_color
             colorMode=False
             darkModeApp=True
-            bg_color=dark_bg_color
-            text_color=dark_text_color
-            button_color=dark_button_color
-            option_color=dark_option_color
+            bg_color='#231F20'
+            text_color='#000000'
+            button_color='gray'
+            option_color='white'
             send()
         def setColorMode():
-            global colorMode, darkModeApp, color_bg_color, color_text_color, color_button_color, color_option_color, bg_color, text_color, button_color, option_color
+            global colorMode, darkModeApp, bg_color, text_color, button_color, option_color
             colorMode=True
             darkModeApp=False
-            bg_color=color_bg_color
-            text_color=color_text_color
-            button_color=color_button_color
-            option_color=color_option_color
+            bg_color='red'
+            text_color='blue'
+            button_color='orange'
+            option_color='green'
             send()
         def CustomizeApp():
             clear()
@@ -618,7 +620,7 @@ if cont==True:
             e2 = Button(tk, text='Go Back', command=send, bg=button_color, foreground=text_color)
             e2.config(height=button_height, width=button_width)
             e2.pack()
-            save_in_txtFile.tools(max_length=25)
+            save_in_txtFile.tools(max_length=20, OverRideOutput_file_MaxLength=True)
             os.chdir('collections')
             if systemDetectedOperatingSystem=="windows":
                 os.system('notepad.exe tools.txt')
@@ -800,7 +802,10 @@ if cont==True:
                     if printer_debug==True:
                         print('Printing...')
                     #Prints the picture file.
-                    print_instructions.print('barcode.png')
+                    try:
+                        print_instructions.print('barcode.png')
+                    except:
+                        pass
                     clear()
                     send()
                 else:
@@ -882,11 +887,12 @@ if cont==True:
             else:
                 #Checks for profanity.
                 if profanityFilter.filter(name)==0 and profanityFilter.filter(password)==0 and profanityFilter.filter(permission)==0:
-                    if users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())==False:
+                    output = users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())
+                    if output == False:
                         options.create_user(user_exists=True)
-                    elif users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())=="IncorrectPerm":
+                    if output=="IncorrectPerm":
                         options.create_user(unknownPermission=True)
-                    elif users.create(new_user=name.lower(), new_password=password, new_permission=permission.lower())=="PasswordDoesNotMeetReq":
+                    if output == "PasswordDoesNotMeetReq":
                         options.create_user(PasswordDoesNotMeetReq=True)
                     else:
                         other, other1, other2 = None, None, None
@@ -980,7 +986,7 @@ if cont==True:
             file.close()
         def random():
             #Question, Button1, Button2
-            list15=[['Oh no, our table it\'s broken! What should we do?','Go to Ikea. :(','Use some duct tape!'],['Is english hard?','Engrish','No. It\'s easy.'],['Potato + Squash = ?','Squatato','Watermelon'],['What\'s funnier than 24?','25','23'],['Are you human?','Yes','No'],['Do you like this app?','Yes, It\'s perfect!','No, it could be better.'],['Are taco bell bathrooms clean?','Yes','Oh hell nay!'],['Have you heard of Linus Tech Tips?','Yes','No'],['Who is the first President of the United States?','John Adams','George Washington'],['Do you like memes?','Yes','No'],['Do you like video games?','Yes','No'],['Are you a good person?','Yes','No'],['Who lives in a pineapple under the sea?','Patrick','Spongebob'],['What does Mr. Krabs like the most?','Money','Krappy Patty Formula'],['Chief Wiggims is from what show?','American Dad','Family Guy'],['Peter Griffion is from what show?','American Dad','Family Guy'],['Sally has 10 hotdogs. She ate 5 of them.\nHow many are left?','5','10'],['Dogs Or Cats?','Dogs','Cats'],['Sara would like to send you a picture.','Yes Please!','No thanks.'],['Marvel or DC?','Marvel','DC'],['Click the Yes button.','No','Yes'],['1+1=','2','3'],['Life Or Death?','Life','Death'],['Click No','No','Yes'],['Apple or Samsung?','Apple','Samsung'],['Gem rush your town hall? (COC)','Yes','No! Don\'t waste your gems!'],['Are you an American?','Yes','No'],['Are you a Lefty or Righty?','Righty','Lefty'],['59+125=','184','187'],['Can I get a hiyah?!','Hiyah!','I\'m not a little kid'], ['Do you like PATHS?', 'Yes', 'No'], ['Do you agree?', 'Yes', 'No'], ['What color is blue?','Red','Blue'], ['Is the earth flat?','Yes','No'], ['Does Ohio exist?','Yes','No'], ['Is water wet?','Yes','No'], ['Time for Crab.','Rate','Close'], ['2+2=','21','4.01'], ['Who lives in a pinapple under the sea?','Squidward','SpongQuan'], ['Why are you gay?','What?','Who said i\'m gay?'], ['Fries or Onion rings?','Yes','No'], ['Do you support raccoon rights?','Yes','Yes'], ['Is proper grammar important in an online setting','n0p3','Yes, it is'], ['Do all your base belong to us?','Yes','No'], ['Waffles or Pancakes','Waffles','Pancakes'], ['Badger Badger Badger Badger Badger Badger','Mushroom','Mushroom'], ['You werent supposed to see this get out','Leave','Leave'],['Your teammate has initiated a surrender','F1 Surrender','F2 Continue'], ['Ninjas or Pirates','Ninjas','Pirates'], ['Bulbasaur,Charmander or Squirtle','Charmander','Squirtle'], ['Heads or Tails','Heads','Tails'], ['Is the washington post a reliable source of news','No','Yes'], ['Eat the rich?','Yes','Yes'], ['Is dirt dirty','Yes','No'], ['What\'s brown and sticky','A stick','*redacted*'], ['Soup or Salad?','soup','WHATS A SUPERSALAD'], ['Up or down?','dowp','upown'], ['Is this statement true?','True','False'], ['Could we cover the earth in pudding?','Maybe','Hmmmm Pudding!'],['Are we real?','Yes','Mayonaise'],['Is mayonaise an instrament?','Pudding','Horseraddish'],['Do you like your teacher?','Yes','No'], ['Which do you like more?', 'Tacos', 'Salad']]
+            list15=[['Was I at your moms house?', 'Yes', 'Greasy Mayo'],['Oh no, our table it\'s broken! What should we do?','Go to Ikea. :(','Use some duct tape!'],['Is english hard?','Engrish','No. It\'s easy.'],['Potato + Squash = ?','Squatato','Watermelon'],['What\'s funnier than 24?','25','23'],['Are you human?','Yes','No'],['Do you like this app?','Yes, It\'s perfect!','No, it could be better.'],['Are taco bell bathrooms clean?','Yes','Oh hell nay!'],['Have you heard of Linus Tech Tips?','Yes','No'],['Who is the first President of the United States?','John Adams','George Washington'],['Do you like memes?','Yes','No'],['Do you like video games?','Yes','No'],['Are you a good person?','Yes','No'],['Who lives in a pineapple under the sea?','Patrick','Spongebob'],['What does Mr. Krabs like the most?','Money','Krappy Patty Formula'],['Chief Wiggims is from what show?','American Dad','Family Guy'],['Peter Griffion is from what show?','American Dad','Family Guy'],['Sally has 10 hotdogs. She ate 5 of them.\nHow many are left?','5','10'],['Dogs Or Cats?','Dogs','Cats'],['Sara would like to send you a picture.','Yes Please!','No thanks.'],['Marvel or DC?','Marvel','DC'],['Click the Yes button.','No','Yes'],['1+1=','2','3'],['Life Or Death?','Life','Death'],['Click No','No','Yes'],['Apple or Samsung?','Apple','Samsung'],['Gem rush your town hall? (COC)','Yes','No! Don\'t waste your gems!'],['Are you an American?','Yes','No'],['Are you a Lefty or Righty?','Righty','Lefty'],['59+125=','184','187'],['Can I get a hiyah?!','Hiyah!','I\'m not a little kid'], ['Do you like PATHS?', 'Yes', 'No'], ['Do you agree?', 'Yes', 'No'], ['What color is blue?','Red','Blue'], ['Is the earth flat?','Yes','No'], ['Does Ohio exist?','Yes','No'], ['Is water wet?','Yes','No'], ['Time for Crab.','Rate','Close'], ['2+2=','21','4.01'], ['Who lives in a pinapple under the sea?','Squidward','SpongQuan'], ['Why are you gay?','What?','Who said i\'m gay?'], ['Fries or Onion rings?','Yes','No'], ['Do you support raccoon rights?','Yes','Yes'], ['Is proper grammar important in an online setting','n0p3','Yes, it is'], ['Do all your base belong to us?','Yes','No'], ['Waffles or Pancakes','Waffles','Pancakes'], ['Badger Badger Badger Badger Badger Badger','Mushroom','Mushroom'], ['You werent supposed to see this get out','Leave','Leave'],['Your teammate has initiated a surrender','F1 Surrender','F2 Continue'], ['Ninjas or Pirates','Ninjas','Pirates'], ['Bulbasaur,Charmander or Squirtle','Charmander','Squirtle'], ['Heads or Tails','Heads','Tails'], ['Is the washington post a reliable source of news','No','Yes'], ['Eat the rich?','Yes','Yes'], ['Is dirt dirty','Yes','No'], ['What\'s brown and sticky','A stick','*redacted*'], ['Soup or Salad?','soup','WHATS A SUPERSALAD'], ['Up or down?','dowp','upown'], ['Is this statement true?','True','False'], ['Could we cover the earth in pudding?','Maybe','Hmmmm Pudding!'],['Are we real?','Yes','Mayonaise'],['Is mayonaise an instrament?','Pudding','Horseraddish'],['Do you like your teacher?','Yes','No'], ['Which do you like more?', 'Tacos', 'Salad']]
             item=random.randint(0, len(list15)-1)
             return (list15[item])[0], (list15[item])[1], (list15[item])[2]
         def item1():
@@ -1292,6 +1298,7 @@ if cont==True:
                 try:
                     os.remove('hash.txt')
                 except:
+                    #Occurs when qrcode dep is missing.
                     pass
                 create_encryption_password()
     tk.config(bg=bg_color)
