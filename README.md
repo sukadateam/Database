@@ -1,5 +1,5 @@
 # Database
-This project is currently being fully rebuilt for optimizations and reliability reasons! Please not this before developing apps for it. A new repository will be created soon.
+This project is being continued. Rebuilding, optimizations and code cleanup is in progress! Goto live build to see even more new features!
 To setup. Install all items in requirements.txt using pip and run custom_database.py. That's it!
 <br> So run:
 <br>pip install -r requirements.txt
@@ -24,7 +24,10 @@ If NumPy is giving erros try: (Termux Only)
 <br>To get live version(s) check out github.com/sukadateam/live_build
 
 <br> Credits!
-<br> Brandon Robinson(Programmer/Designer/Tester)
-<br> Adbullahi Adbullahi(Tester)
-<br> Albert Plummer(Tester)
-<br> Cameron Landry(Tester)
+  - Brandon Robinson(Programmer/Designer/Tester) - Current Dev
+  - Adbullahi Adbullahi(Tester) - No longer apart of program develepment as of (3/8/24)
+  - Albert Plummer(Tester) - No longer apart of program develepment as of (3/8/24)
+  - Cameron Landry(Tester) - No longer apart of program develepment as of (3/8/24)
+
+
+  - I'd like to note that the people listed above have not helped since I left high school. It's been a solo project for a few years. I'd like to thank them for their help in the kick start of this project. I will keep the development going by myself. Thank you all! You are more than welcome to rejoin the progress at any time!
