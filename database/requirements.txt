@@ -1,3 +1,4 @@
+cryptography
 pyAesCrypt
 pillow
 pynput
@@ -5,7 +6,12 @@ pandas
 pybind11 #Might remove
 cython
 python-barcode
-pypiwin32
+pypiwin32 #Doesn't work on 3.11 as i've tested. Windows only kinda thing too. I use a mac with emulation, it's not great.
 screeninfo
-numby
+numpy
 git #Temp
+qrcode
+
+Pyarrow #Pandas requires this for future versions as of now.
+pipdeptree #For upcoming update. Will help address dependecy issues.
+pycryptodome #For testing encryption methods. ChaCha20
