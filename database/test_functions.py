@@ -1,13 +1,19 @@
-#Testing purposes only.
-hide=True
+#Testing purposes only. 
+#PLEASE NOTE: This file may not be always upto date comparativly towards the custom_database.py file.
+hide=False
 from custom_database import *
 import time
+skipFunction1=False #Skips check.encyption_password on line 12
 while True:
     if users.login_request(user=input('Username: '), password=input('Password: ')) == True:
         break
 while True:
+    print('If you would like to skip this type: -skip')
     encry_password=input('Enter Encryption Password: ')
     if check.encyption_password(password=encry_password)==0:
+        break
+    elif encry_password == "-skip":
+        print('Entry Has Been Skipped and not tested.')
         break
     else:
         print("Incorrect Password.")
@@ -51,6 +57,8 @@ info.app_version()
 info.operating_system()
 info.python_version()
 save.all()
+print('Screen Height: ',GetScreenHeight())
+print('Screen Width: ',GetScreenWidth())
 print('--(SYSTEM INFO TEST COMPLETE)--')
 print('\n--(USER CLASS TEST)--')
 users.create(new_user='test_dummy', new_password='testpas1',new_permission='admin', hide=hide)
@@ -67,9 +75,9 @@ if check.data_base_exists(data_base='money')==False:
 check.data_format(data_base='money')
 print('--(DATABASE CLASS TEST COMPLETE)--')
 print('\n--(TESTING MATH)--')
-math.pi()
-math.distance(speed=100, time=100)
-math.force(mass=100, acceleration=100)
+math1.pi()
+math1.distance(speed=100, time=100)
+math1.force(mass=100, acceleration=100)
 print('--(TESTING MATH COMPLETE)--')
 print('\n--(TESTING ERRORS)--')
 errors.FileDoesNotExist(var='Test')
