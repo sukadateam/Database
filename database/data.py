@@ -1,4 +1,4 @@
-data_bases=[['tools', True, 'all', 'column_row', ['name','id']], ['logs', True, 'all', 'list']]
+data_bases=[]
 #Name, Active status, owner, type, columns(if type == column_row)
 row=[]
 #Side to side
@@ -8,12 +8,18 @@ lists=[]
 #Data_base, items in list
 
 #Authentication
-known_users=['admin', 'teacher']
-passwords=['admin', 'teacher']
+known_users=['admin', 'teacher', 'student']
+passwords=['admin', 'teacher', 'student']
 #Look at line 24 for allowed permissions. allowed_users=[]
-permissions=['admin', 'teacher']
+permissions=['admin', 'teacher', 'student']
+'''Please avoid labeling any vars as permissions, i've had issues with this. Isolated functions are okay.
+\nSet Permissions by default:
+- admin
+- teacher
+- student
+'''
 #True = Enabled, False = Disabled.
-active_users=[True, True]
+active_users=[True, True, True]
 
 #Current user logged in
 user_logged=None
@@ -25,8 +31,10 @@ allowed_users=['admin', 'student', 'teacher', 'secret'] #Allowed Permissions
 denied_inputs=['',' ',None]
 denied_names=[]
 debug=False
-students=[]
+students=[['Mike', 123456, False], ['Turtle', 123456, False]]
+#Name, 4-6 digit passcode, active_student. Might change var name to studentsLogincreds(list)
 opto_data=[]
 opto_row=[]
 opto_lists=[]
 side_tilt=200
+#students=[['Mike', 123456, True]]
