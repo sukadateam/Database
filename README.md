@@ -1,4 +1,4 @@
-# Database
+# A 3 year long project. It's so close to it's first 1.0 release!
 This project is being continued. Rebuilding, optimizations and code cleanup is in progress! Goto live build to see even more new features!
  - Setup instructions need to be updated. They will appear here after they have been written. In progress, almost done.
 
