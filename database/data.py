@@ -1,3 +1,5 @@
+# Encryption does not occur inside this file. Only data stored in data_save.py is encrypted.
+
 data_bases=[]
 #Name, Active status, owner, type, columns(if type == column_row)
 row=[]
@@ -10,7 +12,7 @@ lists=[]
 #Authentication
 known_users=['admin', 'teacher', 'student']
 passwords=['admin', 'teacher', 'student']
-#Look at line 24 for allowed permissions. allowed_users=[]
+#Look at line 32 for allowed permissions. allowed_users=[]
 permissions=['admin', 'teacher', 'student']
 '''Please avoid labeling any vars as permissions, i've had issues with this. Isolated functions are okay.
 \nSet Permissions by default:
