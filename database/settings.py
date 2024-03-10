@@ -29,7 +29,11 @@ studentModifierPermissions=['admin', 'teacher']
 
 # Currently testing encryption methods. Info related to tests will be released soon!
 pyAesCryptMethod=False
-ChaCha20Method=False
+ChaCha20Method=True
+
+#UnverifiedHashDetection - If a hash is not verified, then the system will not allow the user to continue. It will beggin wiping the system.
+UnverifiedHashDetection=False
+AllowedAttempsBeforewipe=3 #How many attemps are allowed before the system is wiped. Counter is reset after a successful login.
 
 '''Values: \n - admin\n - teacher'''
 # -- END OF NEW SETTINGS
@@ -40,7 +44,7 @@ ChaCha20Method=False
 #Required python version to run program/Tested versions. You can try others if u want.
 required_version=['3.10.0','3.10.1','3.10.2','3.10.3','3.10.4', "3.11.7"]
 #Application version. Just for show.
-program_version='0.9.2'
+program_version='0.9.3'
 #Drive letter to store hash.aes file on root directory. Letter must be Uppercase. Windows only.
 drive_letter='E'
 #Drive name to store hash.aes file on root directory. Linux only. Setting is not required to be changed.
@@ -106,8 +110,8 @@ do_not_remove=True
 fail_safe=True
 #Disable profanity filter for admin.
 disable_filter_admin=False
-#After ? startups. Remove backups from ? long ago.
-retain_backup_time=25 #Startups
+#Prevents to many backups from being stored.
+retain_backup_time=25 # Only (retain_backup_time) backups will be kept. If a new backup occurs, the oldest backup will be removed.
 #Clear collections folder on app startup.
 resetCollections=True
 #If a setting is missing, not present, or not there, skip it.
