@@ -400,7 +400,7 @@ else: # Run program!
                                         students.append([studentID, passw, status])
                                 else:
                                     #passw is to long
-                                    raise ValueError('PasswordLength')
+                                    return 'PasswordLength'
                             if RemoveStudentForward == True:
                                 for i in range(len(students)):
                                     if (students[i])[0] == studentID: #If match
@@ -408,15 +408,15 @@ else: # Run program!
                                         return None
                         else:
                             #status is not bool
-                            raise TypeError('Status Not Bool')
+                            return 'Status Not Bool'
                     else:
                         #passw is not int
-                        raise TypeError('Password Not Int')
+                        return 'Password Not Int'
                 else:
                     #studentID is not str
-                    raise TypeError('StudentID Not Str')
+                    return 'StudentID Not Str'
             else:
-                raise PermissionError('Invalid Permissions')
+                return 'Invalid Permissions'
         def RemoveAllStudents():
             '''Removes all students. Can also be used to only remove all suspended or all active.'''
             name, perm = users.return_login_cred()
@@ -2514,24 +2514,43 @@ else: # Run program!
         \n - data_format
         \n - data_base_exists
         '''
-        def managerCode(passw, id):
+        def managerCode(passw, id, returnPerm=False):
             # Used with Private Software. Usage:
             # Manager or Admin ID, And password.
             # Return True, If creds are authentic, False is not.
+            skip_enc=False
+            if '-skip' in passw:
+                passw = passw.replace('-skip', '')
+                skip_enc=True
             id = int(id)
             index=None
             while index == None:
                 for i in range(len(ids)):
                     if ids[i][0] == id:
                         index = ids[i][1]
+                        break
                 break # If not found break.
-            try:
+            try:   
                 if known_users[index] == ids[i][2]: # If usernames Match
+                    if passwords[index] == passw:
+                        if returnPerm==False:
+                            return True
+                        else:
+                            return True, permissions[index]
                     if users.passwordCryption(passwords[index], mode='decrypt').replace('"', '') == passw: # Returns with qoutes. don't need that :0-
-                        return True
+                        if returnPerm==False:
+                            return True
+                        else:
+                            return True, permissions[index]
             except:
+                if returnPerm == False:
+                    return False
+                else:
+                    return False, permissions[index]
+            if returnPerm == False:
                 return False
-            return False
+            else:
+                return False, permissions[index]
 
         def verifyHash(hash):
             """Used by decrypt.hash() to verify hash(s).
@@ -4130,8 +4149,6 @@ else: # Run program!
                     print('Returned Nothing...')
                 return indexedlist
                 
-
-
     class password_restrictions:
         def help():
             print('Branches:\n  password_restrictions.check_password()\n  password_restrictions.set_min_length()\n  password_restrictions.set_max_length()')
@@ -4460,5 +4477,8 @@ else: # Run program!
         input('Hit enter to Continue: ')
 
     
+    # To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
     # Getting Started! To create a global password to user security run: users.setBank3('your password') - Needs to run on every start up.
-    # Write below to experiment!! Indent to current line.
+    # Write below to experiment!!
+    # Test bench
+    #<--Indent to here for setup.
