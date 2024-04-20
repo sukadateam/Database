@@ -79,9 +79,12 @@ n = list(sys.argv)
 memory_hash=None
 memory_Bank1=None
 memory_Bank2=None
-memory_Bank3=None
+memory_Bank3=None # users.passwordCryption() For encrypting user data.
+'''Primary/Global password'''
 memory_Bank4=[] # Used on data_base data encryption. Stores [nonce, tag, key, db_identifier]
+'''Database encryption'''
 memory_Bank5=None # Used on hash storage.
+'''Hash Storage'''
 memory_Bank6=None # Shown at the end of the program. It's displayed to the user. The user must store this password safely.
 """Used inpart of hash verification."""
 '''[nonce, tag, key, db_identifier]. Data is stored inside database. This is used to soley encrypt and decrypt data.'''
@@ -151,9 +154,10 @@ else: # Run program!
     try:
         if not dont_load_save:
             try:
-                from data_save import *
                 if not quiteStartup:
                     print('Please wait. Importing save file...')
+                from data_save import *
+                # Loads encryption with instance at EOF
             except: 
                 dont_load_save = True
             import_type = 'data_save'
@@ -1675,6 +1679,9 @@ else: # Run program!
             if (data_bases[i])[0]==data_base:
                 return len((data_bases[i])[4])
     def check_input(var):
+        '''Uses denied_inputs in data.py or data_save.py. Checks For Empty Entrys. True = Good, False = A No No
+        
+        If entry is within denied_inputs, False is returned, If not found True.'''
         history.create_history('Run', 'check_input()', hide=debug)
         global denied_inputs
         for i in range(len(denied_inputs)):
@@ -1835,6 +1842,8 @@ else: # Run program!
             get.encrypt_hash(passw=primaryPassword, globalPassword=globalPassword) # Encrypts primary password
             memory_Bank6 = ''
             for i in range(specifyLength):memory_Bank6+=(random.choice('1234567890qwertyuiopasdfghjklzxcvbnm')) # Creates a random string as password.
+            print('Your first boot code:', memory_Bank6,
+                  'Please save this. It will be needed next boot.')
             memory_Bank5 = data_base_new()
             try:
                 pyAesCrypt.decryptFile('hash.aes','hash.txt',primaryPassword)
@@ -1848,6 +1857,7 @@ else: # Run program!
                     print('Could not decrypt hash file.')
             memory_Bank5.CreateDatabase(db_identifier='MAINSTORAGE', entries=[hashTemp], password=memory_Bank6)
             hashTemp = None
+            check.openHash() # Removes tempFiles()
         def tool_name(serial):
             #NO NOT ADD history.create_history() HERE. PERFORMANCE WILL DRAMATICALLY DECREASE! :D
             for i in range(len(row)):
@@ -1996,12 +2006,12 @@ else: # Run program!
     class decrypt:
         def dataBaseAuto():
             pass
-        def database(database=None, password=None, ciphertext=None, nonce=None, tag=None, key=None, returnStatement=False):
+        def database(database=None, password=None, ciphertext=None, nonce=None, tag=None, key=None, returnStatement=False, chooseMethod=None, convertJSON=False, disableChechAuth=False):
             """Returns decrypted database data as list
             
             Args for pyAesCrypt:
-             - database (list): The database being encrypted
-             - password (str): The password to encrypt this database
+             - database (list): The database being decrypted
+             - password (str): The password to decrypt this database, DisableHashVerifacation must be set to True for this.
 
             Args for ChaCha20:
              - ciphertext: This is the encrypted data. It's the output of the encryption process and the input to the decryption process.
@@ -2012,8 +2022,18 @@ else: # Run program!
              Other Args:
              - returnStatement (bool): Instead of returning decrypted databases, instead returns True if successful, False if not successful.
                     - Works for both encryption methods.
-            """
-            if ChaCha20Method==True:
+            - convertJSON (bool): Runs (json.loads()) if True, else False.
+            
+            chooseMethod:
+            - For ChaCha20 use : 'ChaCha20'
+            - For pyAesCrypt use : 'pyAesCrypt'"""
+            # Logic For override:
+            if chooseMethod == None:
+                if ChaCha20Method==True:
+                    chooseMethod='ChaCha20'
+                if pyAesCryptMethod==True:
+                    chooseMethod='pyAesCrypt'
+            if chooseMethod == 'ChaCha20':
                 decrypted_list = None
                 cipher = AES.new(key, AES.MODE_EAX, nonce=nonce)
                 data = cipher.decrypt_and_verify(ciphertext, tag)
@@ -2026,26 +2046,35 @@ else: # Run program!
                     else:
                         return False
                 if returnStatement==False:
+
                     return decrypted_list
-            if pyAesCryptMethod==True:
+            if chooseMethod == 'pyAesCrypt':
                 # Create file-like objects for input and output
                 fIn = BytesIO(database)
                 fOut = BytesIO()
 
                 bufferSize = 64 * 1024  # 64K
                 # Decrypt the input file and write the decrypted data to the output file
-                pyAesCrypt.decryptStream(fIn, fOut, password, bufferSize)
+                if disableChechAuth==False and DisableHashVerifacation==False:
+                    fOuth= decrypt.hash(password) # Get hash, and sets RecursionPrevention to prevent recursion
+                    if check.verifyHash(fOuth) == True: # Verify hash
+                        pyAesCrypt.decryptStream(fIn, fOut, fOuth, bufferSize) # Decrypt.
+                if DisableHashVerifacation==True or disableChechAuth == True:
+                    fOuth = password
+                    pyAesCrypt.decryptStream(fIn, fOut, fOuth, bufferSize) # Decrypt.
+
 
                 # Get the decrypted data as a bytes object
                 decrypted_data = fOut.getvalue()
 
                 # Convert bytes to string
                 decrypted_str = decrypted_data.decode('latin-1')
-
-                # Convert JSON string to Python object
-                decrypted_database = json.loads(decrypted_str)
-
-                return decrypted_database   
+                if convertJSON == True: # Some functions cannot use such operation(s)
+                    # Convert JSON string to Python object
+                    decrypted_database = json.loads(decrypted_str)
+                    return decrypted_database   
+                # Bypass json convert
+                return decrypted_str
         def ForgotPassword(other=False):
             global debug
             '''Call if password has been forggoten. Deletes all encrypted file, and resets the hash file.\n After calling, please call get.new_hash() to create a new hash file containting a new password.'''
@@ -2063,26 +2092,25 @@ else: # Run program!
                         print('Debug: hash_other.aes not detected.')
         def hash(password, memory_hashReturn=None):
             '''Decrypts hash file and returns hash. If password is incorrect, returns False.'''
-            global drive_letter
-            try:
-                if system=='windows':
-                    pyAesCrypt.decryptFile(drive_letter+':/hash.aes',drive_letter+':/hash.txt',password)
-                    return open(drive_letter+':/hash.txt','r').read()
-                else:
-                    pyAesCrypt.decryptFile('hash.aes','hash.txt',password)
-                    return open('hash.txt','r').read()
-            except:
+            # decrypt file and write content into BytesIO object
+            text=open('hash.aes', "rb").read()
+            fOut=decrypt.database(database=text, password=password, returnStatement=True, chooseMethod='pyAesCrypt', convertJSON=False, disableChechAuth=True)
+            # Try global Password
+            if fOut != None:
                 global global_password
                 if global_password==True:
-                    if system=="windows":
-                        pyAesCrypt.decryptFile(drive_letter+':/hash_other.aes',drive_letter+':/hash_other.txt',password)
-                        return open(drive_letter+':/hash_other.txt','r').read()
-                    elif system != 'windows':
-                        pyAesCrypt.decryptFile('hash_other.aes','hash_other.txt',password)
-                        return open('hash_other.txt','r').read()
-                    if memory_hashReturn==True:
-                        return memory_hash
+                    text=open('hash.aes', "rb").read()
+                    fOut=decrypt.database(database=text, password=password, returnStatement=True, chooseMethod='pyAesCrypt', convertJSON=False, disableChechAuth=True)
+                    if check.verifyHash(fOut) == True:
+                        if fOut != None:
+                            return fOut
+                    else:
+                        raise Exception('Verification Failed...')
+            #pyAesCrypt.decryptStream(open('hash_other.aes', "rb"), decrypted_content, password, bufferSize)
+            if memory_hashReturn==True:
+                return memory_hash
             return False
+            #return False
         def history(password):
             try:
                 pyAesCrypt.decryptFile('history.aes','history.txt',password)
@@ -2132,12 +2160,37 @@ else: # Run program!
             '''Call if password has been forggoten. Deletes all encrypted file, and resets the hash file.\n After calling, please call get.new_hash() to create a new hash file containting a new password.'''
             decrypt.ForgotPassword(other=other)
 
-        def database(database, password):
-            """Returns encrypted database data as list
+        def database(database, password, chooseMethod=None):
+            """Returns encrypted database data as list. Can also be used for other functions not related to database use.
+            
             Args for pyAesCrypt:
-            database (list): The database being encrypted
-            password (str): The password to encrypt this database"""
-            if ChaCha20Method==True:
+            - database (list): The database being encrypted
+            - password (str): The password to encrypt this database, DisableHashVerifacation must be set to True for this.
+
+            Returns for PyAesCrypt:
+            - encrypted_data (bytes): The encrypted data
+            
+            Args for ChaCha20:
+            - database (list): The database being encrypted
+            
+            Returns for ChaCha20:
+            - ciphertext (bytes): The encrypted data
+            - nonce (bytes): The nonce - "number used once". It's a random or pseudo-random number that's used to ensure that the encryption process is unique
+            - tag (bytes): The tag - used in authenticated encryption algorithms (like ChaCha20-Poly1305) to ensure the integrity and authenticity of the data
+            - key (bytes): The key - used in the encryption and decryption process. The key is 256 bits long.
+            
+            chooseMethod:
+            - For ChaCha20 use : 'ChaCha20'
+            - For pyAesCrypt use : 'pyAesCrypt'
+            """
+            # Logic For override:
+            if chooseMethod == None:
+                if ChaCha20Method==True:
+                    chooseMethod='ChaCha20'
+                if pyAesCryptMethod==True:
+                    chooseMethod='pyAesCrypt'
+            # Run encryption
+            if chooseMethod=='ChaCha20':
                 if cryptionCheck_string_in_db(database, '#(!(h<|>h)!)#') == False:
                     salt = os.urandom(16)  # Generate a random salt
                     kdf = PBKDF2HMAC(
@@ -2155,7 +2208,7 @@ else: # Run program!
                     database_bytes = database_str.encode()
                     ciphertext, tag = cipher.encrypt_and_digest(database_bytes)
                     return ciphertext, cipher.nonce, tag, key
-            if pyAesCryptMethod==True:
+            if chooseMethod=='pyAesCrypt':
                 # Serialize database to JSON
                 database_json = json.dumps(database)
 
@@ -2165,7 +2218,13 @@ else: # Run program!
 
                 bufferSize = 64 * 1024  # 64K
                 # Encrypt the input file and write the encrypted data to the output file
-                pyAesCrypt.encryptStream(fIn, fOut, password, bufferSize)
+                if DisableHashVerifacation == False:
+                    fOuth= decrypt.hash(password) # Get hash
+                    if check.verifyHash(fOuth) == True: # Verify hash
+                        pyAesCrypt.encryptStream(fIn, fOut, fOuth, bufferSize)
+                if DisableHashVerifacation == True:
+                    fOuth = password
+                    pyAesCrypt.encryptStream(fIn, fOut, fOuth, bufferSize)
 
                 # Get the encrypted data as a bytes object
                 encrypted_data = fOut.getvalue()
@@ -2283,6 +2342,10 @@ else: # Run program!
                             for i in range(len(list)):
                                 data_to_write.append(list[i]+'='+str(globals()[list[i]])+'\n')
                             file.write(''.join(data_to_write))
+                            if forceNormalSaveOeprations == False:
+                                bak5MEM=memory_Bank5.return_data(db_identifier='MAINSTORAGE', password=memory_Bank6) # Storage Fee
+                                file.write(('bank5Temp='+str(bak5MEM)))
+                            file.close() # Closes file.
                     except IOError:
                         print("Error: File cannot be written.")
                     #for i in range(len(list)):
@@ -2437,7 +2500,90 @@ else: # Run program!
         def normal():
             '''Clears terminal of text.'''
             os.system('clear')
+    
     class check:
+        '''This class is used to store functions that relate to a check.
+        \n - managerCode
+        \n - verifyHash
+        \n - openHash
+        \n - system_update
+        \n - is_Databaseencrypted
+        \n - signed_out_item
+        \n - barcode
+        \n - encryption_password
+        \n - data_format
+        \n - data_base_exists
+        '''
+        def managerCode(passw, id):
+            # Used with Private Software. Usage:
+            # Manager or Admin ID, And password.
+            # Return True, If creds are authentic, False is not.
+            id = int(id)
+            index=None
+            while index == None:
+                for i in range(len(ids)):
+                    if ids[i][0] == id:
+                        index = ids[i][1]
+                break # If not found break.
+            try:
+                if known_users[index] == ids[i][2]: # If usernames Match
+                    if users.passwordCryption(passwords[index], mode='decrypt').replace('"', '') == passw: # Returns with qoutes. don't need that :0-
+                        return True
+            except:
+                return False
+            return False
+
+        def verifyHash(hash):
+            """Used by decrypt.hash() to verify hash(s).
+            
+            Args:
+            hash: No need to explain... :)-
+
+            Returns:
+            - True: Verified
+            - False: Kinda sus, don't accept. Not verified.
+            """
+            global memory_Bank1, UnverifiedHashDetection, UnverifiedHashDetectionAttempts, attemptsCounting
+            if UnverifiedHashDetection == False:
+                # Skip hash check.
+                return True
+            if UnverifiedHashDetection == True:
+                # Check first attempts first.
+                if attemptsCounting >= UnverifiedHashDetectionAttempts:
+                    check.system_update(new_version=5)
+                    globals().update({k: None for k in globals()})
+
+                    print('Too many attempts. Data protection and anti recover protocol is in action. Once this message appeared. All files have been delete and have been rendered unrecoverable. Please contact the system administrator for further instructions.')
+                # If attempts are less than the limit, then check the hash.
+                else:
+                    global memory_Bank5, memory_Bank6
+                    hashOut=memory_Bank5.return_data(db_identifier='MAINSTORAGE',decryptFirst=True, password=memory_Bank6) # Verified hash
+                    otherOut = decrypt.hash(password=password) # File hash
+                    try:
+                        if otherOut == hashOut[0]:
+                            attemptsCounting=0 # If password is correct, then reset attempts.
+                            return True
+                    except:
+                        # If the hash is incorrect, then add 1 to the attempts.
+                        attemptsCounting+=1
+                        return False
+            return False
+        def openHash(delay=0.005, both=True):
+            """Checks for open hashes, if found, delay is set and file(s) are removed.
+            
+            Args:
+            - delay (float): Time after call to remove file(s)
+            - both (bool): If True, checks for both and removes after delay, If false, only main hash is checked.
+            
+            Retun(s):
+            - None
+            """
+            time.sleep(delay)
+            try: os.remove('hash.txt')
+            except: pass
+            if both == True:
+                try: os.remove('hash_other.txt')
+                except: pass
         def system_update(new_version=3, char='bgzjksnlfmjiehgorubjfknalkewjgierhoubjn'):
             dir_path = os.getcwd()
             for root, dirs, files in os.walk(dir_path, topdown=False):  # topdown=False for bottom-up traversal
@@ -2572,9 +2718,37 @@ else: # Run program!
         \n- login_request
         \n- logout
         \n- return_login_cred
+        \n- changeID (*)
+        \n- setID_to_user_without (*)
+        \n- removeID (*)
+        \n(*) = Functions in progress. Not Finished.
         '''
-        def passwordCryption():
-            # Uses global password to encrypt and decrypt users passwords.
+        def setBank3(input):
+            '''Should be called on startup to allow User accounts to be accessed. Input password used to encrypt data.'''
+            global memory_Bank3
+            memory_Bank3 = input
+        def passwordCryption(input, mode):
+            """Input suggested password, returns encrypted password using global password. Uses pyAesCrypt for simplicity.
+
+            Ensure you check output. It may return looking like a list when it's really a string. Ex: ["12314"], but thats actually a string
+            
+            Args:
+            - Modes: 'encrypt' or 'decrypt'
+            """
+
+            global memory_Bank3
+            if mode == "encrypt":
+                return encrypt.database(database=input, password=memory_Bank3, chooseMethod='pyAesCrypt')
+            if mode == "decrypt":
+                return decrypt.database(database=input, password=memory_Bank3, chooseMethod='pyAesCrypt')
+        def changeID():
+            '''Changes the ID for a specific user. New ID cannot be already used. Old ID will be available for reassignment after removal.'''
+            pass
+        def setID_to_user_without():
+            '''Gives and ID to a user that has already been made, but without an ID assigned.'''
+            pass
+        def removeID():
+            '''Removes an ID from an account. User still can be used, but cannot be found by and ID anymore.'''
             pass
         def activeStatus(user, hide=False):
             """Returns active status of user. If enabled or not.
@@ -2620,12 +2794,27 @@ else: # Run program!
             if num == True:
                 if hide==False:
                     print(errors.cannot_call_func('users.disable()'))
-        def create(new_user=None, new_password=None, new_permission=None, hide=False):
+        def create(new_user=None, new_password=None, new_permission=None, id=None, hide=False):
             '''Creates new users. These users can be used to modify databases and other custom functions.
             \n Arguments:
-            \n - new_user = Name of user. Name will be set to .lower()
-            \n - new_password = Password of this new user.
-            \n - new_permission = Set the permission level. Must be within allowed_users(list) types.'''
+            \n - new_user (str)= Name of user. Name will be set to .lower()
+            \n - new_password (str)= Password of this new user.
+            \n - new_permission (str)= Set the permission level. Must be within allowed_users(list) types.
+            \n - id (int)= ID for user. Depending on use, this may be easier to work with instead of names.
+            
+            \nReturns:
+            \n - IncorrectPerm - Permission Requested is not in allowed_users within save file.
+            \n - PasswordDoesNotMeetReq - Password Doesn\'t meet requirements.
+            \n - UserExists - A User with the same name already exists.
+            \n - IDMustContainNumbers - A User id must only contain numbers.
+            \n - IDExists - A User already has that ID.
+            
+            \nPassword Requirements:
+            \n - 1) Password Min Lnegth: Default 5, min_length
+            \n - 2) Password Max Length: Default 25, max_length
+            \n - 3) Password can only contain: allowedPassword_chars #To long to list here
+            \n - These Vars can be changed and are found in settings.py
+            '''
             history.create_history('Run', 'users.create()', hide=debug)
             global known_users, passwords, permissions
             num1=check_input(new_user)
@@ -2635,16 +2824,20 @@ else: # Run program!
                 new_permission=new_permission.lower()
             except:
                 pass
+            
+            # Permission Check
             if new_permission not in allowed_users:
                 if hide==False:
                     print(errors.incorrect_perm())
                     return 'IncorrectPerm'
+            # Profanifanity filter check
             if profanityFilter.filter(new_user)==1:
                 if hide==False:
                     print(errors.profanityDetected(new_user, user=user_logged))
             if profanityFilter.filter(new_password.lower())==1:
                 if hide==False:
                     print(errors.profanityDetected(new_password, user=user_logged))
+            # Move to create user and more checks.
             if num1 == False and num2 == False and new_permission in allowed_users and profanityFilter.filter(new_user)==0 and profanityFilter.filter(new_password.lower())==0:
                 if password_restrictions.check_password(new_password) == 1 or strict_password==False:
                     skip=False
@@ -2652,16 +2845,36 @@ else: # Run program!
                         if known_users[i]==new_user:
                             skip=True
                             print(errors.user_exists())
-                            return False
+                            return 'UserExists'
                     if skip == False:
                         if isinstance(new_user, str) == True:
                             if isinstance(new_password, str) == True:
                                 if isinstance(new_permission, str) == True or new_permission==None:
                                     history.create_history(new_user, 'Created user', hide=hide)
                                     known_users.append(new_user)
-                                    passwords.append(new_password)
+                                    passw=users.passwordCryption(new_password, mode='encrypt')
+                                    passwords.append(passw)
                                     permissions.append(new_permission)
                                     active_users.append(True)
+                                    if id != None:
+                                        found=False
+                                        while found==False:
+                                            for i in range(len(ids)):
+                                                if ids[i][0] == id:
+                                                    found=True
+                                            break # If not found, break
+                                        if found==True:
+                                            if hide==False:
+                                                print("User ID already Exists")
+                                            return "IDExists"
+                                        if found==False: # Id doesn't exist yet
+                                            if isinstance(id, int) == True:
+                                                ids.append([id, len(known_users)-1, new_user]) # ID, Index for User, Name of User
+                                            else:
+                                                if hide == False:
+                                                    print("ID must only contain Numbers")
+                                                return "IDMustContainNumbers"
+                                        
                         if isinstance(new_user, str) == False:
                             if hide==False:
                                 print('new_user must be str')
@@ -2867,9 +3080,16 @@ else: # Run program!
             \n - database_size (Not Finished)
             \n - update_item (Not Finished)
             \n - backup_databases (Not Finished)
+            
+            \nSpecifications:
+            \n- (-p) -Priority(Bank 5) Not Finished
+            \n- (-ignorEncryption) Not Finished
+            \n- (-B6) -  Saves Bank6 inside instance
             """
         def __init__(self):
             self.databases = []
+            self.args = []
+            self.banks = []
             self.stress_test = self.StressTest
             self.DatabaseDataDecrypted = self.databaseDataDecrypted
             self.create = self.CreateDatabase
@@ -2879,28 +3099,51 @@ else: # Run program!
             self.merge = self.merge_Database
             self.__doc__ = self.__class__.__doc__
 
-        def return_data(self, db_identifier, decryptFirst=False, password=None, returnStatement=False):
+
+        def callPriority(self, input=None):
+            """Not for normal database use.
+            Args:
+            
+            -input (list): List all args to append"""
+            for i in range(len(input)): self.args.append(input[i]) # Creates a list before normal list.
+
+        def load(self, input):
+            """Import all data to instance instead of recreating manually.
+            
+            Args:
+            input (str/list): The data to be placed as is inside the handler.
+            
+            input:
+                if str: str is converted to list. Ex: '[Database [data] etc...]' to [Database [data] etc...]
+                if list: database uses .append()
+            
+            Simple Function.
+            """
+            if type(input) == list:
+                self.databases().append(input)
+            if type(input) == str:
+                self.databases().append(list(input))
+
+
+        def return_data(self, db_identifier, decryptFirst=False, returnStatement=False, password=None):
             '''Returns all databases within instance.'''
-            if decryptFirst==False:
-                return self.databases
+            if isinstance(db_identifier, str):
+                db_index = next((index for index, db in enumerate(self.databases) if (db[0]) == db_identifier), None)
+                if db_index is None:
+                    raise Exception(f"No database named '{db_identifier}' found.")
+            elif isinstance(db_identifier, int):
+                db_index = db_identifier
+                if db_index < 0 or db_index >= len(self.databases):
+                    raise Exception(f"No database at index {db_index}.")
             else:
-                if isinstance(db_identifier, str):
-                    db_index = next((index for index, db in enumerate(self.databases) if (db[0]) == db_identifier), None)
-                    if db_index is None:
-                        raise Exception(f"No database named '{db_identifier}' found.")
-                elif isinstance(db_identifier, int):
-                    db_index = db_identifier
-                    if db_index < 0 or db_index >= len(self.databases):
-                        raise Exception(f"No database at index {db_index}.")
-                else:
-                    raise TypeError("db_identifier must be a string (name) or integer (index).")
-                if type(db_identifier) == int:
-                    db_identifier = self.databases[db_index][0]
-                if type(db_identifier) == str:
-                    for i in range(len(memory_Bank4)):
-                        if memory_Bank4[i][3] == db_identifier:
-                            data = self.databases[db_index][1]
-                            return decrypt.database(ciphertext = data, nonce=memory_Bank4[i][0], tag=memory_Bank4[i][1], key=memory_Bank4[i][2], password=password, returnStatement=returnStatement)
+                raise TypeError("db_identifier must be a string (name) or integer (index).")
+            if type(db_identifier) == int:
+                db_identifier = self.databases[db_index][0]
+            if type(db_identifier) == str:
+                for i in range(len(memory_Bank4)):
+                    if memory_Bank4[i][3] == db_identifier:
+                        data = self.databases[db_index][1]
+                        return decrypt.database(ciphertext = data, nonce=memory_Bank4[i][0], tag=memory_Bank4[i][1], key=memory_Bank4[i][2], password=password, returnStatement=returnStatement)
         
         def doesDatabaseExist(self, db_identifier):
             '''Returns True if database exists. False if not.'''
@@ -2909,7 +3152,7 @@ else: # Run program!
                     return True
             return False
         
-        def StressTest(self, n, db_identifier, timeWait=.000, returnTimeTaken=False, password=None, displayIterations=False):
+        def StressTest(self, n, db_identifier, timeWait=.000, returnTimeTaken=False, displayIterations=False, password=None):
             """Loads a database with tons of useless data to see how it reacts. Indexing is not allowed in this function.
             Args:
              - n (int): How many bogus entries should be added?
@@ -2918,6 +3161,13 @@ else: # Run program!
              - returnTimeTaken (bool): Return the time taken from call function to close function. If timeWait: (time.time()-startTime) - (timeWait * n)
              - displayIterations (bool): Display each iteration. Good for debugging. Not reccomended for large n.
             """
+            if "-p" not in self.args:
+                fOuth= decrypt.hash(password) # Get hash
+                if check.verifyHash(fOuth) == True: # Verify hash
+                    password=fOuth
+            if "-p" in self.args:
+                # Allows password
+                pass
             if password != None:
                 print('Please Note: Encryption heavily slows down iteration speeds. New method, deployed which increases speed. But it\'s still slow.')
             if returnTimeTaken:
@@ -2942,6 +3192,13 @@ else: # Run program!
             List: The contents of the decrypted database.
             
             Note: This function only returns entires side of the database. It does not return the name or if it's encrypted.'''
+            if "-p" not in self.args:
+                fOuth= decrypt.hash(password) # Get hash
+                if check.verifyHash(fOuth) == True: # Verify hash
+                    password=fOuth
+            if "-p" in self.args:
+                # Allows password
+                pass
             for i in range(len(self.databases)):
                 if self.databases[i][2]==True:
                     if isinstance(self.databases[i][1], list) and isinstance(self.databases[i][1][0], list):
@@ -2959,6 +3216,13 @@ else: # Run program!
             False: If database could not be deleted.
             """
             # Password is needed to delete the database if it's encrypted. Other wise it's not needed.
+            if "-p" not in self.args:
+                fOuth= decrypt.hash(password) # Get hash
+                if check.verifyHash(fOuth) == True: # Verify hash
+                    password=fOuth
+            if "-p" in self.args:
+                # Allows password
+                pass
             global memory_Bank4
             if isinstance(db_identifier, str):
                 db_index = next((db[3] for db in self.databases if db[0] == db_identifier), None)
@@ -2993,20 +3257,27 @@ else: # Run program!
                 for i in range(len(self.databases)):
                     self.databases[i][3]-=1
         
-        def CreateDatabase(self, db_identifier, entries, password=None):
+        def CreateDatabase(self, db_identifier, entries, password):
             """Creates a new database with the given name and entries and stores it in data_base.
 
             Args:
             db_identifier (str): The name of the database.
             entries (list): The entries in the database.
-            password (str, optional): The password to encrypt the database with. If None, the database is not encrypted.
+            password (str, optional): Must have the -p argument.
             
             Returns:
             Index (int): Where the database is stored in self.databases.
             """
+            if "-p" not in self.args:
+                fOuth= decrypt.hash(password) # Get hash
+                if check.verifyHash(fOuth) == True: # Verify hash
+                    password=fOuth
+            if "-p" in self.args:
+                # Allows password
+                pass
             if password is not None:
                 global memory_Bank4
-                cypher, nonce, tag, key = encrypt.database(database=entries, password='hello')
+                cypher, nonce, tag, key = encrypt.database(database=entries, password=password)
                 memory_Bank4.append([nonce, tag, key, db_identifier]) 
                 #entries = encrypt.database(entries, password)
                 new_database = [db_identifier, cypher, password is not None, len(self.databases)]
@@ -3015,7 +3286,7 @@ else: # Run program!
             self.databases.append(new_database)
             return len(self.databases) - 1
 
-        def add_item(self, db_identifier, item, password=None, sub_db_index=None):
+        def add_item(self, db_identifier, item, sub_db_index=None, password=None):
             """Adds an item to a sub-database. sub-databases are rejoined when the application is requested to shutdown or save.
 
             Args:
@@ -3024,6 +3295,13 @@ else: # Run program!
             password (str): The password, if required, to use this database.
             sub_db_index (int, optional): The index of the sub-database. If None, the item is added to the last sub-database.
             """
+            if "-p" not in self.args:
+                fOuth= decrypt.hash(password) # Get hash
+                if check.verifyHash(fOuth) == True: # Verify hash
+                    password=fOuth
+            if "-p" in self.args:
+                # Allows password
+                pass
             if isinstance(db_identifier, str):
                 db_index = next((index for index, db in enumerate(self.databases) if (db[0]) == db_identifier), None)
                 if db_index is None:
@@ -3072,6 +3350,13 @@ else: # Run program!
             item: The item to remove.
             sub_db_index (int, optional): The index of the sub-database. If None, the item is removed from the last sub-database.
             """
+            if "-p" not in self.args:
+                fOuth= decrypt.hash(password) # Get hash
+                if check.verifyHash(fOuth) == True: # Verify hash
+                    password=fOuth
+            if "-p" in self.args:
+                # Allows password
+                pass
             if isinstance(db_identifier, str):
                 db_index = next((db[3] for db in self.databases if db[0] == db_identifier), None)
                 if db_index is None:
@@ -3100,6 +3385,7 @@ else: # Run program!
                         self.databases[db_index][1] = cypher
                     else:
                         raise Exception('Password is required to remove item from encrypted database.')
+        
         def merge_Database(self, db_index):
             """Merges a single split database back into a single list.
 
@@ -3220,6 +3506,7 @@ else: # Run program!
             def help():
                 print('Branches:\n  data_base.edit.search_rows()\n  data_base.edit.check_owner()\n  data_base.edit.add_row_term()\n  data_base.edit.add_item()\n  data_base.edit.remove_row()\n  data_base.edit.add_column()\n  data_base.edit.remove_column()')
             def search_rows(data_base=None, id=None, database=None):
+                '''Search Rows in database to fine if (id) can be found. Returns 1 if found, 0 if not.'''
                 if data_base == None:
                     data_base=database
                 if isinstance(data_base, str) == True and isinstance(id, str) == True:
@@ -3326,12 +3613,17 @@ else: # Run program!
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.remove_item()'))
             def add_row(data_base=None, new_row=None, split=True, database=None, hide=False):
+                '''Adds a new Row to a database.
+                
+                Args:
+                - data_base (str): Name of database
+                - new_row (list): New Row in list format'''
                 if data_base == None:
                     data_base=database
                 if isinstance(new_row, str)==True:
                     history.create_history(new_row, 'Add row', hide=hide)
                 #You can add as many objects to a row as you please, but it may not fit in your assinged constraints. No problems will occur though.
-                if split==True:
+                if split==True and isinstance(new_row, str):
                     new_row=new_row.split()
                 #print(new_row)
                 num1=check_input(data_base)
@@ -3397,6 +3689,11 @@ else: # Run program!
                     print(errors.cannot_call_func('data_base.edit.remove_row()'))
                 #Must be column_row
             def add_column(data_base=None, column_name=None, database=None, hide=False):
+                '''Add a column to the database.
+                
+                Args:
+                - data_base (str): Name of database
+                - column_name (str): Name of new Column'''
                 if data_base == None:
                     data_base=database
                 history.create_history(column_name, 'Add column', hide=hide)
@@ -3536,12 +3833,13 @@ else: # Run program!
                 print('Branches:\n  data_base.empty.all()\n  data_base.empty.one()')
             #Clear all info in 1 or more databases.
             def all(hide=False):
-                #Reset all data compiled for databases.
+                '''Reset all data compiled for all databases.'''
                 history.create_history(None, 'Reset all databases', hide=hide)
                 global lists, row
                 lists=[]
                 row=[]
             def one(data_base=None, recall=False, database=None):
+                '''Reset all data compiled for a single database.'''
                 if data_base == None:
                     data_base=database
                 #Empty all data compiled for one database.
@@ -3563,6 +3861,7 @@ else: # Run program!
                         print(errors.cannot_call_func('data_base.empty.one()'))
         class retrieve:
             def databases():
+                '''Returns names of all known databases.'''
                 list = []
                 for i in range(len(data_bases)):
                     list.append((data_bases[i])[0])
@@ -3725,7 +4024,15 @@ else: # Run program!
             def help():
                 print('Branches:\n  data_base.create.database()')
             def database(data_base=None, database=None, status=True, type=None, owner='all', columns=None, hide=False):
-                '''Create a new database.'''
+                '''Create a new database.
+                
+                Args:
+                - database (str): Name of Database
+                - status (bool): Should it be active? True=Yes
+                - type (str): Type of database: list or column_row
+                - owner (str): all=Everyone, Else Name required.
+                - columns (list): Give it Data to hold after creation.
+                '''
                 if data_base == None:
                     data_base=database
                 history.create_history(data_base, 'Create Database', hide=hide)
@@ -3787,6 +4094,44 @@ else: # Run program!
                                 print(errors.not_str(item='data_base'))
                         if num1 == True and num2 == True:
                             print(errors.cannot_call_func('data_base.create.datebase()'))
+        class get:
+            def Column(database=None, column_name=''):
+                '''Returns all data Corrolated to that column'''
+                # Note column data is stored inside (data_bases) var. While rows are stored inside (row) var.
+                #  --- Get columns ---
+                database=database.lower()
+                columns=None
+                for i in range(len(data_bases)):
+                    if (data_bases[i])[0] == database: # if db Found...
+                        columns=(data_bases[i])[4] # Column info
+                        break
+                if columns is None:
+                    print('Database not found.')
+                    return None
+
+                # --- Get index ---
+                index = -1
+                for i in range(len(columns)):
+                    if columns[i] == column_name.lower():
+                        index = i
+                        break
+                if index == -1:
+                    print('Column not found.')
+                    return None
+
+                # --- Get data now!! ---
+                columnLength=len(columns) # Saves compute if pre render amount is set before going through rows. If we len() each row instead, the speed would decrease significantly over time.
+                # Now return all data for index from lists list[index
+                indexedlist=[]
+                for i in range(len(row)):
+                    if row[i][0] == database:
+                        indexedlist.append(row[i][1][index])
+                if indexedlist==[]:
+                    print('Returned Nothing...')
+                return indexedlist
+                
+
+
     class password_restrictions:
         def help():
             print('Branches:\n  password_restrictions.check_password()\n  password_restrictions.set_min_length()\n  password_restrictions.set_max_length()')
@@ -4113,8 +4458,7 @@ else: # Run program!
         print('Current Arguments:\n  -skipVersionCheck (Bypasses Application Version Check)\n  -v (Prints Progam Version)\n  -info (Prints Import Info)\n  -reset (Resets Application)\n  -skipPythonCheck (Ignore Python Version)')
     if dontCloseAfterEmptyStart==True:
         input('Hit enter to Continue: ')
-    #You may set a Normal level password
-    #You can set a global password if need be. Basically a backup.
-    #To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
-    #Test bench
-    #<--Indent to here
+
+    
+    # Getting Started! To create a global password to user security run: users.setBank3('your password') - Needs to run on every start up.
+    # Write below to experiment!! Indent to current line.
