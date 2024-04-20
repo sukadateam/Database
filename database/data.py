@@ -14,6 +14,7 @@ known_users=['admin', 'teacher', 'student']
 passwords=['admin', 'teacher', 'student']
 #Look at line 32 for allowed permissions. allowed_users=[]
 permissions=['admin', 'teacher', 'student']
+ids=[]
 '''Please avoid labeling any vars as permissions, i've had issues with this. Isolated functions are okay.
 \nSet Permissions by default:
 - admin
