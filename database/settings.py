@@ -4,15 +4,20 @@
 #END **
 
 
-#    ------------------------------------------------------------------------------------------------
-# --| ( New Settings. These settings haven't been fully implemented for it's specific function(s)  ) |--
-#    ------------------------------------------------------------------------------------------------
-testExpermintalFeatures=False #Runs parts of the program that have issues and are in developement
+#    ------------------------------------------------------------------------------------------------    #
+# --| ( New Settings. These settings haven't been fully implemented for it's specific function(s)  ) |-- #
+#    ------------------------------------------------------------------------------------------------    #
+testExpermintalFeatures=False # Runs parts of the program that have issues and are in developement
 
-ShowCredentials=False #Shows Credentials when failed. Only to be used to debug issues with encryption. Security Issue if left True. 
+
+# Settings For Forcing Compdability with older Database Handler. Set all to true if using older handler.
+forceNormalSaveOeprations=True # Default False. Ingores saving of memory_bank6. Setting only added to allow forced support for the older database handler.
+
+
+ShowCredentials=False # Shows Credentials when failed. Only to be used to debug issues with encryption. Security Issue if left True. 
 #ShowCrendtials may be removed from this file if you want. I would recommend if your big on security.
 
-ShowDebugInfo=False #Similar to ShowCredentials but limits it to not showing important security passwords unless above is set True.
+ShowDebugInfo=False # Similar to ShowCredentials but limits it to not showing important security passwords unless above is set True.
                    #--Show debugging data for newly build functions. May be removed in the future.
 
 DdosPreventionTimerEnabler=True # Enables ddos Prevention
@@ -32,6 +37,7 @@ pyAesCryptMethod=False
 ChaCha20Method=True
 
 #UnverifiedHashDetection - If a hash is not verified, then the system will not allow the user to continue. It will beggin wiping the system.
+DisableHashVerifacation=False # Default False. Added since hash verifaction isn't fully developed and has issues. Bypass.
 UnverifiedHashDetection=False
 AllowedAttempsBeforewipe=3 #How many attemps are allowed before the system is wiped. Counter is reset after a successful login.
 
