@@ -28,3 +28,10 @@ If NumPy is giving erros try: (Termux Only)
 
 
   - I'd like to note that the people listed above have not helped in development since I left high school. It's been a solo project for a few years. I'd like to thank them for their help in the kick start of this project. I will keep the development going by myself. Thank you all! You are more than welcome to rejoin the progress at any time!
+
+
+Current Working/Partially working without major issues are:
+StudentManager --> ()
+Users --> ()
+data_base --> ()
+Note: Backing away from going a full release as there are tons of issues. I'm hoping to address them all before adding new featrues, or finishing some features. I will be going function by function testing everything. I will release a list of all teseted and working functions right here: (Happy 420!!)
