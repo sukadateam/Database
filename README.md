@@ -1,6 +1,6 @@
 # A 3 year long project. It's so close to it's first 1.0 release!
-This project is being continued. Rebuilding, optimizations and code cleanup is in progress! Goto live build to see even more new features!
- - Setup instructions need to be updated. They will appear here after they have been written. In progress, almost done.
+This project is being continued. Rebuilding, optimizations and code cleanup is in progress! Updates will slowly progress.
+ - Setup instructions need to be updated. They will appear here after they have been written, if ever.
 
 <br>Current Python Version: 3.11.7 - Currently used for dev
 <br>Please note: Only MacOS is currently be used for application testing. Windows support has been dropped. Might be revisited in the future.
@@ -18,7 +18,7 @@ To start the program:
 If NumPy is giving erros try: (Termux Only)
 <br>   MATHLIB="m" pip install -r requirements.txt
 
-<br>To get live version(s) check out github.com/sukadateam/live_build
+<br>To get live version(s) check out :????
 
 <br> Credits!
   - Brandon Robinson(Programmer/Designer/Tester) - Current Dev, And possibly forever the only dev. :(
