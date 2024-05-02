@@ -9,10 +9,10 @@ from ast import Bytes
 from dis import show_code
 from email.encoders import encode_7or8bit
 from ftplib import error_reply
-from xmlrpc.client import FastMarshaller
+#from xmlrpc.client import FastMarshaller
 from json import tool
 from re import L
-from numpy import True_, int32
+#from numpy import True_, int32
 from pandas import *
 from screeninfo import get_monitors
 from zipfile import ZipFile
@@ -2515,14 +2515,18 @@ else: # Run program!
         \n - data_base_exists
         '''
         def managerCode(passw, id, returnPerm=False):
-            # Used with Private Software. Usage:
-            # Manager or Admin ID, And password.
-            # Return True, If creds are authentic, False is not.
+            ''' Used with Private Software. Usage:
+            - Manager or Admin ID, And password.
+            - Return True, If creds are authentic, False is not.
+            - Also returns False if ID is not int.'''
             skip_enc=False
             if '-skip' in passw:
                 passw = passw.replace('-skip', '')
                 skip_enc=True
-            id = int(id)
+            try:
+                id = int(id)
+            except:
+                return False
             index=None
             while index == None:
                 for i in range(len(ids)):
@@ -2546,7 +2550,10 @@ else: # Run program!
                 if returnPerm == False:
                     return False
                 else:
-                    return False, permissions[index]
+                    try:
+                        return False, permissions[index]
+                    except:
+                        return False, None
             if returnPerm == False:
                 return False
             else:
@@ -3885,6 +3892,15 @@ else: # Run program!
                 for i in range(len(data_bases)):
                     list.append((data_bases[i])[0])
                 return list
+        class look_up:
+            def row(database, column, value):
+                '''Returns row depending on input factors. Look inside a database for a specific row, with the row having the column and value. The row found is returned in list format.'''
+                global row
+                for i in range(len(row)):
+                    if (row[i])[0]==database:
+                        if (row[i])[1][column]==value:
+                            return (row[i])[1]
+
         class show:
             def help():
                 print('Branches:\n  data_base.show.show_column()\n  data_base.show.show_row()\n  data_base.show.show_lists()\n  data_base.show.all_in_database()\n  data_base.show.all_data_bases()\n  data_base.show.info()')
@@ -4114,6 +4130,9 @@ else: # Run program!
                         if num1 == True and num2 == True:
                             print(errors.cannot_call_func('data_base.create.datebase()'))
         class get:
+            def rows(data_base=None, database=None):
+                '''Returns all rows Corrolated to that database'''
+                pass
             def Column(database=None, column_name=''):
                 '''Returns all data Corrolated to that column'''
                 # Note column data is stored inside (data_bases) var. While rows are stored inside (row) var.
@@ -4478,7 +4497,11 @@ else: # Run program!
 
     
     # To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
+    #You may set a Normal level password
     # Getting Started! To create a global password to user security run: users.setBank3('your password') - Needs to run on every start up.
+    #You can set a global password if need be. Basically a backup.
     # Write below to experiment!!
+    #To trick the system in thinking it's running on another os, systemDetectedOperatingSystem='your os'. windows, macos, linux
     # Test bench
+    #Test bench
     #<--Indent to here for setup.
