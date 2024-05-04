@@ -38,6 +38,8 @@ Note: Backing away from going a full release as there are tons of issues. I'm ho
 
 
 
+Notes for future use:
+1) Column_row will be the only format for future use. Fuctions are being rewritten to be more efficient and type specific.
 
 Known Issues:
 1) - User encryption is really sketchy. Barely works. Reccomended to use without encryption for now until encryption is fully worked out.
