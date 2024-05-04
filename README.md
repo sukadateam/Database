@@ -35,3 +35,9 @@ StudentManager --> ()
 Users --> ()
 data_base --> ()
 Note: Backing away from going a full release as there are tons of issues. I'm hoping to address them all before adding new featrues, or finishing some features. I will be going function by function testing everything. I will release a list of all teseted and working functions right here: (Happy 420!!)
+
+
+
+
+Known Issues:
+1) - User encryption is really sketchy. Barely works. Reccomended to use without encryption for now until encryption is fully worked out.
