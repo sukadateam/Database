@@ -9,6 +9,8 @@
 #    ------------------------------------------------------------------------------------------------    #
 testExpermintalFeatures=False # Runs parts of the program that have issues and are in developement
 
+disableUserEncryption=True # Disables the encryption for the user. Only use if you know what your doing.
+'''Only disables encryption for new users. Older users that already have encryption will still have it. A function will be added in the future to remove encryption from all users.'''
 
 # Settings For Forcing Compdability with older Database Handler. Set all to true if using older handler.
 forceNormalSaveOeprations=True # Default False. Ingores saving of memory_bank6. Setting only added to allow forced support for the older database handler.
@@ -37,7 +39,7 @@ pyAesCryptMethod=False
 ChaCha20Method=True
 
 #UnverifiedHashDetection - If a hash is not verified, then the system will not allow the user to continue. It will beggin wiping the system.
-DisableHashVerifacation=False # Default False. Added since hash verifaction isn't fully developed and has issues. Bypass.
+DisableHashVerifacation=True # Default False. Added since hash verifaction isn't fully developed and has issues. Bypass.
 UnverifiedHashDetection=False
 AllowedAttempsBeforewipe=3 #How many attemps are allowed before the system is wiped. Counter is reset after a successful login.
 
