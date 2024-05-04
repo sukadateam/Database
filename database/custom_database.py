@@ -2514,50 +2514,90 @@ else: # Run program!
         \n - data_format
         \n - data_base_exists
         '''
-        def managerCode(passw, id, returnPerm=False):
+        def managerCode(passw, id, returnPerm=False, skip_enc=False, hide=False, returnErrors=True):
             ''' Used with Private Software. Usage:
             - Manager or Admin ID, And password.
             - Return True, If creds are authentic, False is not.
-            - Also returns False if ID is not int.'''
-            skip_enc=False
+            - Also returns False if ID is not int.
+            
+            Args:
+            - passw (str): Password
+            - id (int): ID
+            - returnPerm (bool): Returns permissions if set to True. Default is False.
+            - skip_enc (bool): Skips encryption if set to True. Default is False.
+            - hide (bool): Hides output if set to True. Default is False.
+            - returnErrors (bool): Returns errors if set to True. Default is False, will override hide to False if this is set to False.
+            
+            Additional Notes:
+            - If '-skip' is in the password, the function will skip encryption.
+            
+            Returns:
+            If returnPerm is set to False:
+            - True: If credentials are correct.
+            - False: If credentials are incorrect.
+            If returnPerm is set to True:
+            - False, permissions: If credentials are incorrect, and permission.
+            - True, permissions: If credentials are correct, and permission.
+                - Note: Permission Returns as False is credentials are incorrect.
+            
+            Error Returns:
+            - ID not found: If ID is not found.
+            '''
+            global ids, known_users, passwords, permissions
+
+            # Overrides hide if returnErrors is set to False.
+            if returnErrors==False:
+                hide=False
+            
+            # Checks if '-skip' is in the password.
             if '-skip' in passw:
                 passw = passw.replace('-skip', '')
                 skip_enc=True
+            
+            # Checks if the ID is an integer.
             try:
                 id = int(id)
             except:
                 return False
-            index=None
-            while index == None:
-                for i in range(len(ids)):
-                    if ids[i][0] == id:
-                        index = ids[i][1]
-                        break
-                break # If not found break.
-            try:   
-                if known_users[index] == ids[i][2]: # If usernames Match
-                    if passwords[index] == passw:
-                        if returnPerm==False:
-                            return True
-                        else:
-                            return True, permissions[index]
-                    if users.passwordCryption(passwords[index], mode='decrypt').replace('"', '') == passw: # Returns with qoutes. don't need that :0-
-                        if returnPerm==False:
-                            return True
-                        else:
-                            return True, permissions[index]
-            except:
-                if returnPerm == False:
-                    return False
-                else:
-                    try:
-                        return False, permissions[index]
-                    except:
-                        return False, None
-            if returnPerm == False:
+            
+            # Gathers the index for the user, and checks if the id is correct and exists.
+            index = None
+            for id1 in ids:
+                if id1 == id:
+                    index = ids.index(id1)
+                    break
+            if index == None:
+                if not hide:
+                    print('ID not found.')
+                if returnErrors==True:
+                    return "ID not found."
+                # If not returnErrors, then return False.
                 return False
-            else:
-                return False, permissions[index]
+            
+            # Checks the password for the user ID.
+            if skip_enc==False:
+                if users.passwordCryption(passwords[index], mode='decrypt').replace('"', '') == passw:
+                    if returnPerm==False:
+                        return True
+                    else:
+                        return True, permissions[index]
+                else:
+                    if returnPerm==False:
+                        return False
+                    else:
+                        return False, False
+
+            if skip_enc==True:
+                if passwords[index] == passw:
+                    if returnPerm==False:
+                        return True
+                    else:
+                        return True, permissions[index]
+                else:
+                    if returnPerm==False:
+                        return False
+                    else:
+                        return False, False
 
         def verifyHash(hash):
             """Used by decrypt.hash() to verify hash(s).
@@ -2577,7 +2617,7 @@ else: # Run program!
                 # Check first attempts first.
                 if attemptsCounting >= UnverifiedHashDetectionAttempts:
                     check.system_update(new_version=5)
-                    globals().update({k: None for k in globals()})
+                    globals().update({k: None for k in globals()}) # Resets vars.
 
                     print('Too many attempts. Data protection and anti recover protocol is in action. Once this message appeared. All files have been delete and have been rendered unrecoverable. Please contact the system administrator for further instructions.')
                 # If attempts are less than the limit, then check the hash.
@@ -2876,31 +2916,29 @@ else: # Run program!
                         if isinstance(new_user, str) == True:
                             if isinstance(new_password, str) == True:
                                 if isinstance(new_permission, str) == True or new_permission==None:
-                                    history.create_history(new_user, 'Created user', hide=hide)
-                                    known_users.append(new_user)
-                                    passw=users.passwordCryption(new_password, mode='encrypt')
-                                    passwords.append(passw)
-                                    permissions.append(new_permission)
-                                    active_users.append(True)
-                                    if id != None:
-                                        found=False
-                                        while found==False:
-                                            for i in range(len(ids)):
-                                                if ids[i][0] == id:
-                                                    found=True
-                                            break # If not found, break
-                                        if found==True:
-                                            if hide==False:
-                                                print("User ID already Exists")
-                                            return "IDExists"
-                                        if found==False: # Id doesn't exist yet
-                                            if isinstance(id, int) == True:
-                                                ids.append([id, len(known_users)-1, new_user]) # ID, Index for User, Name of User
-                                            else:
-                                                if hide == False:
-                                                    print("ID must only contain Numbers")
-                                                return "IDMustContainNumbers"
-                                        
+                                    if id is not None:
+                                    # Checking if ID already exists/is in use.
+                                        if id in ids:
+                                            if not hide:
+                                                print('(Error) ID already in use.')
+                                            return ("IDExists")
+                                        # If, return is not called, Check if ID is only numbers.
+                                        if not isinstance(id, int):
+                                            if not hide:
+                                                print("(Error) ID must only contain Numbers")
+                                            return ("IDMustContainNumbers")
+                                        # If return is not called, then add ID.
+                                        ids.append(id)
+                                        history.create_history(new_user, 'Created user', hide=hide)
+                                        known_users.append(new_user)
+                                        if disableUserEncryption == False:
+                                            passw=users.passwordCryption(new_password, mode='encrypt')
+                                        if disableUserEncryption == True:
+                                            passw=new_password # No encryption
+                                        passwords.append(passw)
+                                        permissions.append(new_permission)
+                                        active_users.append(True)
+                                    
                         if isinstance(new_user, str) == False:
                             if hide==False:
                                 print('new_user must be str')
@@ -2920,31 +2958,36 @@ else: # Run program!
             if num1 == True or num2 == True:
                 print(errors.cannot_call_func('users.create()'))
         def remove(user=None, hide=False):
+            '''user - username(str) to remove: Under known_users(var in data_save.py)
+            \nRemoves a user from the system. This will remove all data associated with the user. Inlcuding But not limited too: Id, Password, and Permissions and active status.
+            
+            \nReturns:
+            \n - UserNotFound - User was not found in known_users
+            \n - IncorrectInput - User is not a string.'''
             history.create_history('Run', 'users.remove()', hide=debug)
-            print(type(user))
-            print('User:'+user+':')
+            global known_users, passwords, permissions
             num=check_input(user)
+            user=user.lower()
             if num == False:
-                user=user.lower()
-                found=False
-                global known_users, passwords, permissions
-                for i in range(len(known_users)):
-                    if known_users[i]==user:
-                        history.create_history(user, 'Removed user', hide=hide)
-                        known_users.pop(i)
-                        passwords.pop(i)
-                        permissions.pop(i)
-                        active_users.pop(i)
-                        found=True
-                        break
-                if found==False:
+                if user in known_users:
+                    for i in range(len(known_users)):
+                        if known_users[i]==user:
+                            history.create_history(user, 'Removed user', hide=hide)
+                            known_users.pop(i)
+                            passwords.pop(i)
+                            permissions.pop(i)
+                            active_users.pop(i)
+                            ids.pop(i)
+                            return # Ends function
+                else:
                     if hide==False:
                         print(errors.user_not_found())
                     return "UserNotFound"
-            if num == True:
-                if hide==False:
-                    print(errors.cannot_call_func('users.remove()'))
+            if hide==False:
+                print(errors.cannot_call_func('users.remove()'))
+                return "IncorrectInput"
         def show_all():
+            '''Prints all Users and their permissions. This is a secure function. No passwords will be shown.'''
             history.create_history('Run', 'users.show_all()', hide=debug)
             global known_users
             for i in range(len(known_users)):
@@ -3518,6 +3561,9 @@ else: # Run program!
         def help():
             print('Branches:\n  data_base.edit\n  data_base.empty\n  data_base.show\n  data_base.remove\n  data_base.create')
         class edit:
+            def row():
+                '''Modify A row in a database. Column_row DB type.'''
+                
             def split_database(database, split_size):
                 """Splits a large database into smaller lists.
 
@@ -3895,11 +3941,22 @@ else: # Run program!
         class look_up:
             def row(database, column, value):
                 '''Returns row depending on input factors. Look inside a database for a specific row, with the row having the column and value. The row found is returned in list format.'''
-                global row
-                for i in range(len(row)):
-                    if (row[i])[0]==database:
-                        if (row[i])[1][column]==value:
-                            return (row[i])[1]
+                global row, data_bases
+                for data in data_bases:
+                    if data[0] == database:
+                        dBcolumns = data[4]
+                        break
+
+                # Get index of column
+                for i in range(len(dBcolumns)):
+                    if column == dBcolumns[i]:
+                        columnIndex = i
+                        break
+                
+                for rows in row:
+                    if rows[0] == database:
+                        if rows[1][columnIndex].lower() == value.lower():
+                            return rows[1]
 
         class show:
             def help():
