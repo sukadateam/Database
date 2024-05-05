@@ -3560,9 +3560,55 @@ else: # Run program!
     class data_base:
         def help():
             print('Branches:\n  data_base.edit\n  data_base.empty\n  data_base.show\n  data_base.remove\n  data_base.create')
+        class getIndex:
+            '''Used to get the index location of a specific row by searching by column and a specific value within that column against all rows. Returns all possible rows.
+            \n Best used for unique values. For example: License Plate, ID, etc. Something that doesn't appear more than once.
+            \n A good way for doing this is assigning a unique ID to each row with a ID column. Then use this function to search for the ID.'''
+            def row(database, column, value):
+                '''Modify A row in a database. Column_row DB type. We suggest using ticketNumber(var) for list lookups.'''
+                pass
         class edit:
-            def row():
-                '''Modify A row in a database. Column_row DB type.'''
+            '''Current Functions:
+            - split_database
+            - help
+            - search_rows
+            - check_owner
+            - add_row_term
+            - add_item
+            - add_row
+            - add_column
+            - remove_item
+            - remove_column
+            - remove_row
+            - row
+            '''
+            def row(database, new_row, current_row):
+                '''Input Current row, and new row. Replaces old row with new row.
+                \nCurrent row: The row you want to replace.
+                \nNew row: The row you want to replace it with.
+                
+                \nReturns:
+                \n - DatabaseDoesNotExist - If the database does not exist.
+                \n - RowDoesNotExist - If the row does not exist.
+                \n - UnknownError - If an error occurs while trying to replace the row.'''
+                global data_bases, lists
+                # verify that the database exists
+                for i in range(len(data_bases)):
+                    if (data_bases[i])[0] == database:
+                        # verify that the row exists
+                        for x in range(len(lists)):
+                            if (lists[x])[0] == database:
+                                # replace the row
+                                try:
+                                    (lists[x])[1][current_row] = new_row
+                                except Exception as e:
+                                    print(e)
+                                    return "UnknownError"
+                                    
+                        # If the row does not exist
+                        return "RowDoesNotExist"
+                    # if the database does not exist
+                    return "DatabaseDoesNotExist"
                 
             def split_database(database, split_size):
                 """Splits a large database into smaller lists.
@@ -3939,8 +3985,14 @@ else: # Run program!
                     list.append((data_bases[i])[0])
                 return list
         class look_up:
-            def row(database, column, value):
-                '''Returns row depending on input factors. Look inside a database for a specific row, with the row having the column and value. The row found is returned in list format.'''
+            def row(database, column, value, checkValuesWithLower=False):
+                '''Returns row depending on input factors. Look inside a database for a specific row, with the row having the column and value. The row found is returned in list format.
+                
+                Args:
+                - database (str): Name of database
+                - column (str): Column name
+                - value (str): Value to search for
+                - checkValuesWithLower (bool): If True, the values in the database will be checked with the value in lower case. If False, the values will be checked with the value in the same case.'''
                 global row, data_bases
                 for data in data_bases:
                     if data[0] == database:
@@ -3955,8 +4007,12 @@ else: # Run program!
                 
                 for rows in row:
                     if rows[0] == database:
-                        if rows[1][columnIndex].lower() == value.lower():
-                            return rows[1]
+                        if checkValuesWithLower:
+                            if rows[1][columnIndex].lower() == value.lower():
+                                return rows[1]
+                        else:
+                            if rows[1][columnIndex] == value:
+                                return rows[1]
 
         class show:
             def help():
