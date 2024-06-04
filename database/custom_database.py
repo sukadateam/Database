@@ -96,7 +96,7 @@ attemptsCounting=0 # Counts the amount of attemps to login. If it reaches a cert
 if quiteStartup == False:
     print('This Project is hosted on github. github.com/sukadateam')
     print('If problems occur, try to check if a new version exists.')
-    print('-or- Create/Mark An Issue On GitHub!\n\n')
+    print('-or- Create/Mark An Issue On GitHub! \nVersion: {}\n\n'.format(program_version))
 
 
 # Get the current Python version
@@ -134,7 +134,6 @@ else: # Run program!
 
     # Define the alphabet
     alphabet = 'abcdefghijklmnopqrstuvwxyz'
-    
     # Set the path
     try:
         from directory import path
@@ -291,7 +290,11 @@ else: # Run program!
             \n - Permission denied - False
             \n Second Return Value:.
             \n - If permission is UserNotSignedIn - True
-            \n - If permission is not UserNotSignedIn - False'''
+            \n - If permission is not UserNotSignedIn - False
+            \n\n Example Usage: 
+            \n 1) UserName, permissionsReturn = users.return_login_cred() #Returns User and Permissions for User
+            \n 2) output1, output2 = StudentManager.AllowedPermissions(permissionsReturn)
+            '''
             global permissions
             secondReturn=False
             if input == 'UserNotSignedIn': #May return None, if user hasn't logged in yet.
@@ -469,10 +472,13 @@ else: # Run program!
             '''Return Value(s)
             \n - True = Student Exists
             \n - False = Student Doesn't exist'''
-            for i in range(len(students)):
-                if (students[i])[0] == studentID:
-                    return True
-                return False
+            UserName, permissionsReturn = users.return_login_cred() #Returns User and Permissions for User
+            output1, output2 = StudentManager.AllowedPermissions(permissionsReturn)
+            if output1 == True:
+                for i in range(len(students)):
+                    if (students[i])[0] == studentID:
+                        return True
+                    return False
     def get_variables(node):
         #Source. Will make my own version soon.
         #https://stackoverflow.com/questions/51118006/viewing-variables-of-another-python-file-without-importing-running
@@ -1467,59 +1473,29 @@ else: # Run program!
                 if isinstance(code, str)==True and isinstance(description, str)==True:
                     history_id.append(str(code))
                     history_description.append(str(description))
+
         def check_forDuplicate(user, usage, hide=False):
-            #DO NOT ADD history.create_history IN THIS FUNCTION. IT WILL CAUSE A LOOP.
-            #Prevents duplicate items to be recorded.
-            file=open('history.txt').read()
-            a=len(file)
-            a3=len(user)+len(usage)+2
-            last_object=(file[a-a3: a])
-            current_object=(usage+': '+user)
-            if debug==True and hide==False:
-                print('Current:', current_object)
-                print('Last:', last_object)
-            if str(current_object)==str(last_object):
-                if debug==True:
-                    if hide==False:
-                        print('Match Found. Skipping write to history file.')
-                return 1
-            else:
-                if debug==True:
-                    if hide==False:
-                        print('No match found. Writing to history file.')
-                return 0
-        def assign_letter(count, hide=False):
-            #DO NOT ADD history.create_history IN THIS FUNCTION. IT WILL CAUSE A LOOP.
-            #Not in use yet.
-            global allowed_digits_forHistory
-            try:
-                #Causes errors on newer versions. Since count is typically a int, trying to force it to be an int just makes no since to python.
-                count=int(count)
-            except:
-                pass
-            a=''
-            for i in range(allowed_digits_forHistory-len(str(count))):
-                a+='0'
-            a+=str(count)
-            count+=1
+            # This function is being removed, as it doesn't serve a real purpose.
+            return 0
+        def assign_letter(count, allowed_digits_forHistory, hide=False):
+            # DO NOT ADD history.create_history IN THIS FUNCTION. IT WILL CAUSE A LOOP.
+            # Not in use yet.
+            a = f"{count:0{allowed_digits_forHistory}d}"
+            count += 1
             save.all(hide=hide)
             return a
         def clear():
-            #DO NOT ADD history.create_history IN THIS FUNCTION. IT WILL CAUSE A LOOP.
-            #Clears history file
-            try:
-                os.chdir(path)
-            except:
-                pass
+            # DO NOT ADD history.create_history IN THIS FUNCTION. IT WILL CAUSE A LOOP.
+            # Clears history file
             history.delete()
             history.create()
             try:
-                os.remove('history_desc.py')
-            except:
+                os.remove(os.path.join(path, 'history_desc.py'))
+            except FileNotFoundError:
                 pass
-            file=open('history_desc.py', 'w')
-            file.write('history_id=[]\nhistory_description=[]\ncount=1')
-            file.close()
+            with open(os.path.join(path, 'history_desc.py'), 'w') as file:
+                file.write('history_id=[]\nhistory_description=[]\ncount=1')
+        
         def delete():
             #DO NOT ADD history.create_history IN THIS FUNCTION. IT WILL CAUSE A LOOP.
             #Removes history file
@@ -1535,41 +1511,30 @@ else: # Run program!
             ah.write('File created: '+d1)
             ah.close()
         def create_history(user, usage, manual_record=False, add_desc=False, desc=None, hide=False):
-            #DO NOT ADD history.create_history IN THIS FUNCTION. IT WILL CAUSE A LOOP.
-            #Adds items to history file
-            if auto_history_record==True or manual_record==True:
-                if user==None:
-                    user='Null'
-                global d1, count
-                try:
-                    open('history.txt','r')
-                except:
+            # DO NOT ADD history.create_history IN THIS FUNCTION. IT WILL CAUSE A LOOP.
+            # Adds items to history file
+            global d1, count
+            if auto_history_record or manual_record:
+                user = user or 'Null'
+                if not os.path.exists('history.txt'):
                     history.create()
-                allow=True
-                if skip_history_copy==True:
-                    if history.check_forDuplicate(user=user, usage=usage, hide=hide) == 1:
-                        allow=False
-                if allow==True:
-                    if add_desc==True:
-                        if assign_digit_forHistory==False:
-                            if debug==True:
-                                if hide==False:
-                                    print('assign_digit_forHistory needs to be enabled for history to add a description.')
-                        if desc!=None and assign_digit_forHistory==True:
-                            abc=history.assign_letter(count, hide=hide)
+                allow = not (skip_history_copy and history.check_forDuplicate(user=user, usage=usage, hide=hide) == 1)
+                if allow:
+                    if add_desc:
+                        if not assign_digit_forHistory and debug and not hide:
+                            print('assign_digit_forHistory needs to be enabled for history to add a description.')
+                        if desc and assign_digit_forHistory:
+                            abc = history.assign_letter(count, hide=hide)
                             history.add_description(code=abc, description=desc)
-                            ah=open('history.txt','a')
-                            ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user)+' : ('+str(abc)+')')
-                            ah.close()
-                            count+=1
+                            with open('history.txt', 'a') as ah:
+                                ah.write(f'\n({d1}) {usage}: {user} : ({abc})')
+                            count += 1
                             save.all(hide=hide)
-                        if desc==None:
-                            if hide==False:
-                                print('Please give a description to write history.')
-                    if add_desc==False:
-                        ah=open('history.txt','a')
-                        ah.write('\n('+d1+')'+' '+str(usage)+': '+str(user))
-                        ah.close()
+                        elif not desc and not hide:
+                            print('Please give a description to write history.')
+                    else:
+                        with open('history.txt', 'a') as ah:
+                            ah.write(f'\n({d1}) {usage}: {user}')
     class optimize():
         def determ(letter=None, set=None, test=False):
             for i in range(26):
@@ -1700,6 +1665,35 @@ else: # Run program!
         print('Application Closed')
         sys.exit()
     class restore:
+        def removeZip(f):
+            for i in range(len(f)):
+                try:
+                    f[i]=f[i].replace('.zip','')
+                except:
+                    f.pop(i)
+            return f
+        def findHighest(f):
+            highest=0
+            for i in range(len(f)):
+                try:
+                    if int(f[i])>highest:
+                        highest=int(f[i])
+                except:
+                    pass
+            return f, highest
+        def rmBackupsInnerFn(f, highest, temp, hide=False):
+            try:
+                os.chdir('backups')
+                for i in range(len(f)):
+                    if int(f[i])<highest-retain_backup_time+1:
+                        try:
+                            os.remove(f[i]+'.zip')
+                        except:
+                            pass
+                retain_backup_time=temp
+                os.chdir(path)
+            except:
+                return False
         def remove_old_backups(TempChange_retain_backup_time=None, hide=False):
             history.create_history('Run', 'restore.remove_old_backups()', hide=debug)
             if TempChange_retain_backup_time != None:
@@ -1717,32 +1711,11 @@ else: # Run program!
                 f.extend(filenames)
                 break
             #Remove .zip from all files names in list
-            for i in range(len(f)):
-                try:
-                    f[i]=f[i].replace('.zip','')
-                except:
-                    f.pop(i)
+            f = restore.removeZip(f)
             #Find the highest number in list
-            highest=0
-            for i in range(len(f)):
-                try:
-                    if int(f[i])>highest:
-                        highest=int(f[i])
-                except:
-                    pass
+            f, highest = restore.findHighest(f)
             #Remove old backups.
-            try:
-                os.chdir('backups')
-                for i in range(len(f)):
-                    if int(f[i])<highest-retain_backup_time+1:
-                        try:
-                            os.remove(f[i]+'.zip')
-                        except:
-                            pass
-                retain_backup_time=temp
-                os.chdir(path)
-            except:
-                return False
+            restore.rmBackupsInnerFn(f, highest, temp, hide=hide)
         def all(beta=False, backup_name=None, password=None, hide=False, restoreFile=['app.py','history_desc.aes','settings.py','data_save.aes','history.aes'], removeFile=['app.py','history_desc.py', 'settings.py','data_save.py','history.txt']):
             history.create_history('Run', 'restore.all()', hide=debug)
             #Restore everything from a backup.
@@ -3557,6 +3530,7 @@ else: # Run program!
             with open(backup_file, 'w') as f:
                 json.dump(self.databases, f)
 
+    # Old Handler/Primary Handler
     class data_base:
         def help():
             print('Branches:\n  data_base.edit\n  data_base.empty\n  data_base.show\n  data_base.remove\n  data_base.create')
@@ -3569,6 +3543,7 @@ else: # Run program!
                 pass
         class edit:
             '''Current Functions:
+            - row
             - split_database
             - help
             - search_rows
@@ -3580,8 +3555,9 @@ else: # Run program!
             - remove_item
             - remove_column
             - remove_row
-            - row
             '''
+            def help():
+                print('Branches:\n  data_base.edit.search_rows()\n  data_base.edit.check_owner()\n  data_base.edit.add_row_term()\n  data_base.edit.add_item()\n  data_base.edit.remove_row()\n  data_base.edit.add_column()\n  data_base.edit.remove_column()')
             def row(database, new_row, current_row):
                 '''Input Current row, and new row. Replaces old row with new row.
                 \nCurrent row: The row you want to replace.
@@ -3621,18 +3597,22 @@ else: # Run program!
                 list: A list of smaller lists.
                 """
                 return [database[i:i + split_size] for i in range(0, len(database), split_size)]
-            def help():
-                print('Branches:\n  data_base.edit.search_rows()\n  data_base.edit.check_owner()\n  data_base.edit.add_row_term()\n  data_base.edit.add_item()\n  data_base.edit.remove_row()\n  data_base.edit.add_column()\n  data_base.edit.remove_column()')
-            def search_rows(data_base=None, id=None, database=None):
-                '''Search Rows in database to fine if (id) can be found. Returns 1 if found, 0 if not.'''
+            def search_rows(data_base=None, id=None, database=None, indexForID=1):
+                '''Search Rows in database to find if (id) can be found. Returns 1 if found, 0 if not.
+                
+                If ID's are located differently, change the indexForID to the correct index location for the database, since some db's have the id in different locations.'''
+                # Check to see with var to use.
                 if data_base == None:
-                    data_base=database
+                    data_base = database
+                # Check var types, then search for id.
                 if isinstance(data_base, str) == True and isinstance(id, str) == True:
                     for i in range(len(row)):
                         if (row[i])[0] == data_base:
-                            if ((row[i])[1])[1]==id:
+                            if ((row[i])[1])[indexForID]==id:
                                 return 1
+                            return 0
                     return 0
+                return 0
             def check_owner(data_base=None, user_perm=None, database=None):
                 '''Returns 1 is owner matches the database. Returns 0 if not.'''
                 if data_base == None:
