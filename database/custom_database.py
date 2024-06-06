@@ -3636,7 +3636,65 @@ else: # Run program!
                     data_base.edit.add_row(data_base=data, new_row=aa)
                 except:
                     pass
+            def remove_row_term(data_base=None, database=None, hide=False):
+                ''''''
+                if data_base == None:
+                    data_base=database
+                num1=check_input(data_base)
+                if num1 == False:
+                    data_base=data_base.lower()
+                    history.create_history(data_base, 'Remove row', hide=hide)
+                    global row
+                    rows=[]
+                    rows_count=0
+                    a=0
+                    #Gather sets that correspond with called data_base
+                    try:
+                        for i in range(len(row)):
+                            if (row[i-a])[0]==data_base:
+                                rows.append(row[i-a])
+                                row.pop(i-a)
+                                a+=1
+                                rows_count+=1
+                    except:
+                        pass
+                    #Print known sets on screen.
+                    for i in range(len(rows)):
+                        print('#'+str(i)+' : '+str(rows[i]))
+                    try:
+                        a=input('Choose a set to delete: ')
+                        try:
+                            a=a.replace('#','')
+                        except:
+                            pass
+                        a=int(a)
+                    except ValueError:
+                        print('Please enter the corresponding number #?')
+                    #If input is correct then ask user if they wish to remove it.
+                    if isinstance(a, int) == True:
+                        if rows_count-1 >= a:
+                            print('Remove:',rows[a])
+                            choice = input('Are you sure(y/n): ').lower()
+                            if choice == "yes" or "y":
+                                rows.pop(a)
+                            elif choice == "no" or "n":
+                                print('No changes have occured.')
+                            else:
+                                print('Invalid response.')
+                        if rows_count <= a:
+                            print('That item does not exist.')
+                    for i in range(len(rows)):
+                        row.append(rows[i])
+                if num1 == True:
+                    print(errors.cannot_call_func('data_base.edit.remove_row()'))
+                #Must be column_row
             def add_item(data_base=None, item_to_add=None, create_if_notExist=True, database=None, hide=False):
+                '''For list type databases. Adds an item to a list.
+                Args:
+                - data_base, database (str): Name of database
+                - item_to_add (str): Item to add to database
+                - create_if_notExist (bool): If database does not exist, create it. Default is True.
+                '''
                 if data_base == None:
                     data_base=database
                 try:
@@ -3660,7 +3718,7 @@ else: # Run program!
                             pass
                 except:
                     pass
-                if check.data_base_exists(data_base='logs')==True:
+                if check.data_base_exists(data_base=data_base)==True:
                     letter_spot=optimize.determ(letter=data_base[0])
                     if num1 == False and num2 == False:
                         if create_if_notExist == True:
@@ -3735,57 +3793,39 @@ else: # Run program!
                         print(errors.not_list())
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.add_row()'))
-            def remove_row(data_base=None, database=None, hide=False):
+            def remove_row(data_base=None, row_index=None, column=None, rowValue=None, database=None, returnRows=False, hide=False):
+                '''Removing Methods:
+                1) Remove row by index; the location of the row within the database.
+
+                2) Specify a column and a value unique to the row you wish to remove.
+                    Will return a notice if multiple rows, are found with the specific value.
+                    If returnRows is True, it will return all rows that match the value with an index to recall the function to remove the row.
+                
+                Args:
+                - data_base (str): Name of database
+                - row_index (int): Index of row to remove
+                - column (str): Column to search for value
+                - rowValue (str): Value to search for in column
+                - returnRows (bool): Return all rows that match the value with an index to recall the function to remove the row
+
+
+                '''
                 if data_base == None:
                     data_base=database
-                num1=check_input(data_base)
-                if num1 == False:
-                    data_base=data_base.lower()
-                    history.create_history(data_base, 'Remove row', hide=hide)
-                    global row
-                    rows=[]
-                    rows_count=0
-                    a=0
-                    #Gather sets that correspond with called data_base
-                    try:
-                        for i in range(len(row)):
-                            if (row[i-a])[0]==data_base:
-                                rows.append(row[i-a])
-                                row.pop(i-a)
-                                a+=1
-                                rows_count+=1
-                    except:
+                history.create_history(row_index, 'Remove row', hide=hide)
+
+                # Check to see if both types of lookups are called
+                if row_index != None:
+                    if column != None or rowValue != None:
+                        print(errors.too_many_args(calling_func='data_base.edit.remove_row()'))
+                        return
+                    # Look for the row index and remove it.
+                    pass
+                else:
+                    # Look for the column and value to remove the row. Return list of rows with an index of location, if multiple rows are found and returnRows is True.
+                    if column != None and rowValue != None:
                         pass
-                    #Print known sets on screen.
-                    for i in range(len(rows)):
-                        print('#'+str(i)+' : '+str(rows[i]))
-                    try:
-                        a=input('Choose a set to delete: ')
-                        try:
-                            a=a.replace('#','')
-                        except:
-                            pass
-                        a=int(a)
-                    except ValueError:
-                        print('Please enter the corresponding number #?')
-                    #If input is correct then ask user if they wish to remove it.
-                    if isinstance(a, int) == True:
-                        if rows_count-1 >= a:
-                            print('Remove:',rows[a])
-                            choice = input('Are you sure(y/n): ').lower()
-                            if choice == "yes" or "y":
-                                rows.pop(a)
-                            elif choice == "no" or "n":
-                                print('No changes have occured.')
-                            else:
-                                print('Invalid response.')
-                        if rows_count <= a:
-                            print('That item does not exist.')
-                    for i in range(len(rows)):
-                        row.append(rows[i])
-                if num1 == True:
-                    print(errors.cannot_call_func('data_base.edit.remove_row()'))
-                #Must be column_row
+             
             def add_column(data_base=None, column_name=None, database=None, hide=False):
                 '''Add a column to the database.
                 
@@ -4167,7 +4207,6 @@ else: # Run program!
                 found1=False
                 found2=False
                 found3=False
-                print(data_base)
                 #Check to see if database already exists.
                 for i in range(len(data_bases)):
                     if (data_bases[i])[0]==data_base:
@@ -4303,6 +4342,9 @@ else: # Run program!
     class errors:
         def help():
             print('Branches:\n  errors.MissingCPP()\n  errors.FileDoesNotExist()\n  errors.NotSignedIn()\n  errors.BackupNameExists()\n  errors.profanityDetected()\n  errors.doesNotObeyRestrictions()\n  errors.database_does_not_exist()\n  errors.cannot_call_func()\n  errors.incorrect_perm()\n  errors.user_exists()\n  errors.user_not_found()\n  errors.not_list()\n  errors.not_str()\n  errors.not_bool()\n  errors.not_int()')
+        def too_many_args(calling_func=None):
+            history.create_history('too_many_args:'+str(calling_func), 'Error', manual_record=auto_error_record, hide=debug)
+            return '(Error) Too many arguments were given.'
         def MissingCPP():
             global UtilizeCPPCode
             UtilizeCPPCode=False
