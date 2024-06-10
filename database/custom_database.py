@@ -3793,7 +3793,52 @@ else: # Run program!
                         print(errors.not_list())
                 if num1 == True or num2 == True:
                     print(errors.cannot_call_func('data_base.edit.add_row()'))
-            def remove_row(data_base=None, row_index=None, column=None, rowValue=None, database=None, returnRows=False, hide=False):
+            def row_indexLookup(data_base=None, index=None, database=None, hide=False):
+                '''Specify an index for a row. Returns the row specified.
+                
+                Args:
+                - Index (int) or (list of int): Index of row(s) to return
+                    \nSupply a list of indexes or a single index to return
+                    
+                Returns:
+                - List: A list of all row indexs that match the value(s) given.
+                - False: An Issue Occured
+                - True: No issues Occured.'''
+                if data_base == None:
+                    data_base=database
+                if isinstance(index, int) == True:
+                    # Look through the var (row) to find the row specified. The count is only +1 when the row seen is apart of the database.
+                    currentIndexLocation=0
+                    for i in range(len(row)):
+                        if (row[i])[0] == data_base:
+                            if currentIndexLocation == index:
+                                return row[i]
+                            currentIndexLocation+=1
+                if isinstance(index, list):
+                    # Look through index and verify all values are int.
+                    for z in range(len(index)):
+                        if isinstance(index[z], int):
+                            pass
+                        else:
+                            return False
+                        # If Return is not called, then we are in the clear.
+                        # Look through the var (row) to find the row(s) specified.
+                        listToReturn=[]
+                        currentIndexLocation=0
+                        for i in range(len(row)):
+                            if row[i][0] == data_base:
+                                if currentIndexLocation in index:
+                                    listToReturn.append(row[i])
+                                currentIndexLocation+=1
+                        if listToReturn == []:
+                            return False
+                        if len(listToReturn) < len(index):
+                            if hide==False:
+                                print(errors.row_indexLookup(type='ListToSmall'))
+                            return False
+                        return listToReturn
+                        
+            def remove_row(data_base=None, row_index=None, column=None, rowValue=None, database=None, returnRows=True, hide=False):
                 '''Removing Methods:
                 1) Remove row by index; the location of the row within the database.
 
@@ -3804,11 +3849,17 @@ else: # Run program!
                 Args:
                 - data_base (str): Name of database
                 - row_index (int): Index of row to remove
-                - column (str): Column to search for value
+                - column (str): Column to search for value, Name of Column, Not case sensative
                 - rowValue (str): Value to search for in column
                 - returnRows (bool): Return all rows that match the value with an index to recall the function to remove the row
 
+                Return:
+                - - True: If issues occur or if no rows are found, it will return *
 
+                - - False: If no issues occur and a row is found or deleted, it will return *
+
+                - - List: A list of all row indexs that match the value(s) given.
+                \n            Use data_base.edit.row_indexLookup() to return the row values for the indexs given.
                 '''
                 if data_base == None:
                     data_base=database
@@ -3820,11 +3871,44 @@ else: # Run program!
                         print(errors.too_many_args(calling_func='data_base.edit.remove_row()'))
                         return
                     # Look for the row index and remove it.
-                    pass
+                    for i in range(len(row)):
+                        if (row[i])[0] == data_base:
+                            if i == row_index:
+                                row.pop(i)
+                                break
                 else:
-                    # Look for the column and value to remove the row. Return list of rows with an index of location, if multiple rows are found and returnRows is True.
+                    # Column Index, finds where the var column is located in row[i][1][?] : ? = IndexForColumn
+                    column_index=None
+                    for i in range(len(data_bases)):
+                        if (data_bases[i])[0] == data_base:
+                            if (data_bases[i])[3] == "column_row":
+                                for x in range(len((data_bases[i])[4])):
+                                    if ((data_bases[i])[4])[x].lower() == column.lower(): # Lower case for case insensative
+                                        column_index=x
+                                        break
+                            else:
+                                if hide == False:
+                                    print(errors.wrong_db_type())
+                                return "False"
+                    # Look for the column using column_index and value to remove the row. Return list of rows with an index of location, if multiple rows are found and returnRows is True.
                     if column != None and rowValue != None:
-                        pass
+                        rows=[]
+                        # Get all rows that match the value
+                        for i in range(len(row)):
+                            if row[i][0] == data_base:
+                                if row[i][1][column_index] == rowValue:
+                                    rows.append(i)
+                        # Remove the first value in (row) using (rows) if (rows) only has 1 value.
+                        if len(rows) == 1:
+                            row.pop(rows[0])
+                            return True
+                        # If multiple, return all.
+                        elif len(rows) > 1:
+                            if returnRows == True:
+                                if hide == False:
+                                    print(errors.multiple_rows_found())
+                                return rows
+                return False
              
             def add_column(data_base=None, column_name=None, database=None, hide=False):
                 '''Add a column to the database.
@@ -4342,6 +4426,13 @@ else: # Run program!
     class errors:
         def help():
             print('Branches:\n  errors.MissingCPP()\n  errors.FileDoesNotExist()\n  errors.NotSignedIn()\n  errors.BackupNameExists()\n  errors.profanityDetected()\n  errors.doesNotObeyRestrictions()\n  errors.database_does_not_exist()\n  errors.cannot_call_func()\n  errors.incorrect_perm()\n  errors.user_exists()\n  errors.user_not_found()\n  errors.not_list()\n  errors.not_str()\n  errors.not_bool()\n  errors.not_int()')
+        def row_indexLookup(type=None):
+            history.create_history(type, 'row_indexLookup:type('+str(type)+')', manual_record=auto_error_record, hide=debug)
+            if type=='ListToSmall':
+                return '(Error) The list given is smaller than the list of indexs given.'
+        def multiple_rows_found():
+            history.create_history('multiple_rows_found', 'Error', manual_record=auto_error_record, hide=debug)
+            return '(Error) Multiple rows were found with the same value.'
         def too_many_args(calling_func=None):
             history.create_history('too_many_args:'+str(calling_func), 'Error', manual_record=auto_error_record, hide=debug)
             return '(Error) Too many arguments were given.'
