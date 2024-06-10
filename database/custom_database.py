@@ -533,7 +533,7 @@ else: # Run program!
                 if (depRequired[i])[1] == '1':
                     Answer1="Yes"
                 if (depRequired[i])[1] == '0':
-                    Answer1="No "
+                    Answer1="No"
                 NameDep = str((depRequired[i])[0])
                 if NameDep in dep:
                     Answer2="Yes"
@@ -3821,22 +3821,23 @@ else: # Run program!
                             pass
                         else:
                             return False
-                        # If Return is not called, then we are in the clear.
-                        # Look through the var (row) to find the row(s) specified.
-                        listToReturn=[]
-                        currentIndexLocation=0
+                    # If Return is not called, then we are in the clear.
+                    # Look through the var (row) to find the row(s) specified.
+                    listToReturn=[]
+                    for x in range(len(index)):
                         for i in range(len(row)):
-                            if row[i][0] == data_base:
-                                if currentIndexLocation in index:
+                            if (row[i])[0] == data_base:
+                                if i == index[x]:
                                     listToReturn.append(row[i])
-                                currentIndexLocation+=1
-                        if listToReturn == []:
-                            return False
-                        if len(listToReturn) < len(index):
-                            if hide==False:
-                                print(errors.row_indexLookup(type='ListToSmall'))
-                            return False
-                        return listToReturn
+                                    break
+                    if listToReturn == []:
+                        return False
+                    # error check
+                    if len(listToReturn) < len(index):
+                        if hide==False:
+                            print(errors.row_indexLookup(type='ListToSmall'))
+                        return False
+                    return listToReturn
                         
             def remove_row(data_base=None, row_index=None, column=None, rowValue=None, database=None, returnRows=True, hide=False):
                 '''Removing Methods:
