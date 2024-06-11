@@ -9,6 +9,8 @@
 #    ------------------------------------------------------------------------------------------------    #
 testExpermintalFeatures=False # Runs parts of the program that have issues and are in developement
 
+bannedEntries=['\n','\t','\r', '#(!(h<|>h)!)#'] # Entries that are not allowed to be entered into a database.
+
 disableUserEncryption=True # Disables the encryption for the user. Only use if you know what your doing.
 '''Only disables encryption for new users. Older users that already have encryption will still have it. A function will be added in the future to remove encryption from all users.'''
 
@@ -30,9 +32,6 @@ modifiedSafeFile=False
 
 #Used to set max password lengths for student accounts. Default is 10
 studentPasswordLength=10
-
-#used for StudentManager.AllowedPermissions() - Users with these permissions are allowed to modify student accounts.
-studentModifierPermissions=['admin', 'teacher']
 
 # Currently testing encryption methods. Info related to tests will be released soon!
 pyAesCryptMethod=False
@@ -59,22 +58,33 @@ drive_letter='E'
 drive_name='Computer'
 #Operating System or OS. Can be macos, windows or linux. Must be lowercase.
 system='macos'
-#Filters bad words that people should not be using.
-profanity_filter=True
-#A backup password in case the other is forgotten.
-global_password=True
-#App version control --(Disable if needed)--
-app_version_control=True
 #Only allow set operating system. Change system variable to your choice.
 set_operating_system=False
 #Allowed windows versions. You can choose 7, 8, 10, 11. Only works if system setting is set to windows.
 allow_windows_version='10'
+
+#Filters bad words that people should not be using.
+profanity_filter=True
+#A backup password in case the other is forgotten.
+global_password=True
+
+#App version control --(Disable if needed)--
+app_version_control=True
+
 #min and max password lengths, and allowed characters
 min_length=5 #Cannot be smaller than 5
 max_length=25 #Cannot be bigger than 99
 allowedPassword_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890*()# '
+
+#used for StudentManager.AllowedPermissions() - Users with these permissions are allowed to modify student accounts.
+studentModifierPermissions=['admin', 'teacher']
 #What is the name of your printer? For macOS. Windows uses default.
 printer_name='iDPRT_SP310' #My prefered printer for labels and printing squidwards.
+
+
+
+
+
 
 
 #Developer Settings --(NOT USER SETTINGS!)-- Developer Settings
