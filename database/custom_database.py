@@ -71,6 +71,7 @@ except ImportError:
 password=None
 systemDetectedOperatingSystem=None
 list1=[]
+'''Used within the ProfanityFilter function. DO NOT OVERWRITE!'''
 startupCount=time.time()
 n = list(sys.argv)
 
@@ -1407,6 +1408,7 @@ else: # Run program!
             global profanity_filter
             profanity_filter=False
         def setup():
+            '''Sets up the profanity filter, must be called on startup if enabled.'''
             history.create_history('Run', 'profanityFilter.setup()', hide=debug)
             #Called on startup if enabled to setup the filter.
             global profanity_filter, auto_filter_profanity_speedBoost, list1
@@ -1420,6 +1422,7 @@ else: # Run program!
                     for line in file_in:
                         list1.append(line.replace('\n',''))
         def filter(var, manual=False, hide=False, test=False, record=True):
+            '''Using (var) as input, if a match is found within the profanity list, 1 is returned. If none, 0 is returned.'''
             history.create_history('Run', 'profanityFilter.filter()', hide=debug)
             #Give this function a string to check.
             #If a match is found 1 is returned. If none, 0 is returned.
@@ -3531,6 +3534,20 @@ else: # Run program!
                 json.dump(self.databases, f)
 
     # Old Handler/Primary Handler
+    def data_base_EntryCheck(input):
+        '''Check the input(str) against a list of special entrys which are prohibited from being used within a database.
+        
+        Returns:
+        True: If the input is found in the list.
+        False: If the input is not found in the list.
+        '''
+        global bannedEntries
+        # Check list for a match
+        for i in range(len(bannedEntries)):
+            if input == bannedEntries[i]:
+                return True
+        # If no match, return 0
+        return False
     class data_base:
         def help():
             print('Branches:\n  data_base.edit\n  data_base.empty\n  data_base.show\n  data_base.remove\n  data_base.create')
@@ -3916,34 +3933,48 @@ else: # Run program!
                 
                 Args:
                 - data_base (str): Name of database
-                - column_name (str): Name of new Column'''
+                - column_name (str): Name of new Column
+                
+                Returns:
+                - - None: If no issues occur
+                - - ProfanityDetected: If profanity is detected in the column name
+                - - BannedEntry: If the column name is in the banned list'''
                 if data_base == None:
                     data_base=database
                 history.create_history(column_name, 'Add column', hide=hide)
-                letter_spot=optimize.determ(letter=data_base[0], set='opto_data')
-                num1=check_input(data_base)
-                num2=check_input(column_name)
-                global debug, data_bases
+                # Check column_name for profanity
                 if profanityFilter.filter(column_name) == 1:
                     print(errors.profanityDetected(var=column_name, user=user_logged))
+                    return "ProfanityDetected"
+                # Check to see if the column name is in the banned list
+                elif data_base_EntryCheck == True:
+                    print(errors.bannedEntry())
+                    return "BannedEntry"
                 else:
-                    found=False
-                    for i in range(len(data_bases)):
-                        if (data_bases[i])[0] == data_base:
-                            found=True
-                            break
-                    if found==False:
-                        print(errors.database_does_not_exist())
-                    if num1 == False and num2 == False and found==True:
-                        data_base=data_base.lower()
-                        if debug==True:
-                            print("Adding column at",data_base,"with name",column_name.lower())
+                    letter_spot=optimize.determ(letter=data_base[0], set='opto_data')
+                    num1=check_input(data_base)
+                    num2=check_input(column_name)
+                    global debug, data_bases
+                    if profanityFilter.filter(column_name) == 1:
+                        print(errors.profanityDetected(var=column_name, user=user_logged))
+                    else:
+                        found=False
                         for i in range(len(data_bases)):
-                            if (data_bases[i+letter_spot])[0] == data_base:
-                                if (data_bases[i+letter_spot])[3]=="column_row":
-                                    (data_bases[i+letter_spot])[4].append(column_name.lower())
-                    if num1 == True or num2 == True:
-                        print(errors.cannot_call_func('data_base.edit.add_column()'))
+                            if (data_bases[i])[0] == data_base:
+                                found=True
+                                break
+                        if found==False:
+                            print(errors.database_does_not_exist())
+                        if num1 == False and num2 == False and found==True:
+                            data_base=data_base.lower()
+                            if debug==True:
+                                print("Adding column at",data_base,"with name",column_name.lower())
+                            for i in range(len(data_bases)):
+                                if (data_bases[i+letter_spot])[0] == data_base:
+                                    if (data_bases[i+letter_spot])[3]=="column_row":
+                                        (data_bases[i+letter_spot])[4].append(column_name.lower())
+                        if num1 == True or num2 == True:
+                            print(errors.cannot_call_func('data_base.edit.add_column()'))
             def remove_column(data_base=None, column=None, remove_row=False, database=None, hide=False):
                 if data_base == None:
                     data_base=database
@@ -4427,6 +4458,9 @@ else: # Run program!
     class errors:
         def help():
             print('Branches:\n  errors.MissingCPP()\n  errors.FileDoesNotExist()\n  errors.NotSignedIn()\n  errors.BackupNameExists()\n  errors.profanityDetected()\n  errors.doesNotObeyRestrictions()\n  errors.database_does_not_exist()\n  errors.cannot_call_func()\n  errors.incorrect_perm()\n  errors.user_exists()\n  errors.user_not_found()\n  errors.not_list()\n  errors.not_str()\n  errors.not_bool()\n  errors.not_int()')
+        def bannedEntry():
+            history.create_history('bannedEntry', 'Error', manual_record=auto_error_record, hide=debug)
+            return '(Error) The entry given is banned for use within\' a database.'
         def row_indexLookup(type=None):
             history.create_history(type, 'row_indexLookup:type('+str(type)+')', manual_record=auto_error_record, hide=debug)
             if type=='ListToSmall':
